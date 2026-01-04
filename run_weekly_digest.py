@@ -123,12 +123,15 @@ def main():
     poster = ThreadsPoster(access_token, os.getenv("THREADS_APP_ID"))
     
     # Execute posting
+    # Execute posting
     logger.info("Publishing to Threads...")
-    # posted_ids = poster.post_thread(posts)
-    # logger.info(f"Published successfully! IDs: {posted_ids}")
+    posted_ids = poster.post_thread(posts)
+    logger.info(f"Published successfully! IDs: {posted_ids}")
     
-    # Safety: DRY RUN by default until confirmed
-    logger.info("DRY RUN: Posting logic is commented out for safety until user approval.")
+    # Optional: Print for log
+    for i, p in enumerate(posts):
+            print(f"--- Post {i+1} ---")
+            print(p['text'])
     for i, p in enumerate(posts):
             print(f"--- Post {i+1} ---")
             print(p['text'])
