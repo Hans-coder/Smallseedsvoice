@@ -47,14 +47,6 @@ class ThreadsPoster:
     def create_post(self, text: str, image_url: Optional[str] = None, reply_to_id: Optional[str] = None) -> Optional[str]:
         """
         創建並發布Threads帖子 (Container -> Publish)
-        
-        Args:
-            text: 帖子文本
-            image_url: 圖片URL (必須是公開可訪問的URL)
-            reply_to_id: 回覆的帖子ID (用於串聯貼文)
-        
-        Returns:
-            創建的帖子ID或None
         """
         if not self.user_id:
             logger.error("用戶ID未設置，無法發布")
@@ -66,8 +58,10 @@ class ThreadsPoster:
             if not container_id:
                 return None
             
-            # 等待容器準備就緒
-            self._wait_for_container(container_id)
+            # 等待容器準備就緒 (如果是純文字通常不需等待，但API習慣一致較安全)
+            if not self._wait_for_container(container_id):
+                logger.error(f"容器未就緒，無法發布: {container_id}")
+                return None
             
             # 2. 發布容器
             post_id = self._publish_container(container_id)
@@ -75,6 +69,103 @@ class ThreadsPoster:
             
         except Exception as e:
             logger.error(f"發布Threads帖子失敗: {str(e)}")
+            return None
+
+    def post_thread(self, posts: List[Dict]) -> List[str]:
+        # ... (Same as before, simplified for brevity in replace tool if not changing it)
+        # Actually I need to keep post_thread same, so I won't touch it unless needed.
+        # But this replace block covers create_post. 
+        # I need to be careful with range.
+        # Let's just replacing create_post and helper methods.
+        pass # Placeholder for thought process. I will target specific lines.
+
+    # ... (skipping post_thread in replacement if not changed) ...
+    # Wait, I can only replace contiguous blocks.
+    # create_post is lines 47-79.
+    # _create_container is 125-147.
+    # _wait_for_container is 149-176.
+    # _publish_container is 177-192.
+    # They are separated by post_thread (80-124).
+    # I should use multi_replace or separate calls.
+    # I'll use multi_replace.
+    pass
+
+    def _create_container(self, text: str, image_url: Optional[str] = None, reply_to_id: Optional[str] = None) -> Optional[str]:
+        """創建媒體容器"""
+        url = f"{self.api_url}/{self.user_id}/threads"
+        data = {
+            'access_token': self.access_token,
+            'media_type': 'IMAGE' if image_url else 'TEXT',
+            'text': text
+        }
+        
+        if image_url:
+            data['image_url'] = image_url
+            
+        if reply_to_id:
+            data['reply_to_id'] = reply_to_id
+            
+        try:
+            response = requests.post(url, data=data)
+            response.raise_for_status()
+            result = response.json()
+            return result.get('id')
+        except Exception as e:
+            # Enhanced Logging
+            error_body = ""
+            if hasattr(e, 'response') and e.response:
+                error_body = e.response.text
+            logger.error(f"創建容器失敗: {str(e)} | Body: {error_body}")
+            return None
+
+    def _wait_for_container(self, container_id: str, timeout: int = 60) -> bool:
+        """等待容器就緒"""
+        start_time = time.time()
+        url = f"{self.api_url}/{container_id}"
+        params = {
+            'access_token': self.access_token,
+            'fields': 'status,error_message'
+        }
+        
+        while time.time() - start_time < timeout:
+            try:
+                response = requests.get(url, params=params)
+                data = response.json()
+                status = data.get('status')
+                
+                if status == 'FINISHED':
+                    return True
+                elif status == 'ERROR':
+                    logger.error(f"容器狀態錯誤: {data.get('error_message')}")
+                    return False
+                
+                time.sleep(2)
+            except Exception as e:
+                logger.warning(f"檢查容器狀態失敗: {str(e)}")
+                time.sleep(2)
+                
+        logger.warning(f"等待容器就緒超時: {container_id}")
+        return False
+
+    def _publish_container(self, container_id: str) -> Optional[str]:
+        """發布容器"""
+        url = f"{self.api_url}/{self.user_id}/threads_publish"
+        data = {
+            'access_token': self.access_token,
+            'creation_id': container_id
+        }
+        
+        try:
+            response = requests.post(url, data=data)
+            response.raise_for_status()
+            result = response.json()
+            return result.get('id')
+        except Exception as e:
+            # Enhanced Logging
+            error_body = ""
+            if hasattr(e, 'response') and e.response:
+                error_body = e.response.text
+            logger.error(f"發布容器失敗: {str(e)} | Body: {error_body}")
             return None
 
     def post_thread(self, posts: List[Dict]) -> List[str]:
@@ -143,10 +234,11 @@ class ThreadsPoster:
             result = response.json()
             return result.get('id')
         except Exception as e:
-            logger.error(f"創建容器失敗: {str(e)} - Data: {data}")
+            error_body = e.response.text if hasattr(e, 'response') and e.response else "No Body"
+            logger.error(f"創建容器失敗: {str(e)} | Body: {error_body}")
             return None
 
-    def _wait_for_container(self, container_id: str, timeout: int = 60):
+    def _wait_for_container(self, container_id: str, timeout: int = 60) -> bool:
         """等待容器就緒"""
         start_time = time.time()
         url = f"{self.api_url}/{container_id}"
@@ -162,10 +254,10 @@ class ThreadsPoster:
                 status = data.get('status')
                 
                 if status == 'FINISHED':
-                    return
+                    return True
                 elif status == 'ERROR':
                     logger.error(f"容器狀態錯誤: {data.get('error_message')}")
-                    return
+                    return False
                 
                 time.sleep(2)
             except Exception as e:
@@ -173,6 +265,7 @@ class ThreadsPoster:
                 time.sleep(2)
                 
         logger.warning(f"等待容器就緒超時: {container_id}")
+        return False
 
     def _publish_container(self, container_id: str) -> Optional[str]:
         """發布容器"""
@@ -188,7 +281,8 @@ class ThreadsPoster:
             result = response.json()
             return result.get('id')
         except Exception as e:
-            logger.error(f"發布容器失敗: {str(e)}")
+            error_body = e.response.text if hasattr(e, 'response') and e.response else "No Body"
+            logger.error(f"發布容器失敗: {str(e)} | Body: {error_body}")
             return None
     
     def post_event(self, event: Dict, formatted_text: str) -> bool:
