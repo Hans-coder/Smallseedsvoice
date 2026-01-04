@@ -1,0 +1,35 @@
+# 網頁抓取
+requests>=2.31.0
+beautifulsoup4>=4.12.0
+selenium>=4.15.0
+lxml>=4.9.0
+
+# 圖片處理
+Pillow>=10.0.0
+
+# 數據庫
+sqlalchemy>=2.0.0
+
+# 排程
+schedule>=1.2.0
+APScheduler>=3.10.0
+
+# 配置管理
+pyyaml>=6.0
+python-dotenv>=1.0.0
+
+# HTTP客戶端
+httpx>=0.25.0
+
+# 工具
+python-dateutil>=2.8.0
+
+# 日誌
+colorlog>=6.8.0
+
+# Instagram爬蟲
+instaloader>=4.10
+
+# OCR（可選，用於讀取圖片中的文字）
+pytesseract>=0.3.10
+

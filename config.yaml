@@ -1,0 +1,91 @@
+# 台灣音樂活動抓取系統配置
+
+# 抓取設定
+scraper:
+  # 請求間隔（秒）
+  request_delay: 2
+  # 超時時間（秒）
+  timeout: 30
+  # 重試次數
+  retry_count: 3
+  # User-Agent
+  user_agent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36"
+
+# 雙管道數據源配置
+pipelines:
+  # 1. 每週懶人包（免費活動）
+  weekly_digest:
+    enabled: true
+    schedule:
+      day_of_week: "sun"  # 週日
+      hour: 20           # 20:00 執行
+    
+    # 來源配置
+    sources:
+      instagram:
+        username: "livetws"
+        max_posts: 50
+        enabled: true
+    
+    # 過濾條件
+    filters:
+      price_type: "free"      # 僅抓取免費
+      date_range: "next_week" # 下週 (Mon-Sun)
+      
+    # 發布配置
+    publishing:
+      max_images: 20
+      split_text: true        # 超過500字自動拆分
+      template: |
+        📅 下週免費音樂活動懶人包 ({date_range}) 🇹🇼
+        
+        {events_content}
+        
+        #台灣音樂 #免費活動 #LiveTWS
+
+  # 2. 即時通知（售票活動）
+  realtime_alerts:
+    enabled: true
+    schedule:
+      interval_minutes: 30  # 每30分鐘檢查一次
+      
+    # 來源配置
+    sources:
+      sites:
+        - name: "kktix"
+          url: "https://kktix.com/events"
+          enabled: true
+        - name: "indievox"
+          url: "https://www.indievox.com/activity"
+          enabled: false
+          
+    # 發布配置
+    publishing:
+      template: |
+        🚨 售票情報 ALERT 🚨
+        
+        🎤 {event_name}
+        📍 地點：{location}
+        🕐 演出：{time}
+        🎫 售票：{sale_time}
+        💰 票價：{price}
+        
+        🔗 {link}
+        
+        #演唱會 #搶票 #音樂祭
+
+# 數據庫配置
+database:
+  type: "sqlite"
+  path: "data/events.db"
+
+# 圖片配置
+images:
+  download_path: "data/images"
+  max_size_mb: 5
+  allowed_formats: ["jpg", "jpeg", "png", "webp"]
+  delete_after_post: true
+
+# Threads API配置 (共用)
+threads:
+  post_time: 10 # 沒用到的舊設定，保留以防報錯
