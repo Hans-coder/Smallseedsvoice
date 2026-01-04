@@ -156,9 +156,23 @@ def main():
         logger.info("No matching events found. Exiting.")
         return
 
-    # 3. Build Digest
-    digest_builder = DigestBuilder(pipeline_config)
-    posts = digest_builder.build_digest(filtered_events, start_date, end_date)
+    # 3. Build Digest (AI or Rule-based)
+    from src.processor.ai_summarizer import AISummarizer
+    ai_summarizer = AISummarizer(os.getenv("GEMINI_API_KEY"))
+    
+    posts = []
+    if ai_summarizer.enabled:
+        logger.info("Using AI to organize digest...")
+        posts = ai_summarizer.organize_digest(
+            filtered_events, 
+            start_date.strftime("%m/%d"), 
+            end_date.strftime("%m/%d")
+        )
+
+    if not posts:
+        logger.info("Using rule-based DigestBuilder...")
+        digest_builder = DigestBuilder(pipeline_config)
+        posts = digest_builder.build_digest(filtered_events, start_date, end_date)
     
     logger.info(f"Generated {len(posts)} thread posts.")
     

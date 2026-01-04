@@ -49,40 +49,33 @@ class DigestBuilder:
         # 3. Generate Posts
         posts = []
         
-        # --- Main Post (Cover) ---
+        # Initialize first post with cover text
         cover_text = self._generate_cover_text(start_date, end_date, len(sorted_events))
-        posts.append({
-            'text': cover_text,
-            'images': [] # We might want to add a summary image here if available, or just the first event's image
-        })
-        
-        # --- Content Posts (Threaded) ---
-        current_text = ""
+        current_text = cover_text
         current_images = []
         
         for section_name, section_events in grouped_sections.items():
             section_header = f"\n{section_name}\n"
             
-            # Check if adding header exceeds limit, if so, push current post and start new
+            # If adding header exceeds limit, push current post and start new
             if len(current_text) + len(section_header) > self.max_chars:
                 posts.append({'text': current_text.strip(), 'images': current_images})
-                current_text = ""
+                current_text = section_header.strip()
                 current_images = []
-            
-            current_text += section_header
+            else:
+                current_text += section_header
             
             for event in section_events:
                 event_line = self._format_event_line(event)
                 
-                # Check length
                 if len(current_text) + len(event_line) > self.max_chars:
+                    # Push current post
                     posts.append({'text': current_text.strip(), 'images': current_images})
-                    current_text = ""
+                    # Start new post with event line
+                    current_text = event_line.strip()
                     current_images = []
-                    # Re-add section header if we just broke a section? 
-                    # Simpler: just continue.
-                
-                current_text += event_line
+                else:
+                    current_text += event_line
                 
                 # Add image if available
                 if event.get('image_path'):
