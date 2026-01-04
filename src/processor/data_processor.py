@@ -151,6 +151,10 @@ class DataProcessor:
             # 嘗試解析活動時間
             event_date = self._parse_event_date(event_time_str)
             if event_date:
+                # 若解析出的時間帶有時區，則移除時區資訊以便與 start_dt/end_dt (naive) 比較
+                if event_date.tzinfo is not None:
+                    event_date = event_date.replace(tzinfo=None)
+                    
                 # 檢查是否在時間範圍內
                 if start_dt <= event_date <= end_dt:
                     filtered_events.append(event)
