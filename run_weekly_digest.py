@@ -108,10 +108,6 @@ def main():
     # logger.info(f"DEBUG: Passing all {len(events_in_range)} events (Date Filter Disabled)")
     
     # 2b. Price Filter (Free)
-    # KKTIX usually doesn't show price in list. We might assume all are candidates 
-    # and filter by title keywords if strictly free, or just post all for now to verify format.
-    # User goal: "Free Music Events". 
-    # Strategy: If price is 'Unknown', keep it but label it. Or try to detect 'Free' in title.
     target_price = pipeline_config.get('filters', {}).get('price_type', 'free')
     filtered_events = []
     
@@ -119,21 +115,42 @@ def main():
         cleaned = processor.clean_event_data(event)
         if not cleaned: continue
         
-        # Enhanced Filter Logic:
-        # If scraper marked it "Paid", skip.
-        # If "Unknown" (List view), we loosely accept it for now to ensure we have content to show user,
-        # OR we can implement strict title checking (e.g., "免費", "Free").
-        
         if cleaned.get('price_type') == 'Paid':
             continue
             
-        # Strict Mode: Only if title contains "免費" or "Free" or price is explicitly "免費"
-        # For KKTIX, this might be too strict without detail scraping.
-        # Let's keep it loose for this iteration to demonstrate the Quality improvement (Format/Image).
-        
         filtered_events.append(cleaned)
         
     logger.info(f"Events after price filter: {len(filtered_events)}")
+
+    # 2c. Image Download Step
+    image_dir = Path(config.get('images', {}).get('download_path', 'data/images'))
+    image_dir.mkdir(parents=True, exist_ok=True)
+    
+    # We need a scraper instance to use download_image (any instance works as it's in BaseScraper)
+    from src.scraper.base_scraper import BaseScraper
+    class ImageDownloader(BaseScraper):
+        def scrape_events(self, url): return []
+        def parse_event(self, element): return None
+    
+    downloader = ImageDownloader(scraper_config)
+    
+    for event in filtered_events:
+        img_url = event.get('image_url')
+        if img_url:
+            # Generate a local filename based on name hash or just index
+            import hashlib
+            img_hash = hashlib.md5(img_url.encode()).hexdigest()
+            img_ext = img_url.split('.')[-1].split('?')[0]
+            if len(img_ext) > 4: img_ext = 'jpg' # fallback
+            
+            img_filename = f"{img_hash}.{img_ext}"
+            save_path = image_dir / img_filename
+            
+            if downloader.download_image(img_url, str(save_path)):
+                event['image_path'] = str(save_path)
+                logger.info(f"Downloaded image for {event['name']}: {save_path}")
+            else:
+                logger.warning(f"Failed to download image for {event['name']}")
     
     if not filtered_events:
         logger.info("No matching events found. Exiting.")

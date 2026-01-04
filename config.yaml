@@ -40,8 +40,6 @@ pipelines:
         📅 下週免費音樂活動懶人包 ({date_range}) 🇹🇼
         
         {events_content}
-        
-        #台灣音樂 #免費活動 #LiveTWS
 
   # 2. 即時通知（售票活動）
   realtime_alerts:

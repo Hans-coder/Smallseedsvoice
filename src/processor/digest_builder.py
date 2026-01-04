@@ -119,7 +119,7 @@ class DigestBuilder:
 
     def _generate_cover_text(self, start: datetime, end: datetime, count: int) -> str:
         date_str = f"{start.strftime('%m/%d')} - {end.strftime('%m/%d')}"
-        return f"📅 下週免費音樂活動懶人包 ({date_str}) 🇹🇼\n\n共整理了 {count} 場免費演出！\n詳細資訊請看留言 👇\n\n#台灣音樂 #獨立音樂 #LiveTWS"
+        return f"📅 下週免費音樂活動懶人包 ({date_str}) 🇹🇼\n\n共整理了 {count} 場免費演出！\n詳細資訊請看留言 👇"
 
     def _format_event_line(self, event: Dict) -> str:
         # 📍【城市】活動名稱
