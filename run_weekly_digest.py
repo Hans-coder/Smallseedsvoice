@@ -47,19 +47,43 @@ def main():
         logger.info("Weekly Digest pipeline is disabled.")
         return
 
-    # 1. Scrape Events (KKTIX - Tier 1 Source)
-    # PIVOT: User requested better data quality. Switching from IG to KKTIX.
+    # 1. Scrape Events
     from src.scraper.ticketing.kktix_scraper import KktixScraper
+    from src.scraper.ticketing.indievox_scraper import IndievoxScraper
+    from src.scraper.ticketing.accupass_scraper import AccupassScraper
+    from src.scraper.ticketing.opentix_scraper import OpentixScraper
     
     scraper_config = config.get('scraper', {})
-    kktix_scraper = KktixScraper(scraper_config)
+    scrapers_to_run = [
+        (KktixScraper(scraper_config), "https://kktix.com/events?category_id=2"),
+        (IndievoxScraper(scraper_config), "https://www.indievox.com/explore?type=event"),
+        (AccupassScraper(scraper_config), "https://www.accupass.com/search?q=music"),
+        (OpentixScraper(scraper_config), "https://www.opentix.life/search?q=音樂")
+    ]
     
-    logger.info("Scraping KKTIX (Music Category)...")
-    # URL for Music category. We might want to make this configurable.
-    # KKTIX Music: https://kktix.com/events?category_id=2
-    all_events = kktix_scraper.scrape_events("https://kktix.com/events?category_id=2")
-    
-    logger.info(f"Total scraped events: {len(all_events)}")
+    all_events = []
+    for scraper, url in scrapers_to_run:
+        platform = scraper.__class__.__name__.replace('Scraper', '')
+        logger.info(f"Scraping {platform}...")
+        try:
+            platform_events = scraper.scrape_events(url)
+            all_events.extend(platform_events)
+        except Exception as e:
+            logger.error(f"Error scraping {platform}: {e}")
+            
+    # Deduplicate by source_url
+    unique_events = {}
+    for event in all_events:
+        url = event.get('source_url')
+        if url:
+             if url not in unique_events:
+                 unique_events[url] = event
+        else:
+             # If no URL, keep it anyway
+             unique_events[id(event)] = event
+             
+    all_events = list(unique_events.values())
+    logger.info(f"Total unique events scraped: {len(all_events)}")
     
     # 2. Filter Events
     processor = DataProcessor()
@@ -68,12 +92,20 @@ def main():
     start_date, end_date = get_next_week_range()
     logger.info(f"Filtering for range: {start_date.date()} - {end_date.date()}")
     
+    # Debug: Print all scraped dates
+    # for e in all_events:
+    #     logger.info(f"Debug Event: {e.get('name')} | Time: {e.get('time')}")
+
     events_in_range = processor.filter_events_by_time_range(
         all_events, 
         start_date=start_date.strftime("%Y-%m-%d"),
         end_date=end_date.strftime("%Y-%m-%d")
     )
     logger.info(f"Events within date range: {len(events_in_range)}")
+    
+    # FOR TESTING: Pass all events
+    # events_in_range = all_events
+    # logger.info(f"DEBUG: Passing all {len(events_in_range)} events (Date Filter Disabled)")
     
     # 2b. Price Filter (Free)
     # KKTIX usually doesn't show price in list. We might assume all are candidates 
