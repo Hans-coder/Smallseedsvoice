@@ -61,7 +61,7 @@ class DigestBuilder:
         current_images = []
         
         for section_name, section_events in grouped_sections.items():
-            section_header = f"\n🗓️ {section_name}\n"
+            section_header = f"\n{section_name}\n"
             
             # Check if adding header exceeds limit, if so, push current post and start new
             if len(current_text) + len(section_header) > self.max_chars:
@@ -119,7 +119,7 @@ class DigestBuilder:
 
     def _generate_cover_text(self, start: datetime, end: datetime, count: int) -> str:
         date_str = f"{start.strftime('%m/%d')} - {end.strftime('%m/%d')}"
-        return f"📅 下週免費音樂活動懶人包 ({date_str}) 🇹🇼\n\n共整理了 {count} 場免費演出！\n詳細資訊請看留言 👇"
+        return f"下週免費音樂活動懶人包 ({date_str})\n\n共整理了 {count} 場免費演出！\n詳細資訊請看留言"
 
     def _format_event_line(self, event: Dict) -> str:
         # 📍【城市】活動名稱
@@ -141,7 +141,7 @@ class DigestBuilder:
         # 構造星期幾 (需要 DataProcessor 的支持，這裡先做個簡單映射或佔位)
         weekday = self._get_weekday_zh(time_str) 
 
-        return f"\n📍【{city}】{event['name']}\n🗓 {time_str} ({weekday})\n📌 {venue}\n"
+        return f"\n[{city}] {event['name']}\n日期：{time_str} ({weekday})\n地點：{venue}\n"
 
     def _extract_city(self, location: str) -> str:
         # 簡單城市提取

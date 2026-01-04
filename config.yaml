@@ -37,7 +37,8 @@ pipelines:
       max_images: 20
       split_text: true        # 超過500字自動拆分
       template: |
-        📅 下週免費音樂活動懶人包 ({date_range}) 🇹🇼
+      template: |
+        下週免費音樂活動懶人包 ({date_range})
         
         {events_content}
 
