@@ -32,7 +32,7 @@ class KktixScraper(BaseScraper):
         
         for item in event_items:
             # Basic info from list
-            list_info = self.parse_list_item(item)
+            list_info = self.parse_event(item)
             if not list_info: continue
             
             # Detailed info (Price, Venue City)
@@ -54,7 +54,7 @@ class KktixScraper(BaseScraper):
         logger.info(f"KKTIX: Scraped {len(events)} events from {url}")
         return events
 
-    def parse_list_item(self, element) -> Optional[Dict]:
+    def parse_event(self, element) -> Optional[Dict]:
         try:
             link_tag = element.find('a')
             if not link_tag: return None
