@@ -56,9 +56,9 @@ def main():
     scraper_config = config.get('scraper', {})
     scrapers_to_run = [
         (KktixScraper(scraper_config), "https://kktix.com/events?category_id=2"),
-        (IndievoxScraper(scraper_config), "https://www.indievox.com/explore?type=event"),
-        (AccupassScraper(scraper_config), "https://www.accupass.com/search?q=music"),
-        (OpentixScraper(scraper_config), "https://www.opentix.life/search?q=音樂")
+        (IndievoxScraper(scraper_config), "https://www.indievox.com/activity/list"),
+        (AccupassScraper(scraper_config), "https://www.accupass.com/category/25"), # 25 is Music category on Accupass
+        (OpentixScraper(scraper_config), "https://www.opentix.life/category/1317374921471713282") # Music category on OPENTIX
     ]
     
     all_events = []
@@ -163,6 +163,9 @@ def main():
     posts = []
     if ai_summarizer.enabled:
         logger.info("Using AI to organize digest...")
+        # Note: AISummarizer now needs to receive both local path (for ref) and original URL (for posting)
+        # Actually AISummarizer just needs to return event_ids, and we map them to images.
+        # I need to ensure event['image_url'] is preserved.
         posts = ai_summarizer.organize_digest(
             filtered_events, 
             start_date.strftime("%m/%d"), 

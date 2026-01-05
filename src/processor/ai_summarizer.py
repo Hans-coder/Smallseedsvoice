@@ -95,13 +95,15 @@ class AISummarizer:
                 images = []
                 for eid in event_ids:
                     if 0 <= eid < len(events):
-                        img_path = events[eid].get('image_path')
-                        if img_path:
-                            images.append(img_path)
+                        # Use image_url (public) for Threads API
+                        # image_path is kept in events dict for local backup but Threads needs URL
+                        img_url = events[eid].get('image_url')
+                        if img_url:
+                            images.append(img_url)
                 
                 final_thread.append({
                     'text': text,
-                    'images': images # Limit to 10 is usually handled by poster or builder later
+                    'images': images 
                 })
             
             return final_thread

@@ -77,9 +77,9 @@ class DigestBuilder:
                 else:
                     current_text += event_line
                 
-                # Add image if available
-                if event.get('image_path'):
-                    current_images.append(event['image_path'])
+                # Add image if available (Threads API needs URL)
+                if event.get('image_url'):
+                    current_images.append(event['image_url'])
         
         # Add the last remaining post
         if current_text:
