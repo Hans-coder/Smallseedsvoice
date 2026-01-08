@@ -1,0 +1,81 @@
+"""
+Post Radar Events to Threads
+Reads: data/radar_events.json
+Posts: To Threads via API
+"""
+import json
+import os
+from src.threads.threads_poster import ThreadsPoster
+from src.utils.logger import setup_logger
+
+logger = setup_logger("post_radar")
+
+def format_event(event: dict) -> str:
+    """Format radar event for Threads post."""
+    free_tag = "💰 免費入場" if event.get('is_free') == 'true' else ""
+    text = f"""🎸 {event['activity_name']}
+
+📅 {event['date']}
+📍 {event['venue']}
+{free_tag}
+
+詳情: {event['source']}
+
+#台灣音樂 #LiveHouse #獨立音樂"""
+    return text
+
+def main():
+    # Load credentials
+    access_token = os.getenv("THREADS_ACCESS_TOKEN")
+    if not access_token:
+        logger.error("THREADS_ACCESS_TOKEN not found in environment")
+        print("❌ 請設定 THREADS_ACCESS_TOKEN 環境變數")
+        return
+    
+    # Initialize poster
+    poster = ThreadsPoster(access_token)
+    
+    # Load events
+    if not os.path.exists("data/radar_events.json"):
+        logger.error("data/radar_events.json not found")
+        print("❌ 找不到 data/radar_events.json，請先執行 scrape_activity_radar.py")
+        return
+    
+    with open("data/radar_events.json", 'r') as f:
+        events = json.load(f)
+    
+    logger.info(f"Loaded {len(events)} radar events")
+    
+    # Post first 5 events as demo
+    events_to_post = events[:5]
+    
+    print(f"\n📊 準備發布 {len(events_to_post)} 筆雷達活動")
+    for i, event in enumerate(events_to_post, 1):
+        print(f"  {i}. {event['activity_name']} ({event['date']})")
+    
+    confirm = input("\n確認發布? (y/n): ").strip().lower()
+    
+    if confirm != 'y':
+        print("❌ 取消發布")
+        return
+    
+    # Post events
+    success_count = 0
+    for i, event in enumerate(events_to_post, 1):
+        print(f"\n[{i}/{len(events_to_post)}] 發布中: {event['activity_name']}")
+        
+        text = format_event(event)
+        image_url = event.get('image_url')
+        
+        post_id = poster.create_post(text, image_url)
+        
+        if post_id:
+            print(f"✅ 發布成功! Post ID: {post_id}")
+            success_count += 1
+        else:
+            print(f"❌ 發布失敗")
+    
+    print(f"\n📊 發布完成: {success_count}/{len(events_to_post)} 成功")
+
+if __name__ == "__main__":
+    main()

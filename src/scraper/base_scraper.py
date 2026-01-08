@@ -111,5 +111,38 @@ class BaseScraper(ABC):
             活動字典或None
         """
         pass
+    def fetch_with_selenium(self, url: str, wait_time: int = 5, scroll: bool = False, scroll_count: int = 3) -> Optional[BeautifulSoup]:
+        """
+        Fetch page using Selenium Headless Chrome with optional scrolling.
+        """
+        try:
+            from selenium import webdriver
+            from selenium.webdriver.chrome.options import Options
+            from bs4 import BeautifulSoup
+
+            chrome_options = Options()
+            chrome_options.add_argument("--headless")
+            chrome_options.add_argument("--no-sandbox")
+            chrome_options.add_argument("--disable-dev-shm-usage")
+            chrome_options.add_argument(f"user-agent={self.headers['User-Agent']}")
+
+            driver = webdriver.Chrome(options=chrome_options)
+            driver.get(url)
+
+            # Wait for initial load
+            time.sleep(wait_time)
+
+            if scroll:
+                for _ in range(scroll_count):
+                    driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+                    time.sleep(2)
+
+            html = driver.page_source
+            driver.quit()
+
+            return BeautifulSoup(html, 'lxml')
+        except Exception as e:
+            logger.error(f"Selenium fetch failed for {url}: {e}")
+            return None
 
 

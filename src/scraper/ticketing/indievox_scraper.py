@@ -9,16 +9,13 @@ logger = setup_logger(__name__)
 class IndievoxScraper(BaseScraper):
     """iNDIEVOX Scraper"""
     
-    def scrape_events(self, url: str = "https://www.indievox.com/activity/list") -> List[Dict]:
+    def scrape_events(self, url: str = None) -> List[Dict]:
         """
         Scrape iNDIEVOX music events.
-        
-        Args:
-            url: iNDIEVOX activity list URL
-            
-        Returns:
-            List of event dictionaries
         """
+        if not url:
+            url = "https://www.indievox.com/activity/list"
+            
         # iNDIEVOX is usually static friendly, but check request headers
         soup = self.fetch_page(url)
         if not soup:

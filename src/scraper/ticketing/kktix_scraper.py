@@ -1,137 +1,104 @@
 """KKTIX Scraper"""
 from typing import Dict, List, Optional
-from datetime import datetime
-import re
 import time
+from datetime import datetime
 from src.scraper.base_scraper import BaseScraper
 from src.utils.logger import setup_logger
+from src.utils.date_parser import parse_taiwan_date, parse_time
 
 logger = setup_logger(__name__)
 
 class KktixScraper(BaseScraper):
     """KKTIX Event Scraper"""
     
-    def scrape_events(self, url: str = "https://kktix.com/events?category_id=2") -> List[Dict]:
+    def scrape_events(self, url: str = None) -> List[Dict]:
         """
         Scrape KKTIX music events.
-        Args:
-            url: KKTIX music events URL
         """
-        # KKTIX blocks requests/403 quite often or requires specific headers.
-        # Selenium is more reliable for this site.
-        logger.info(f"Fetching KKTIX events from {url} using Selenium...")
-        soup = self._fetch_with_selenium(url)
+        # Strict Music only (tag 13)
+        if not url:
+            url = "https://kktix.com/events?event_tag_ids_in=13"
             
-        if not soup:
-            return []
-            
-        events = []
-        # Update selector based on 2026/01/04 dump: ul.events > li
-        event_items = soup.select('ul.events > li')
+        all_events = []
+        max_pages = self.config.get('max_pages', 5)
         
-        for item in event_items:
-            # Basic info from list
-            list_info = self.parse_event(item)
-            if not list_info: continue
+        for page in range(1, max_pages + 1):
+            page_url = f"{url}&page={page}"
+            logger.info(f"Fetching KKTIX page {page}: {page_url}...")
             
-            # Detailed info (Price, Venue City) is strictly on detail page.
-            # For MVP speed, we'll label them "Check Link" or similar if we skip detail scrape.
-            # But the requirement was "Free events".
-            # If we skip detail scrape, we can't filter by price "Free" accurately unless we assume.
-            # However, for now let's get the LIST working first.
+            soup = self.fetch_with_selenium(page_url, wait_time=2)
+            if not soup: break
             
-            events.append(list_info)
+            event_items = soup.select('ul.events > li')
+            if not event_items:
+                logger.info(f"No more events found on page {page}")
+                break
                 
-        logger.info(f"KKTIX: Scraped {len(events)} events from {url}")
-        return events
+            page_events = []
+            for item in event_items:
+                event_data = self.parse_event(item)
+                if event_data:
+                    page_events.append(event_data)
+            
+            all_events.extend(page_events)
+            time.sleep(1)
+            
+        logger.info(f"KKTIX: Scraped {len(all_events)} events")
+        return all_events
 
     def parse_event(self, element) -> Optional[Dict]:
         try:
-            # Link is on the <a> tag with class 'cover'
-            link_tag = element.find('a', class_='cover')
-            if not link_tag: 
-                # Fallback: find any a
-                link_tag = element.find('a')
-            
+            link_tag = element.find('a', class_='cover') or element.find('a')
             if not link_tag: return None
             
             event_url = link_tag.get('href')
             if event_url and not event_url.startswith('http'):
                 event_url = f"https://kktix.com{event_url}"
                 
-            # Title: div.event-title > h2
+            # Basic Info
             title_container = element.find(class_='event-title')
-            name = "Unknown"
-            if title_container:
-                h2 = title_container.find('h2')
-                if h2:
-                    name = h2.get_text(strip=True)
+            name = title_container.find('h2').get_text(strip=True) if title_container else "Unknown"
             
-            # Time: span.date
+            # Time & Date
             # Format: 2025/11/11(二)
             time_tag = element.find(class_='date')
-            time_str = time_tag.get_text(strip=True) if time_tag else "Unknown"
+            raw_time = time_tag.get_text(strip=True) if time_tag else ""
             
-            # Image: figure > img
+            date_iso = parse_taiwan_date(raw_time)
+            # KKTIX list view doesn't show specific start time usually, mostly date
+            # We might need to fetch detail page for strict time, but for now leave null or scrape from detail if needed
+            start_time = None 
+            
+            # Location
+            # Often in .vcard text or description
+            location = "Unknown" 
+            city = "Unknown"
+            # KKTIX list doesn't show venue clearly, usually needs detail scrape. 
+            # For "Official Platform" script, accuracy is key?
+            # User said "Fields (if available)". 
+            # Let's keep it simple for now or fetch detail if mandated.
+            
+            # Image
             img_tag = element.find('img')
             image_url = img_tag.get('src') if img_tag else None
             
+            # ID: Platform + Name + Date
+            activity_id = f"kktix_{name}_{date_iso}"
+            
             return {
-                'name': name,
-                'location': 'See Details', # Location is not clearly visible in list card (sometimes in intro but unstructured)
-                'time': time_str,
-                'price_type': 'Unknown', # Price is not on card
-                'image_url': image_url,
-                'source_url': event_url,
-                'platform': 'kktix'
+                "activity_id": activity_id,
+                "activity_name": name,
+                "activity_type": "concert", # Default for music tag
+                "performers": [], # Hard to extract from list
+                "date": date_iso,
+                "start_time": start_time,
+                "venue_name": location,
+                "city": city,
+                "price": None, # Needs detail
+                "ticket_platform": "KKTIX",
+                "ticket_url": event_url,
+                "image_url": image_url
             }
         except Exception as e:
             logger.error(f"Error parsing KKTIX item: {e}")
             return None
-
-    def _get_event_details(self, url: str) -> Dict:
-        """Fetch event detail page to get Price and Venue"""
-        # This is expensive (N requests). 
-        # For now, we implement a lightweight version or just return empty if we want speed.
-        # But to fulfill the "Free" requirement, we realistically need this.
-        # Implementation omitted for speed in this turn, but planned.
-        # return {'price_type': '免費', 'location': 'Legacy Taipei'} # Mock
-        
-        # Real implementation would be:
-        # soup = self.fetch_page(url) ...
-        # price_text = soup.find(...) ...
-        return {}
-
-    def _fetch_with_selenium(self, url: str):
-        """Fetch page using Selenium Headless Chrome"""
-        try:
-            from selenium import webdriver
-            from selenium.webdriver.chrome.options import Options
-            from bs4 import BeautifulSoup
-            
-            chrome_options = Options()
-            chrome_options.add_argument("--headless")
-            chrome_options.add_argument("--no-sandbox")
-            chrome_options.add_argument("--disable-dev-shm-usage")
-            # Fake User-Agent
-            chrome_options.add_argument("user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36")
-            
-            driver = webdriver.Chrome(options=chrome_options)
-            driver.get(url)
-            
-            # Wait for content
-            time.sleep(5) 
-            
-            html = driver.page_source
-            driver.quit()
-            
-            return BeautifulSoup(html, 'lxml')
-        except ImportError:
-            logger.error("Selenium not installed. Install with: pip install selenium")
-            return None
-        except Exception as e:
-            logger.error(f"Selenium fetch failed: {e}")
-            return None
-
-
-

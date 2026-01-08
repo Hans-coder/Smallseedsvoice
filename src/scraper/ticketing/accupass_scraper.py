@@ -9,14 +9,16 @@ logger = setup_logger(__name__)
 class AccupassScraper(BaseScraper):
     """Accupass Scraper"""
     
-    def scrape_events(self, url: str = "https://www.accupass.com/search?q=music") -> List[Dict]:
+    def scrape_events(self, url: str = None) -> List[Dict]:
         """
         Scrape Accupass music events.
-        Args:
-            url: Accupass search URL
         """
+        if not url:
+            url = "https://www.accupass.com/search?c=music&p=free"
+            
         logger.info(f"Fetching Accupass events from {url} using Selenium...")
-        soup = self._fetch_with_selenium(url)
+        # Increase scrolls for Accupass since it uses infinite scroll
+        soup = self.fetch_with_selenium(url, scroll=True, scroll_count=20)
             
         if not soup:
             return []
@@ -85,31 +87,4 @@ class AccupassScraper(BaseScraper):
             }
         except Exception as e:
             logger.error(f"Error parsing Accupass item: {e}")
-            return None
-
-    def _fetch_with_selenium(self, url: str):
-        """Internal method to fetch page using Selenium (duplicated from KKTIX for now or should be in Base)"""
-        try:
-            from selenium import webdriver
-            from selenium.webdriver.chrome.options import Options
-            from bs4 import BeautifulSoup
-
-            chrome_options = Options()
-            chrome_options.add_argument("--headless")
-            chrome_options.add_argument("--no-sandbox")
-            chrome_options.add_argument("--disable-dev-shm-usage")
-            chrome_options.add_argument("user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36")
-
-            driver = webdriver.Chrome(options=chrome_options)
-            driver.get(url)
-
-            # Wait for content to load
-            time.sleep(5)
-
-            html = driver.page_source
-            driver.quit()
-
-            return BeautifulSoup(html, 'lxml')
-        except Exception as e:
-            logger.error(f"Selenium fetch failed: {e}")
             return None
