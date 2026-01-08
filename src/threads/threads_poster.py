@@ -121,19 +121,32 @@ class ThreadsPoster:
         
         if image_url:
             data['image_url'] = image_url
+            logger.info(f"Creating container with image: {image_url[:50]}...")
+        else:
+            logger.info(f"Creating text-only container")
             
         if reply_to_id:
             data['reply_to_id'] = reply_to_id
             
         try:
+            logger.info(f"Posting to: {url}")
+            logger.info(f"Text preview: {text[:100]}...")
             response = requests.post(url, data=data)
+            logger.info(f"Container creation response status: {response.status_code}")
+            logger.info(f"Container creation response: {response.text}")
+            
             if not response.ok:
                 logger.error(f"創建容器 API 報錯: {response.text}")
-            response.raise_for_status()
+                return None
+                
             result = response.json()
-            return result.get('id')
+            container_id = result.get('id')
+            logger.info(f"Container created successfully: {container_id}")
+            return container_id
         except Exception as e:
             logger.error(f"創建容器失敗: {str(e)}")
+            import traceback
+            logger.error(traceback.format_exc())
             return None
 
     def _wait_for_container(self, container_id: str, timeout: int = 60) -> bool:
@@ -174,14 +187,23 @@ class ThreadsPoster:
         }
         
         try:
+            logger.info(f"Publishing container: {container_id}")
             response = requests.post(url, data=data)
+            logger.info(f"Publish response status: {response.status_code}")
+            logger.info(f"Publish response: {response.text}")
+            
             if not response.ok:
                 logger.error(f"發布容器 API 報錯: {response.text}")
-            response.raise_for_status()
+                return None
+                
             result = response.json()
-            return result.get('id')
+            post_id = result.get('id')
+            logger.info(f"Post published successfully: {post_id}")
+            return post_id
         except Exception as e:
             logger.error(f"發布容器失敗: {str(e)}")
+            import traceback
+            logger.error(traceback.format_exc())
             return None
     
     def post_event(self, event: Dict, formatted_text: str) -> bool:
