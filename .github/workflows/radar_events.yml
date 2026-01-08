@@ -38,7 +38,7 @@ jobs:
           python preview_generator.py
       
       - name: Upload Preview Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: radar-preview
           path: |
