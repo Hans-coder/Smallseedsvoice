@@ -6,6 +6,7 @@ Output: JSON Array
 import json
 import logging
 from datetime import datetime
+from pathlib import Path
 from src.utils.logger import setup_logger
 from src.scraper.ticketing.indievox_scraper import IndievoxScraper
 from src.scraper.instagram_scraper import InstagramScraper
@@ -112,6 +113,7 @@ def main():
     # Output
     print(json.dumps(valid_list, indent=4, ensure_ascii=False))
     
+    Path("data").mkdir(exist_ok=True)
     with open("data/radar_events.json", "w", encoding="utf-8") as f:
         json.dump(valid_list, f, indent=4, ensure_ascii=False)
 

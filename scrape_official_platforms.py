@@ -7,6 +7,7 @@ import json
 import logging
 import sys
 from datetime import datetime
+from pathlib import Path
 from src.utils.logger import setup_logger
 from src.scraper.ticketing.kktix_scraper import KktixScraper
 from src.scraper.ticketing.opentix_scraper import OpentixScraper
@@ -94,6 +95,7 @@ def main():
     print(json.dumps(valid_list, indent=4, ensure_ascii=False))
     
     # Save to file
+    Path("data").mkdir(exist_ok=True)
     with open("data/official_events.json", "w", encoding="utf-8") as f:
         json.dump(valid_list, f, indent=4, ensure_ascii=False)
         

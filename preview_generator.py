@@ -18,6 +18,7 @@ RADAR_FILE = "data/radar_events.json"
 
 def ensure_cache_dir():
     Path(CACHE_DIR).mkdir(parents=True, exist_ok=True)
+    Path("data").mkdir(exist_ok=True)
 
 def download_image(url: str) -> str:
     """Download image and return local path (relative to preview.html)."""
