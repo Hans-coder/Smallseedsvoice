@@ -54,7 +54,6 @@ jobs:
             data/preview_cache/
       
       - name: Post to Threads (auto mode)
-        if: github.event_name == 'schedule'  # 只在排程時自動發文
         env:
           THREADS_ACCESS_TOKEN: ${{ secrets.THREADS_ACCESS_TOKEN }}
         run: |
