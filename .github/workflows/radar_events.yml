@@ -53,13 +53,12 @@ jobs:
             data/radar_events.json
             data/preview_cache/
       
-      - name: Post to Threads (if enabled)
+      - name: Post to Threads (auto mode)
         if: github.event_name == 'schedule'  # 只在排程時自動發文
         env:
           THREADS_ACCESS_TOKEN: ${{ secrets.THREADS_ACCESS_TOKEN }}
         run: |
-          # 自動發文模式（跳過確認）
-          echo "y" | python post_radar_to_threads.py
+          python post_radar_to_threads.py --auto
       
       - name: Cleanup
         run: |

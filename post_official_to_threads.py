@@ -2,9 +2,14 @@
 Post Official Events to Threads
 Reads: data/official_events.json
 Posts: To Threads via API
+
+Usage:
+  python post_official_to_threads.py          # Interactive mode
+  python post_official_to_threads.py --auto   # Auto mode (no confirmation)
 """
 import json
 import os
+import sys
 from src.threads.threads_poster import ThreadsPoster
 from src.utils.logger import setup_logger
 
@@ -24,6 +29,9 @@ def format_event(event: dict) -> str:
     return text
 
 def main():
+    # Check for auto mode
+    auto_mode = '--auto' in sys.argv
+    
     # Load credentials
     access_token = os.getenv("THREADS_ACCESS_TOKEN")
     if not access_token:
@@ -52,11 +60,13 @@ def main():
     for i, event in enumerate(events_to_post, 1):
         print(f"  {i}. {event['activity_name']} ({event['date']})")
     
-    confirm = input("\n確認發布? (y/n): ").strip().lower()
-    
-    if confirm != 'y':
-        print("❌ 取消發布")
-        return
+    if not auto_mode:
+        confirm = input("\n確認發布? (y/n): ").strip().lower()
+        if confirm != 'y':
+            print("❌ 取消發布")
+            return
+    else:
+        print("\n🤖 自動模式：開始發布...")
     
     # Post events
     success_count = 0
