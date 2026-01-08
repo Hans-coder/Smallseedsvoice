@@ -17,16 +17,21 @@ logger = setup_logger("post_radar")
 
 def format_event(event: dict) -> str:
     """Format radar event for Threads post."""
-    free_tag = "💰 免費入場" if event.get('is_free') == 'true' else ""
-    text = f"""🎸 {event['activity_name']}
+    venue = event.get('venue', '待確認')
+    date = event.get('date', '待確認')
+    
+    # Build post text
+    text = f"""{event['activity_name']}
 
-📅 {event['date']}
-📍 {event['venue']}
-{free_tag}
-
-詳情: {event['source']}
-
-#台灣音樂 #LiveHouse #獨立音樂"""
+日期：{date}
+地點：{venue}"""
+    
+    # Add free admission note if applicable
+    if event.get('is_free') == 'true':
+        text += "\n免費入場"
+    
+    text += f"\n\n{event['source']}"
+    
     return text
 
 def main():

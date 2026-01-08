@@ -17,15 +17,17 @@ logger = setup_logger("post_official")
 
 def format_event(event: dict) -> str:
     """Format official event for Threads post."""
-    text = f"""🎵 {event['activity_name']}
+    venue = event.get('venue_name', '待確認')
+    if venue == 'Unknown':
+        venue = '待確認'
+    
+    text = f"""{event['activity_name']}
 
-📅 {event['date']}
-📍 {event['venue_name']}
-🎫 {event['ticket_platform']}
+日期：{event['date']}
+地點：{venue}
+售票：{event['ticket_platform']}
 
-購票連結: {event['ticket_url']}
-
-#台灣音樂 #演唱會 #{event['ticket_platform']}"""
+{event['ticket_url']}"""
     return text
 
 def main():
