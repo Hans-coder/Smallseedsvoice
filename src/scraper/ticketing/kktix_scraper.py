@@ -97,7 +97,8 @@ class KktixScraper(BaseScraper):
                 "price": None, # Needs detail
                 "ticket_platform": "KKTIX",
                 "ticket_url": event_url,
-                "image_url": image_url
+                "image_url": image_url,
+                "ticket_sale_date": None  # TODO: Implement detail scrape for sale date
             }
         except Exception as e:
             logger.error(f"Error parsing KKTIX item: {e}")

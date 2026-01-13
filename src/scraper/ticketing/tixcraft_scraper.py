@@ -75,7 +75,8 @@ class TixCraftScraper(BaseScraper):
                 "price": None,
                 "ticket_platform": "tixCraft",
                 "ticket_url": event_url,
-                "image_url": image_url
+                "image_url": image_url,
+                "ticket_sale_date": None  # TODO: Implement detail scrape for sale date
             }
         except Exception as e:
             logger.error(f"Error parsing tixCraft item: {e}")

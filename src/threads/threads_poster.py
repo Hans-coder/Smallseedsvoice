@@ -213,5 +213,12 @@ class ThreadsPoster:
         post_id = self.create_post(formatted_text, image_url)
         return post_id is not None
 
+    def random_sleep(self, min_seconds: int = 60, max_seconds: int = 180):
+        """隨機等待一段時間，避免被偵測為機器人"""
+        import random
+        delay = random.randint(min_seconds, max_seconds)
+        logger.info(f"等待 {delay} 秒後發布下一則貼文...")
+        time.sleep(delay)
+
 
 

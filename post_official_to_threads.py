@@ -10,24 +10,35 @@ Usage:
 import json
 import os
 import sys
+import time
 from src.threads.threads_poster import ThreadsPoster
 from src.utils.logger import setup_logger
+from src.utils.ai_enricher import AIEnricher
 
 logger = setup_logger("post_official")
 
-def format_event(event: dict) -> str:
+def format_event(event: dict, enricher: AIEnricher = None) -> str:
     """Format official event for Threads post."""
     venue = event.get('venue_name', '待確認')
     if venue == 'Unknown':
         venue = '待確認'
     
-    text = f"""{event['activity_name']}
+    # Use AI to enrich caption
+    hook = ""
+    if enricher:
+        hook = enricher.enrich_post(
+            event['activity_name'], 
+            event['date'], 
+            venue, 
+            f"售票平台：{event['ticket_platform']}"
+        )
 
-日期：{event['date']}
-地點：{venue}
-售票：{event['ticket_platform']}
+    text = f"""{hook}{event['activity_name']}
 
-{event['ticket_url']}"""
+📅 日期：{event['date']}
+📍 地點：{venue}
+🎫 售票：{event['ticket_platform']}
+🔗 {event['ticket_url']}"""
     return text
 
 def main():
@@ -41,8 +52,9 @@ def main():
         print("❌ 請設定 THREADS_ACCESS_TOKEN 環境變數")
         return
     
-    # Initialize poster
+    # Initialize poster and enricher
     poster = ThreadsPoster(access_token)
+    enricher = AIEnricher()
     
     # Load events
     if not os.path.exists("data/official_events.json"):
@@ -53,10 +65,13 @@ def main():
     with open("data/official_events.json", 'r') as f:
         events = json.load(f)
     
+    # Sort by date (and eventually ticket_sale_date if implemented)
+    events.sort(key=lambda x: (x.get('ticket_sale_date') or x['date']))
+    
     logger.info(f"Loaded {len(events)} official events")
     
-    # Post first 5 events as demo
-    events_to_post = events[:5]
+    # Post first 5 events as demo or all in auto mode
+    events_to_post = events[:10] if not auto_mode else events
     
     print(f"\n📊 準備發布 {len(events_to_post)} 筆官方活動")
     for i, event in enumerate(events_to_post, 1):
@@ -75,7 +90,7 @@ def main():
     for i, event in enumerate(events_to_post, 1):
         print(f"\n[{i}/{len(events_to_post)}] 發布中: {event['activity_name']}")
         
-        text = format_event(event)
+        text = format_event(event, enricher)
         image_url = event.get('image_url')
         
         post_id = poster.create_post(text, image_url)
@@ -83,6 +98,9 @@ def main():
         if post_id:
             print(f"✅ 發布成功! Post ID: {post_id}")
             success_count += 1
+            # Delay if not the last item
+            if i < len(events_to_post):
+                poster.random_sleep(60, 120)
         else:
             print(f"❌ 發布失敗")
     

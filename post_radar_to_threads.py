@@ -10,27 +10,39 @@ Usage:
 import json
 import os
 import sys
+import time
 from src.threads.threads_poster import ThreadsPoster
 from src.utils.logger import setup_logger
+from src.utils.ai_enricher import AIEnricher
 
 logger = setup_logger("post_radar")
 
-def format_event(event: dict) -> str:
+def format_event(event: dict, enricher: AIEnricher = None) -> str:
     """Format radar event for Threads post."""
     venue = event.get('venue', '待確認')
     date = event.get('date', '待確認')
     
-    # Build post text
-    text = f"""{event['activity_name']}
+    # Use AI to enrich caption
+    hook = ""
+    if enricher:
+        hook = enricher.enrich_post(
+            event['activity_name'], 
+            date, 
+            venue, 
+            "免費活動" if event.get('is_free') == 'true' else ""
+        )
 
-日期：{date}
-地點：{venue}"""
+    # Build post text
+    text = f"""{hook}{event['activity_name']}
+
+📅 日期：{date}
+📍 地點：{venue}"""
     
     # Add free admission note if applicable
     if event.get('is_free') == 'true':
-        text += "\n免費入場"
+        text += "\n✨ 免費入場"
     
-    text += f"\n\n{event['source']}"
+    text += f"\n\n🔗 {event['source']}"
     
     return text
 
@@ -45,8 +57,9 @@ def main():
         print("❌ 請設定 THREADS_ACCESS_TOKEN 環境變數")
         return
     
-    # Initialize poster
+    # Initialize poster and enricher
     poster = ThreadsPoster(access_token)
+    enricher = AIEnricher()
     
     # Load events
     if not os.path.exists("data/radar_events.json"):
@@ -60,7 +73,7 @@ def main():
     logger.info(f"Loaded {len(events)} radar events")
     
     # Post first 5 events as demo
-    events_to_post = events[:5]
+    events_to_post = events[:10] if not auto_mode else events
     
     print(f"\n📊 準備發布 {len(events_to_post)} 筆雷達活動")
     for i, event in enumerate(events_to_post, 1):
@@ -79,7 +92,7 @@ def main():
     for i, event in enumerate(events_to_post, 1):
         print(f"\n[{i}/{len(events_to_post)}] 發布中: {event['activity_name']}")
         
-        text = format_event(event)
+        text = format_event(event, enricher)
         image_url = event.get('image_url')
         
         post_id = poster.create_post(text, image_url)
@@ -87,6 +100,9 @@ def main():
         if post_id:
             print(f"✅ 發布成功! Post ID: {post_id}")
             success_count += 1
+            # Delay
+            if i < len(events_to_post):
+                poster.random_sleep(60, 180)
         else:
             print(f"❌ 發布失敗")
     
