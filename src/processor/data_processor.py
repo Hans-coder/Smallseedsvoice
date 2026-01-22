@@ -13,8 +13,23 @@ class DataProcessor:
     
     def __init__(self):
         """初始化數據處理器"""
-        pass
+        self.exclude_keywords = ['Talk', '講座', '工作坊', '課程', '分享會']
+        self.priority_keywords = ['Live', 'Concert', '專場', '發片', '巡迴']
+
     
+    def filter_by_keywords(self, events: List[Dict]) -> List[Dict]:
+        """
+        根據關鍵字過濾活動
+        """
+        filtered = []
+        for event in events:
+            name = event.get('name', '').lower()
+            if any(k.lower() in name for k in self.exclude_keywords):
+                logger.debug(f"過濾排除關鍵字活動: {name}")
+                continue
+            filtered.append(event)
+        return filtered
+
     def clean_event_data(self, event: Dict) -> Optional[Dict]:
         """
         清洗活動數據
@@ -90,12 +105,14 @@ class DataProcessor:
             hashtag標籤
         """
         # 簡單的提取邏輯，可以根據需要改進
-        if '台北' in location or 'Taipei' in location:
+        if '台北' in location or 'Taipei' in location or 'Legacy' in location or 'Revolver' in location:
             return '台北音樂'
         elif '台中' in location or 'Taichung' in location:
             return '台中音樂'
-        elif '高雄' in location or 'Kaohsiung' in location:
+        elif '高雄' in location or 'Kaohsiung' in location or '駁二' in location:
             return '高雄音樂'
+        elif '台南' in location or 'Tainan' in location or 'TCRC' in location:
+            return '台南音樂'
         else:
             return '台灣音樂'
     

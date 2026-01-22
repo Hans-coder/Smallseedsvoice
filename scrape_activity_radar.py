@@ -73,28 +73,34 @@ def main():
     target_accounts = ['legacy_taiwan', 'revolvertaipei', 'thewalltw']
     
     # NOTE: Instagram scraping without login is brittle. This is "Best Effort".
+    # NOTE: Instagram scraping without login is brittle. This is "Best Effort".
     try:
         ig_scraper = InstagramScraper(config)
         for account in target_accounts:
-            ig_events = ig_scraper.scrape_events(account, max_posts=5)
-            for e in ig_events:
-                # Map to Radar schema
-                radar_event = {
-                    "activity_name": e.get('name'),
-                    "performers": [],
-                    "date": e.get('time'), # IG scraper tries to parse time
-                    "time": "Unknown",
-                    "venue": e.get('location') or account,
-                    "city": "Unknown",
-                    "is_free": "unknown",
-                    "source": e.get('source_url'),
-                    "image_url": e.get('image_url'),
-                    "note": f"IG Post from @{account}",
-                    "reliability": "social"
-                }
-                events.append(radar_event)
+            try:
+                logger.info(f"Scraping Instagram account: {account}")
+                ig_events = ig_scraper.scrape_events(account, max_posts=5)
+                for e in ig_events:
+                    # Map to Radar schema
+                    radar_event = {
+                        "activity_name": e.get('name'),
+                        "performers": [],
+                        "date": e.get('time'), # IG scraper tries to parse time
+                        "time": "Unknown",
+                        "venue": e.get('location') or account,
+                        "city": "Unknown",
+                        "is_free": "unknown",
+                        "source": e.get('source_url'),
+                        "image_url": e.get('image_url'),
+                        "note": f"IG Post from @{account}",
+                        "reliability": "social"
+                    }
+                    events.append(radar_event)
+            except Exception as e:
+                logger.error(f"Failed to scrape @{account}: {e}")
+                continue  # Continue to next account
     except Exception as e:
-        logger.error(f"IG Radar failed: {e}")
+        logger.error(f"IG Radar failed initialization: {e}")
 
     # Deduplication (Simple)
     # Filter valid dates

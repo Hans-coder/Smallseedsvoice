@@ -38,13 +38,58 @@ class KktixScraper(BaseScraper):
             for item in event_items:
                 event_data = self.parse_event(item)
                 if event_data:
+                    # Detail fetch for Venue
+                    if event_data.get('ticket_url'):
+                        detail = self._fetch_detail(event_data['ticket_url'])
+                        if detail:
+                            event_data.update(detail)
                     page_events.append(event_data)
+                    time.sleep(1) # Polite delay
             
             all_events.extend(page_events)
             time.sleep(1)
             
         logger.info(f"KKTIX: Scraped {len(all_events)} events")
         return all_events
+
+    def _fetch_detail(self, url: str) -> Dict:
+        """Fetch detail page for venue and sale time"""
+        try:
+            soup = self.fetch_with_selenium(url, wait_time=1)
+            if not soup: return {}
+            
+            # Venue
+            # usually in .venue-info or something similar?
+            # KKTIX detail page: <span class="venue"> or <td>...
+            # Browsing not active, but standard KKTIX layout:
+            # <table class="table-info"> ... <th>地點</th><td>Venue Name</td>
+            
+            venue = "Unknown"
+            venue_tag = soup.find(string="地點")
+            if venue_tag:
+                # usually in next td or parent's sibling
+                # structure: <tr><th>地點</th><td>Name<br>Addr</td></tr>
+                row = venue_tag.find_parent('tr')
+                if row:
+                    td = row.find('td')
+                    if td:
+                        venue = td.get_text(strip=True).split(maxsplit=1)[0] # Take first part (Name)
+            
+            # Sale Date
+            # <th>報名時間</th>
+            sale_date = None
+            sale_tag = soup.find(string="報名開始") or soup.find(string="報名時間")
+            if sale_tag:
+                row = sale_tag.find_parent('tr')
+                if row:
+                   td = row.find('td')
+                   if td:
+                       sale_date = td.get_text(strip=True)
+
+            return {"venue_name": venue, "ticket_sale_date": sale_date}
+        except Exception as e:
+            logger.warning(f"Failed to fetch detail for {url}: {e}")
+            return {}
 
     def parse_event(self, element) -> Optional[Dict]:
         try:

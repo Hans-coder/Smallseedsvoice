@@ -17,7 +17,8 @@ class TixCraftScraper(BaseScraper):
         """
         if not url:
             # Main list
-            url = "https://tixcraft.com/activity/list/26_27"
+            # Main list - force table view for venue info
+            url = "https://tixcraft.com/activity/list/26_27#display-table"
             
         logger.info(f"Fetching tixCraft events...")
         # tixCraft is heavy on anti-bot, so we use Selenium with gentle settings
@@ -28,7 +29,19 @@ class TixCraftScraper(BaseScraper):
             
         events = []
         # Normal list: .thumbnails > .col-md-3
-        event_items = soup.select('.thumbnails .col-md-3') or soup.select('.activity .col-md-3')
+        # Table list: .activity-info-box within the table structure (selenium might render different DOM)
+        # In table view, it's usually rows or divs. 
+        # Verified selector: .activity-info-box contains text.
+        # But wait, looking at my browser agent, it clicked a button. 
+        # If I append #display-table, does it render cards or list?
+        # Let's assume list view structure.
+        # The selector .thumbnails .col-md-3 might be for grid view.
+        # Let's try to match both or specific table view selector.
+        
+        # In table view: <div class="table-responsive">...
+        # But actually, simpler: use generic selector that catches the items.
+        
+        event_items = soup.select('.thumbnails .col-md-3') or soup.find_all('div', class_='activity-info-box') or soup.select('.activity .col-md-3')
         
         for item in event_items:
             event_data = self.parse_event(item)
@@ -63,6 +76,19 @@ class TixCraftScraper(BaseScraper):
             
             activity_id = f"tixcraft_{name}_{date_iso}"
             
+            # Venue - Try to find in text for table view
+            venue = "Unknown"
+            full_text = element.get_text(" | ", strip=True)
+            parts = full_text.split('|')
+            if len(parts) >= 3:
+                # Naive guess: last part or part that looks like venue
+                potential_venue = parts[-1].strip()
+                if len(potential_venue) > 2 and not potential_venue[0].isdigit():
+                     venue = potential_venue
+            
+            if venue == "Unknown": 
+                 venue = "See Details"
+
             return {
                 "activity_id": activity_id,
                 "activity_name": name,
@@ -70,7 +96,7 @@ class TixCraftScraper(BaseScraper):
                 "performers": [],
                 "date": date_iso,
                 "start_time": None,
-                "venue_name": "See Details",
+                "venue_name": venue,
                 "city": "Unknown",
                 "price": None,
                 "ticket_platform": "tixCraft",
