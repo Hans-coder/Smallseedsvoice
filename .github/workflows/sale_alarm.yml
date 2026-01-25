@@ -1,0 +1,46 @@
+name: Sale Alarm Pipeline
+
+on:
+  schedule:
+    # Runs at 20:00 Taiwan Time (UTC+8) -> 12:00 UTC
+    - cron: '0 12 * * *'
+  workflow_dispatch:
+
+jobs:
+  check-and-post-alarm:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+          
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          
+      - name: Run Sale Alarm
+        env:
+          THREADS_ACCESS_TOKEN: ${{ secrets.THREADS_ACCESS_TOKEN }}
+        run: |
+          # Ensure we have data?
+          # Actually, alarm needs recent data. 
+          # Option A: Run scraper here? (Too long)
+          # Option B: Use cached artifact? (Github limitation)
+          # Option C: Just rely on repo data if committed? (But user data is in data/ ignored)
+          # Wait, in other workflows we Scrape -> Post.
+          # If we don't scrape here, we have empty data on a fresh runner.
+          # DATA PERSISTENCE ISSUE: Github Actions start fresh.
+          # We MUST scrape to get fresh data, or commit JSON (bad practice for automated frequent updates without messy commits).
+          # For accurate alarm, we need relatively fresh data.
+          # If we run 'scrape_official' it scrapes KKTIX etc.
+          # Does it take too long? Usually < 5 mins.
+          # Better approach for Alarm: Run scrape first.
+          
+          python scrape_official_platforms.py
+          python post_sale_alarm.py --auto

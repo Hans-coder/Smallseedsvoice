@@ -55,52 +55,72 @@ class KktixScraper(BaseScraper):
     def _fetch_detail(self, url: str) -> Dict:
         """Fetch detail page for venue and sale time"""
         try:
-            soup = self.fetch_with_selenium(url, wait_time=1)
+            soup = self.fetch_with_selenium(url, wait_time=2)
             if not soup: return {}
             
-            # Venue
-            # usually in .venue-info or something similar?
-            # KKTIX detail page: <span class="venue"> or <td>...
-            # Browsing not active, but standard KKTIX layout:
-            # <table class="table-info"> ... <th>地點</th><td>Venue Name</td>
-            
             venue = "Unknown"
+            sale_date = None
+            price = None
+            
+            # Venue Extraction
             venue_tag = soup.find(string="地點")
             if venue_tag:
-                # usually in next td or parent's sibling
-                # structure: <tr><th>地點</th><td>Name<br>Addr</td></tr>
                 row = venue_tag.find_parent('tr')
                 if row:
                     td = row.find('td')
                     if td:
-                        venue = td.get_text(strip=True).split(maxsplit=1)[0] # Take first part (Name)
+                        venue = td.get_text(strip=True).split(maxsplit=1)[0]
             
-            # Sale Date
-            # <th>報名時間</th>
-            sale_date = None
-            sale_tag = soup.find(string="報名開始") or soup.find(string="報名時間")
-            if sale_tag:
-                row = sale_tag.find_parent('tr')
-                if row:
-                   td = row.find('td')
-                   if td:
-                       sale_date = td.get_text(strip=True)
+            # Ticket Table Parsing (New Logic)
+            # Table headers usually: 票種, 販售時間, 售價
+            # We look for a table containing "販售時間"
+            tables = soup.find_all('table')
+            for table in tables:
+                headers = [th.get_text(strip=True) for th in table.find_all('th')]
+                if "販售時間" in headers:
+                    # Found ticket table. Iterate rows.
+                    rows = table.find_all('tr')
+                    for row in rows:
+                        cols = row.find_all('td')
+                        if not cols: continue
+                        
+                        # Assuming Order: Name, Time, Price (based on debug output)
+                        # We need to map header index to be safe
+                        try:
+                            time_idx = headers.index("販售時間")
+                            price_idx = headers.index("售價") if "售價" in headers else -1
+                            
+                            # Extract Time
+                            if len(cols) > time_idx:
+                                time_text = cols[time_idx].get_text(strip=True)
+                                # Format: 2026/01/07 12:00(+0800)~...
+                                # Take the part before "~"
+                                start_str = time_text.split('~')[0].strip()
+                                # Clean "(+0800)"
+                                start_str = start_str.split('(')[0].strip()
+                                
+                                # Set as sale_date if not set (first row is usually main)
+                                if not sale_date:
+                                    sale_date = start_str
+                                    
+                            # Extract Price
+                            if price_idx != -1 and len(cols) > price_idx:
+                                price_text = cols[price_idx].get_text(strip=True)
+                                if not price: # Take first price found
+                                    price = price_text
+                        except:
+                            continue
+                            
+                    if sale_date:
+                        break # Found our data
 
-                   if td:
-                       sale_date = td.get_text(strip=True)
-
-            # Price
-            # <th>票價</th> or <th>費用</th>
-            price = None
-            price_tag = soup.find(string="票價") or soup.find(string="費用")
-            if price_tag:
-                 row = price_tag.find_parent('tr')
-                 if row:
-                     td = row.find('td')
-                     if td:
-                         price_text = td.get_text(strip=True)
-                         # Simple cleaning: "TWD$1000" -> "$1000" or keep as is
-                         price = price_text
+            # Fallback for old partial logic (if table not found)
+            if not sale_date:
+                 sale_tag = soup.find(string="報名開始") or soup.find(string="報名時間")
+                 if sale_tag:
+                    row = sale_tag.find_parent('tr')
+                    if row and row.find('td'):
+                        sale_date = row.find('td').get_text(strip=True)
 
             return {"venue_name": venue, "ticket_sale_date": sale_date, "price": price}
         except Exception as e:
