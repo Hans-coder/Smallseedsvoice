@@ -86,7 +86,23 @@ class KktixScraper(BaseScraper):
                    if td:
                        sale_date = td.get_text(strip=True)
 
-            return {"venue_name": venue, "ticket_sale_date": sale_date}
+                   if td:
+                       sale_date = td.get_text(strip=True)
+
+            # Price
+            # <th>票價</th> or <th>費用</th>
+            price = None
+            price_tag = soup.find(string="票價") or soup.find(string="費用")
+            if price_tag:
+                 row = price_tag.find_parent('tr')
+                 if row:
+                     td = row.find('td')
+                     if td:
+                         price_text = td.get_text(strip=True)
+                         # Simple cleaning: "TWD$1000" -> "$1000" or keep as is
+                         price = price_text
+
+            return {"venue_name": venue, "ticket_sale_date": sale_date, "price": price}
         except Exception as e:
             logger.warning(f"Failed to fetch detail for {url}: {e}")
             return {}

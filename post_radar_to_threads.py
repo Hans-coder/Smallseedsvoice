@@ -187,24 +187,66 @@ def main():
             print("❌ 取消發布")
             return
     
-    # Generate Digest Blocks
-    blocks = format_digest(events_to_post, enricher)
+    # Batch events into carousels (Max 10 per post)
+    chunk_size = 10
+    chunks = [events_to_post[i:i + chunk_size] for i in range(0, len(events_to_post), chunk_size)]
     
     success_count = 0
-    for i, block in enumerate(blocks, 1):
-        print(f"\n📌 Posting Block {i}/{len(blocks)}...")
+    # Radar events usually have source URL, but image might be tricky.
+    # Scraper tries to fetch og:image. If missing, use default.
+    DEFAULT_IMAGE = "https://images.unsplash.com/photo-1493225255756-d9584f8606e9?w=800&q=80" # Indie band image
+    
+    for i, chunk in enumerate(chunks, 1):
+        print(f"\n📌 Posting Carousel {i}/{len(chunks)} ({len(chunk)} events)...")
+        
+        # 1. Prepare Text
+        text_lines = ["📡 音樂快訊雷達\n"]
+        image_urls = []
+        
+        for idx, event in enumerate(chunk, 1):
+            # Text Line
+            # Text Line
+            # 1. Name (Date) | Venue (if known)
+            clean_venue = event.get('venue', 'Unknown').replace('Unknown', '').replace('待確認', '').strip()
+            
+            line = f"{idx}. {event['activity_name']}\n   📅 {event['date']}"
+            if clean_venue:
+                line += f" | 📍 {clean_venue}"
+                
+            text_lines.append(line)
+            
+            # Image URL
+            url = event.get('image_url')
+            if not url or not url.startswith('http'):
+                url = DEFAULT_IMAGE
+            image_urls.append(url)
+
+        text_lines.append("\n🔗 活動詳情與連結請見圖片說明或留言")
+        post_text = "\n".join(text_lines)
         
         if dry_run:
-            print(f"📝 [Dry Run] Content:\n{block}")
-            success_count += 1
+            print(f"📝 [Dry Run] Content:\n{post_text}")
+            print(f"🖼️ Images ({len(image_urls)}):")
+            for url in image_urls:
+                print(f"  - {url[:50]}...")
+            success_count += len(chunk)
         else:
-            post_id = poster.create_post(block)
+            post_id = poster.create_carousel_post(post_text, image_urls)
             if post_id:
-                print(f"✅ Block {i} Posted: {post_id}")
-                success_count += 1
-                poster.random_sleep(30, 60)
+                print(f"✅ Carousel {i} Posted: {post_id}")
+                success_count += len(chunk)
+                poster.random_sleep(60, 120)
             else:
-                print(f"❌ Block {i} Failed")
+                print(f"❌ Carousel {i} Failed")
+
+    # Update history
+    if success_count > 0:
+        if not dry_run:
+            for event in events_to_post:
+                event_id = f"{event['activity_name']}_{event['date']}_{event['venue']}"
+                posted_history.add(event_id)
+            save_history(posted_history)
+        print(f"✅ History updated with {len(events_to_post)} events.")
 
     # Update history
     if success_count > 0:

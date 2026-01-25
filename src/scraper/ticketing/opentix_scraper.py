@@ -31,10 +31,57 @@ class OpentixScraper(BaseScraper):
         for item in event_items:
             event_data = self.parse_event(item)
             if event_data:
+                # Detail fetch
+                if event_data.get('ticket_url'):
+                    detail = self._fetch_detail(event_data['ticket_url'])
+                    if detail:
+                        event_data.update(detail)
                 events.append(event_data)
+                time.sleep(1) # Polite delay
                 
         logger.info(f"OPENTIX: Scraped {len(events)} events")
         return events
+
+    def _fetch_detail(self, url: str) -> Dict:
+        """Fetch detail page for price and sale time"""
+        try:
+            soup = self.fetch_with_selenium(url, wait_time=2)
+            if not soup: return {}
+            
+            detail = {}
+            
+            # Sale Date
+            # OPENTIX: "啟售時間" or similar
+            # Often in <div class="side-bar"> ... <span class="label">啟售時間</span><span class="value">...</span>
+            sale_label = soup.find(string=lambda t: t and ("啟售" in t or "開賣" in t))
+            if sale_label:
+                parent = sale_label.find_parent('div') or sale_label.find_parent('li')
+                if parent:
+                    # Try to find sibling text or child value
+                    text = parent.get_text(" ", strip=True)
+                    # Extract date part? Usually simple text cleaning.
+                    # Example: "啟售時間：2025/11/11 12:00"
+                    if "：" in text:
+                        detail["ticket_sale_date"] = text.split("：")[-1].strip()
+                    else:
+                        detail["ticket_sale_date"] = text
+
+            # Price
+            # <div class="price-list"> or text "$300, $500..."
+            # Simpler: Search for "$" or "票價"
+            # OPENTIX prices area often listed as buttons or text
+            price_container = soup.select_one('.price-list') or soup.find(string=lambda t: t and "票價" in t)
+            if price_container:
+                if hasattr(price_container, 'get_text'):
+                   detail["price"] = price_container.get_text(strip=True)[:50] # Limit length
+                else: 
+                   # It was a NavString, find parent
+                   detail["price"] = price_container.find_parent().get_text(strip=True)[:50]
+                   
+            return detail
+        except Exception as e:
+            logger.warning(f"Failed to fetch detail for {url}: {e}")
+            return {}
 
     def parse_event(self, element) -> Optional[Dict]:
         try:

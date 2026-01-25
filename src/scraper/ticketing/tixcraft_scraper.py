@@ -46,10 +46,52 @@ class TixCraftScraper(BaseScraper):
         for item in event_items:
             event_data = self.parse_event(item)
             if event_data:
+                # Detail fetch
+                if event_data.get('ticket_url'):
+                    detail = self._fetch_detail(event_data['ticket_url'])
+                    if detail:
+                        event_data.update(detail)
                 events.append(event_data)
+                time.sleep(1) # Polite delay
                 
         logger.info(f"tixCraft: Scraped {len(events)} events")
         return events
+
+    def _fetch_detail(self, url: str) -> Dict:
+        """Fetch detail page for price and sale time"""
+        try:
+            soup = self.fetch_with_selenium(url, wait_time=1)
+            if not soup: return {}
+            
+            # TixCraft detail page varies, but usually has metadata in a list or table
+            # Sale Date: <span>售票時間</span> ...
+            # Price: <span>票價</span> ...
+            
+            detail = {}
+            
+            # Try to find by label text
+            for label in ["售票時間", "票價"]:
+                target_tag = soup.find(string=lambda t: t and label in t)
+                if target_tag:
+                    # Look for value in parent's sibling or next element?
+                    # Structure often: <li><span class='title'>Label</span> Content</li>
+                    # or <tr><th>Label</th><td>Content</td></tr>
+                    
+                    parent = target_tag.find_parent('li') or target_tag.find_parent('tr')
+                    if parent:
+                        text = parent.get_text(" ", strip=True)
+                        # Remove label from text
+                        value = text.replace(label, "").strip().replace(":", "").strip()
+                        
+                        if label == "售票時間":
+                            detail["ticket_sale_date"] = value
+                        elif label == "票價":
+                            detail["price"] = value
+
+            return detail
+        except Exception as e:
+            logger.warning(f"Failed to fetch detail for {url}: {e}")
+            return {}
 
     def parse_event(self, element) -> Optional[Dict]:
         try:

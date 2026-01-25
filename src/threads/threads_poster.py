@@ -71,6 +71,62 @@ class ThreadsPoster:
             logger.error(f"發布Threads帖子失敗: {str(e)}")
             return None
 
+    def create_carousel_post(self, text: str, image_urls: List[str], reply_to_id: Optional[str] = None) -> Optional[str]:
+        """
+        創建並發布輪播帖子 (Carousel)
+        
+        Args:
+            text: 貼文內容
+            image_urls: 圖片 URL 列表 (最多 10 張)
+            reply_to_id: 回覆的貼文 ID (可選)
+        """
+        if not self.user_id:
+            logger.error("用戶ID未設置，無法發布")
+            return None
+            
+        if not image_urls:
+            logger.error("輪播必須包含至少一張圖片")
+            return None
+            
+        if len(image_urls) > 10:
+            logger.warning("輪播圖片超過 10 張，將只使用前 10 張")
+            image_urls = image_urls[:10]
+            
+        try:
+            # 1. 創建子容器 (Item Containers)
+            child_ids = []
+            for img_url in image_urls:
+                child_id = self._create_carousel_item_container(img_url)
+                if child_id:
+                    child_ids.append(child_id)
+                else:
+                    logger.error(f"創建輪播子項目失敗: {img_url}")
+                    return None
+            
+            # 等待所有子容器就緒
+            for child_id in child_ids:
+                if not self._wait_for_container(child_id):
+                    logger.error(f"輪播子容器未就緒: {child_id}")
+                    return None
+            
+            # 2. 創建父容器 (Carousel Container)
+            container_id = self._create_carousel_container(text, child_ids, reply_to_id)
+            if not container_id:
+                return None
+                
+            # 等待父容器就緒
+            if not self._wait_for_container(container_id):
+                logger.error(f"輪播父容器未就緒: {container_id}")
+                return None
+                
+            # 3. 發布容器
+            post_id = self._publish_container(container_id)
+            return post_id
+            
+        except Exception as e:
+            logger.error(f"發布輪播帖子失敗: {str(e)}")
+            return None
+
     def post_thread(self, posts: List[Dict]) -> List[str]:
         """
         發布一串貼文 (Threaded Posts)。支援單張圖片。
@@ -110,8 +166,52 @@ class ThreadsPoster:
                 
         return created_ids
 
+    def _create_carousel_item_container(self, image_url: str) -> Optional[str]:
+        """創建輪播子項目容器 (Single Item)"""
+        url = f"{self.api_url}/{self.user_id}/threads"
+        data = {
+            'access_token': self.access_token,
+            'media_type': 'IMAGE',
+            'image_url': image_url,
+            'is_carousel_item': 'true'
+        }
+        
+        try:
+            response = requests.post(url, data=data)
+            if not response.ok:
+                logger.error(f"創建輪播子項目失敗: {response.text}")
+                return None
+            return response.json().get('id')
+        except Exception as e:
+            logger.error(f"創建輪播子項目例外: {e}")
+            return None
+
+    def _create_carousel_container(self, text: str, children: List[str], reply_to_id: Optional[str] = None) -> Optional[str]:
+        """創建輪播父容器"""
+        url = f"{self.api_url}/{self.user_id}/threads"
+        data = {
+            'access_token': self.access_token,
+            'media_type': 'CAROUSEL',
+            'text': text,
+            'children': ','.join(children)
+        }
+        
+        if reply_to_id:
+            data['reply_to_id'] = reply_to_id
+            
+        try:
+            logger.info(f"Creating Carousel container with {len(children)} items")
+            response = requests.post(url, data=data)
+            if not response.ok:
+                logger.error(f"創建輪播父容器失敗: {response.text}")
+                return None
+            return response.json().get('id')
+        except Exception as e:
+            logger.error(f"創建輪播父容器例外: {e}")
+            return None
+
     def _create_container(self, text: str, image_url: Optional[str] = None, reply_to_id: Optional[str] = None) -> Optional[str]:
-        """創建媒體容器"""
+        """創建單一貼文容器 (TEXT or IMAGE)"""
         url = f"{self.api_url}/{self.user_id}/threads"
         data = {
             'access_token': self.access_token,
