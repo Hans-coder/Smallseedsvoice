@@ -2,9 +2,13 @@
 Post On-Sale Alarm to Threads
 Checks official_events.json for events going on sale TOMORROW.
 """
-import json
-import os
 import sys
+import os
+
+# Add project root to path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+import json
 import time
 import argparse
 from datetime import datetime, timedelta
@@ -60,6 +64,9 @@ def main():
     # In production (GitHub actions), ensure timezone is correct (Taiwan UTC+8)
     # Python datetime.now() depends on system. Github ubuntu is UTC.
     # We should offset to Taiwan time.
+    from datetime import timezone
+    tz_taiwan = timezone(timedelta(hours=8))
+    now_taiwan = datetime.now(tz_taiwan)
     today_taiwan = now_taiwan.date()
     tomorrow_taiwan = today_taiwan + timedelta(days=1)
     three_days_taiwan = today_taiwan + timedelta(days=3)

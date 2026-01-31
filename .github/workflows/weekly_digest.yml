@@ -1,13 +1,13 @@
-name: Sale Alarm Pipeline
+name: Weekly Digest Pipeline
 
 on:
   schedule:
-    # Runs at 20:00 Taiwan Time (UTC+8) -> 12:00 UTC
-    - cron: '0 12 * * *'
+    # Sunday 20:00 Taiwan (UTC+8) -> 12:00 UTC
+    - cron: '0 12 * * 0'
   workflow_dispatch:
 
 jobs:
-  check-and-post-alarm:
+  weekly-digest:
     runs-on: ubuntu-latest
     
     steps:
@@ -18,22 +18,24 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '3.9'
-          
+      
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          
+      
       - name: Install Chrome & Driver
         run: |
           sudo apt-get update
           sudo apt-get install -y chromium-browser chromium-chromedriver
           sudo ln -sf /usr/lib/chromium-browser/chromedriver /usr/local/bin/chromedriver
 
-      - name: Scrape Latest Data
-        run: python scripts/scrape_official_platforms.py
-        
-      - name: Check & Post Alarm
+      - name: Generate & Post Digest
         env:
           THREADS_ACCESS_TOKEN: ${{ secrets.THREADS_ACCESS_TOKEN }}
-        run: python scripts/post_sale_alarm.py --auto
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python run_weekly_digest.py
+      
+      - name: Cleanup
+        if: always()
+        run: rm -rf data/preview_cache/

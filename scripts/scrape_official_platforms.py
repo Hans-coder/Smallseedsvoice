@@ -6,6 +6,11 @@ Output: JSON Array
 import json
 import logging
 import sys
+import os
+
+# Add project root to path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 from datetime import datetime
 from pathlib import Path
 from src.utils.logger import setup_logger
