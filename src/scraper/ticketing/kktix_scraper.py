@@ -16,38 +16,66 @@ class KktixScraper(BaseScraper):
         Scrape KKTIX music events.
         """
         # Strict Music only (tag 13)
+        # Strict Music only (tag 13)
         if not url:
-            url = "https://kktix.com/events?event_tag_ids_in=13"
+            # Default behavior: Scrape Homepage AND Music Tag
+            urls_to_scrape = [
+                ("https://kktix.com", False), # Homepage, no pagination
+                ("https://kktix.com/events?event_tag_ids_in=13", True) # Music Tag, with pagination
+            ]
+        else:
+            urls_to_scrape = [(url, True)]
             
         all_events = []
         max_pages = self.config.get('max_pages', 5)
         
-        for page in range(1, max_pages + 1):
-            page_url = f"{url}&page={page}"
-            logger.info(f"Fetching KKTIX page {page}: {page_url}...")
+        seen_urls = set()
+
+        for target_url, do_pagination in urls_to_scrape:
+            current_max = max_pages if do_pagination else 1
+            base_url = target_url # Simplify logic for paging
             
-            soup = self.fetch_with_selenium(page_url, wait_time=2)
-            if not soup: break
-            
-            event_items = soup.select('ul.events > li')
-            if not event_items:
-                logger.info(f"No more events found on page {page}")
-                break
+            logger.info(f"Scraping KKTIX: {target_url} (Pagination: {do_pagination})")
+
+            for page in range(1, current_max + 1):
+                if do_pagination and page > 1:
+                    page_url = f"{base_url}&page={page}"
+                else:
+                    page_url = base_url
                 
-            page_events = []
-            for item in event_items:
-                event_data = self.parse_event(item)
-                if event_data:
-                    # Detail fetch for Venue
-                    if event_data.get('ticket_url'):
-                        detail = self._fetch_detail(event_data['ticket_url'])
-                        if detail:
-                            event_data.update(detail)
-                    page_events.append(event_data)
-                    time.sleep(1) # Polite delay
-            
-            all_events.extend(page_events)
-            time.sleep(1)
+                logger.info(f"Fetching KKTIX page {page}: {page_url}...")
+                
+                soup = self.fetch_with_selenium(page_url, wait_time=2)
+                if not soup: break
+                
+                # Homepage might use different tabs, but checks confirmed ul.events > li works
+                event_items = soup.select('ul.events > li')
+                if not event_items:
+                    logger.info(f"No more events found on page {page}")
+                    break
+                    
+                page_events = []
+                for item in event_items:
+                    event_data = self.parse_event(item)
+                    if event_data:
+                        # Dedup within this run
+                        if event_data['ticket_url'] in seen_urls:
+                            continue
+                        seen_urls.add(event_data['ticket_url'])
+                        
+                        # Detail fetch for Venue
+                        if event_data.get('ticket_url'):
+                            detail = self._fetch_detail(event_data['ticket_url'])
+                            if detail:
+                                event_data.update(detail)
+                        page_events.append(event_data)
+                        time.sleep(1) # Polite delay
+                
+                all_events.extend(page_events)
+                time.sleep(1)
+                
+                if not do_pagination:
+                    break
             
         logger.info(f"KKTIX: Scraped {len(all_events)} events")
         return all_events

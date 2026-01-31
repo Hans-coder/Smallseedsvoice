@@ -24,17 +24,26 @@ def start_scheduler():
     
     scheduler = BlockingScheduler()
     
+
+    # Wrapper to add jitter
+    def run_with_jitter(job_func):
+        import random
+        # Random delay between 0 and 15 mins (900 seconds)
+        delay = random.randint(0, 900)
+        logger.info(f"💤 Jitter: Sleeping for {delay} seconds before starting job.")
+        time.sleep(delay)
+        job_func()
+
     # 1. Weekly Digest
     digest_config = pipelines.get('weekly_digest', {})
     if digest_config.get('enabled'):
         schedule = digest_config.get('schedule', {})
-        # Map 'sun' to cron day_of_week=6 or 'sun' depending on version. APScheduler supports 'sun'.
         day = schedule.get('day_of_week', 'sun')
         hour = schedule.get('hour', 20)
         
-        logger.info(f"Scheduling Weekly Digest: Day={day}, Hour={hour}")
+        logger.info(f"Scheduling Weekly Digest: Day={day}, Hour={hour} (+0-15m jitter)")
         scheduler.add_job(
-            run_digest,
+            lambda: run_with_jitter(run_digest),
             CronTrigger(day_of_week=day, hour=hour),
             id='weekly_digest'
         )
@@ -45,8 +54,12 @@ def start_scheduler():
         interval = alerts_config.get('schedule', {}).get('interval_minutes', 30)
         
         logger.info(f"Scheduling Real-time Alerts: Interval={interval} mins")
+        # Alerts are time sensitive, maybe less jitter or none?
+        # User asked about "Fixed time being valid". 
+        # For alerts, speed matters. But maybe 1-2 min jitter helps?
+        # Let's add small jitter (0-2 mins) for alerts
         scheduler.add_job(
-            run_alerts,
+            lambda: run_with_jitter(run_alerts) if interval > 10 else run_alerts, # strict speed if very frequent
             IntervalTrigger(minutes=interval),
             id='realtime_alerts'
         )

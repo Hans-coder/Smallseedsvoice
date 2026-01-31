@@ -16,7 +16,9 @@ class DigestBuilder:
     def __init__(self, config: Dict):
         self.config = config
         self.max_chars = 500
-        # Threads limit is usually 500 chars.
+        # Check if AI enrichment is enabled in config or env
+        from src.utils.ai_enricher import AIEnricher
+        self.enricher = AIEnricher() if config.get('ai_enrichment', True) else None
         
     def build_digest(self, events: List[Dict], start_date: datetime, end_date: datetime) -> List[Dict]:
         """
@@ -112,29 +114,40 @@ class DigestBuilder:
 
     def _generate_cover_text(self, start: datetime, end: datetime, count: int) -> str:
         date_str = f"{start.strftime('%m/%d')} - {end.strftime('%m/%d')}"
-        return f"下週免費音樂活動懶人包 ({date_str})\n\n共整理了 {count} 場免費演出！\n詳細資訊請看留言"
+        
+        # Try AI generation first
+        if self.enricher and self.enricher.model:
+            prompt = f"""
+            你是一個熱愛台灣獨立音樂的社群小編。
+            請寫一段每週活動懶人包的「開場白」。
+            
+            資訊：
+            - 時間範圍：{date_str}
+            - 這週共有 {count} 場免費活動
+            
+            要求：
+            1. 語氣活潑、像真人、有溫度（不要像機器人）。
+            2. 提到「免費音樂活動」可以吸引人。
+            3. 字數 50 字以內。
+            4. 結尾要引導大家看下面的整理。
+            """
+            try:
+                ai_text = self.enricher.model.generate_content(prompt).text.strip()
+                return f"{ai_text}\n\n(整理在下方，歡迎分享給朋友推坑！)"
+            except Exception:
+                pass
+                
+        # Fallback
+        return f"下週免費音樂活動懶人包 ({date_str})\n\n這週很熱鬧，共整理了 {count} 場免費演出！\n詳細資訊請看留言 👇"
 
     def _format_event_line(self, event: Dict) -> str:
-        # 📍【城市】活動名稱
-        # 🗓 日期（星期）時間
-        # 📌 活動地點
-        
-        # 提取或推導城市
         location = event.get('location', '台灣')
         city = self._extract_city(location)
-        venue = location # 簡單起見，或者需要更複雜的解析
-        
-        # 解析日期時間
-        # 假設 time 字段已經是 datetime 對象或者包含了完整資訊，
-        # 如果是字符串，我們需要 DataProcessor 已經標準化過。
-        # 這裡假設 DataProcessor 目前還是給字符串，我們盡量解析。
-        # 為演示，我們使用原始字符串並嘗試提取。
+        venue = location 
         time_str = event.get('time', '')
-        
-        # 構造星期幾 (需要 DataProcessor 的支持，這裡先做個簡單映射或佔位)
         weekday = self._get_weekday_zh(time_str) 
 
-        return f"\n[{city}] {event['name']}\n日期：{time_str} ({weekday})\n地點：{venue}\n"
+        return f"\n📍 [{city}] {event['name']}\n🗓 {time_str} ({weekday}) @ {venue}\n"
 
     def _extract_city(self, location: str) -> str:
         # 簡單城市提取

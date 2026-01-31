@@ -21,7 +21,8 @@ def main():
     
     config = {
         "request_delay": 2,
-        "retry_count": 3
+        "retry_count": 3,
+        "max_pages": 30
     }
     
     events = []
