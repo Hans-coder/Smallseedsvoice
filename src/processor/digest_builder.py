@@ -97,13 +97,31 @@ class DigestBuilder:
         return posts
 
     def _sort_and_filter_events(self, events: List[Dict], start: datetime, end: datetime) -> List[Dict]:
-        """Sorts events by time."""
-        # This assumes event['time'] is parseable or we rely on the scraper's parsing.
-        # For now, we trust the scraper passed us valid events.
-        # We simply sort by the 'time' string or a parsed datetime object if available.
-        # Since 'time' is a string in the current DB schema, we might need robust parsing here.
-        # For MVP, we perform a simple sort or rely on the order they were scraped (usually chrono).
-        return events 
+        """Sorts events by time and filters by date range."""
+        from dateutil import parser
+        
+        filtered_events = []
+        for event in events:
+            # 1. Parse Date
+            try:
+                # Assuming event['date'] is "YYYY-MM-DD" or similar ISO
+                if not event.get('date'):
+                    continue
+                    
+                # Use dateutil for robust parsing
+                event_date = parser.parse(event['date'])
+                
+                # Check range (Inclusive)
+                if start <= event_date <= end:
+                    filtered_events.append(event)
+            except Exception:
+                # If date parsing fails, skip (or log warning)
+                continue
+                
+        # 2. Sort by Date
+        filtered_events.sort(key=lambda x: x.get('date', ''))
+        
+        return filtered_events 
 
     def _group_events_by_section(self, events: List[Dict]) -> Dict[str, List[Dict]]:
         """Groups events into sections like '上半週 (Mon-Wed)', '下半週 (Thu-Fri)', '週末 (Sat-Sun)'."""

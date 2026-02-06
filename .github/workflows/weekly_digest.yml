@@ -1,4 +1,4 @@
-name: Weekly Digest Pipeline
+name: Weekly Digest (Free)
 
 on:
   schedule:
