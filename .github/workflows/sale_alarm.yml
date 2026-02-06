@@ -30,10 +30,27 @@ jobs:
           sudo apt-get install -y chromium-browser chromium-chromedriver
           sudo ln -sf /usr/lib/chromium-browser/chromedriver /usr/local/bin/chromedriver
 
-      - name: Scrape Latest Data
-        run: python scripts/scrape_official_platforms.py
+      - name: Scrape KKTIX
+        run: python scripts/scrape_official_platforms.py --platform kktix
+        
+      - name: Scrape OPENTIX
+        run: python scripts/scrape_official_platforms.py --platform opentix
+        
+      - name: Scrape tixCraft
+        run: python scripts/scrape_official_platforms.py --platform tixcraft
+        
+      - name: Merge Data
+        run: python scripts/scrape_official_platforms.py --merge
         
       - name: Check & Post Alarm
         env:
           THREADS_ACCESS_TOKEN: ${{ secrets.THREADS_ACCESS_TOKEN }}
         run: python scripts/post_sale_alarm.py --auto
+      
+      - name: Archive Data
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sales-data
+          path: data/*.json
+          retention-days: 1
