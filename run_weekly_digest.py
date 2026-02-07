@@ -74,6 +74,12 @@ def main():
 
     # --- Step 1: Scrape ---
     if args.step in ['scrape', 'all']:
+        # 0. Clean up stale data
+        raw_data_path = Path("data/digest_raw.json")
+        if raw_data_path.exists():
+            raw_data_path.unlink()
+            logger.info("Removed stale data/digest_raw.json")
+
         events = []
         
         # 1. Instagram Scraper
@@ -123,7 +129,10 @@ def main():
             logger.error(f"OPENTIX scrape failed: {e}")
 
         if not events:
-            logger.warning(f"No events found from any source. Aborting.")
+            logger.warning(f"No events found from any source. Writing empty list to prevent stale data usage.")
+            # Write empty list so subsequent steps know there is no data
+            with open("data/digest_raw.json", "w", encoding="utf-8") as f:
+                json.dump([], f, indent=4, ensure_ascii=False)
             return
 
         logger.info(f"Total Unique Events Found: {len(events)}")
@@ -143,6 +152,13 @@ def main():
         with open("data/digest_raw.json", "r", encoding="utf-8") as f:
             events = json.load(f)
             
+        if not events:
+            logger.warning("No events to process (list is empty).")
+            # Create empty posts file to be safe
+            with open("data/digest_posts.json", "w", encoding="utf-8") as f:
+                json.dump([], f, indent=4, ensure_ascii=False)
+            return
+
         # Process & Build Digest
         start_date = datetime.datetime.now()
         end_date = start_date + datetime.timedelta(days=7)
@@ -157,6 +173,9 @@ def main():
         
         if not posts:
             logger.warning("No posts generated after processing.")
+            # Ensure we don't leave stale posts file
+            with open("data/digest_posts.json", "w", encoding="utf-8") as f:
+                json.dump([], f, indent=4, ensure_ascii=False)
             return
 
         logger.info(f"Generated {len(posts)} threads posts.")
@@ -176,6 +195,10 @@ def main():
         with open("data/digest_posts.json", "r", encoding="utf-8") as f:
             posts = json.load(f)
 
+        if not posts:
+            logger.info("No posts to publish.")
+            return
+
         # Post to Threads
         access_token = os.getenv("THREADS_ACCESS_TOKEN")
         if not access_token:
@@ -187,9 +210,14 @@ def main():
             return
 
         poster = ThreadsPoster(access_token)
-        poster.post_thread(posts)
+        created_ids = poster.post_thread(posts)
         
-        logger.info("Weekly Digest posted successfully.")
+        if not created_ids:
+            logger.error("Failed to create any threads posts. Exiting with error.")
+            import sys
+            sys.exit(1)
+            
+        logger.info(f"Weekly Digest posted successfully. IDs: {created_ids}")
 
 if __name__ == "__main__":
     main()
