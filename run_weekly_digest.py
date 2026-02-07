@@ -48,7 +48,11 @@ def is_free_event(event: dict) -> bool:
         # Hard to be perfect.
         return False
         
-    return True # Non-numeric text?
+    # If explicit paid keywords
+    if '付費' in price_str or 'ticket' in price_str or 'price' in price_str or '門票' in price_str:
+        return False
+
+    return True # Non-numeric text? Assume free if no paid keywords found.
 
 def main():
     import argparse
@@ -145,7 +149,11 @@ def main():
         
         # Initialize Builder with AI enrichment enabled
         builder = DigestBuilder(config={"ai_enrichment": True}) 
-        posts = builder.build_digest(events, start_date, end_date)
+        try:
+            posts = builder.build_digest(events, start_date, end_date)
+        except Exception as e:
+            logger.error(f"DigestBuilder failed: {e}", exc_info=True)
+            return
         
         if not posts:
             logger.warning("No posts generated after processing.")

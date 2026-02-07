@@ -178,14 +178,43 @@ class InstagramScraper:
         Returns:
             活動字典
         """
+        time_str = self._extract_time(caption, post)
+        price_type = self._extract_price_type(caption)
+        
+        # 嘗試從時間字串中提取日期 (YYYY-MM-DD)
+        event_date = None
+        date_match = re.search(r'(\d{4})[/-](\d{1,2})[/-](\d{1,2})', time_str)
+        if date_match:
+            event_date = f"{date_match.group(1)}-{date_match.group(2).zfill(2)}-{date_match.group(3).zfill(2)}"
+        else:
+            # 嘗試找沒有年份的日期 (MM/DD)，假設是今年或明年
+            # 這裡簡化處理，如果不確定年份，就用貼文發布時間的年份，或者直接用貼文時間
+            short_date_match = re.search(r'(\d{1,2})[/-](\d{1,2})', time_str)
+            if short_date_match:
+                # 這裡比較難猜年份，先使用貼文時間當作 fallback，或者不做處理
+                pass
+
+        # Fallback: 使用貼文發布時間
+        if not event_date and post.date_local:
+            event_date = post.date_local.strftime("%Y-%m-%d")
+            
+        # 處理價格
+        price = None
+        if price_type == '免費':
+            price = '0'
+        elif price_type == '付費':
+            price = '付費' # 用於後續過濾
+
         event = {
             'name': self._extract_event_name(caption),
             'location': self._extract_location(caption),
-            'time': self._extract_time(caption, post),
-            'price_type': self._extract_price_type(caption),
+            'time': time_str,
+            'date': event_date, # 新增 date 欄位
+            'price': price,     # 新增 price 欄位
+            'price_type': price_type,
             'image_url': None,
             'source_url': f"https://www.instagram.com/p/{post.shortcode}/",
-            'caption': caption[:500],  # 保存部分文字用於參考
+            'caption': caption[:500],
         }
         
         # 獲取圖片URL
