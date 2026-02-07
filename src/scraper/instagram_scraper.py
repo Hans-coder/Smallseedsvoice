@@ -35,7 +35,9 @@ class InstagramScraper:
             download_geotags=False,
             download_comments=False,
             save_metadata=False,
-            compress_json=False
+            compress_json=False,
+            max_connection_attempts=1,  # Fail fast on 403/Connection errors
+            request_timeout=10.0,       # Short timeout
         )
         # 如果需要登錄（抓取私人帳號或避免限流）
         self.ig_username = config.get("ig_username")
