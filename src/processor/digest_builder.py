@@ -159,13 +159,20 @@ class DigestBuilder:
         return f"下週免費音樂活動懶人包 ({date_str})\n\n這週很熱鬧，共整理了 {count} 場免費演出！\n詳細資訊請看留言 👇"
 
     def _format_event_line(self, event: Dict) -> str:
-        location = event.get('location', '台灣')
+        # Normalize fields
+        name = event.get('name') or event.get('activity_name') or "Unknown Event"
+        location = event.get('location') or event.get('venue_name') or "台灣"
         city = self._extract_city(location)
         venue = location 
-        time_str = event.get('time', '')
+        
+        # Time/Date handling
+        time_str = event.get('time')
+        if not time_str and event.get('date'):
+            time_str = event['date']
+            
         weekday = self._get_weekday_zh(time_str) 
 
-        return f"\n📍 [{city}] {event['name']}\n🗓 {time_str} ({weekday}) @ {venue}\n"
+        return f"\n📍 [{city}] {name}\n🗓 {time_str} ({weekday}) @ {venue}\n"
 
     def _extract_city(self, location: str) -> str:
         # 簡單城市提取
