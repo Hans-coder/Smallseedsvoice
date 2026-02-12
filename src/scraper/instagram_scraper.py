@@ -115,7 +115,11 @@ class InstagramScraper:
             
             logger.info(f"從 @{username} 抓取到 {len(events)} 個活動")
         except Exception as e:
-            logger.error(f"抓取Instagram貼文失敗: {str(e)}")
+            error_msg = str(e)
+            if "401" in error_msg or "Unauthorized" in error_msg or "LoginRequired" in error_msg:
+                logger.warning(f"抓取Instagram貼文失敗 (可能是私人帳號或權限不足): {error_msg}")
+            else:
+                logger.error(f"抓取Instagram貼文失敗: {error_msg}")
         
         return events
     
@@ -183,18 +187,46 @@ class InstagramScraper:
         time_str = self._extract_time(caption, post)
         price_type = self._extract_price_type(caption)
         
-        # 嘗試從時間字串中提取日期 (YYYY-MM-DD)
+        # 1. 嘗試從時間字串中提取完整日期 (YYYY-MM-DD)
+        # 支持格式: YYYY-MM-DD, YYYY/MM/DD, YYYY.MM.DD, YYYY年MM月DD日
         event_date = None
-        date_match = re.search(r'(\d{4})[/-](\d{1,2})[/-](\d{1,2})', time_str)
+        date_match = re.search(r'(\d{4})[./-年](\d{1,2})[./-月](\d{1,2})', time_str)
+        
         if date_match:
             event_date = f"{date_match.group(1)}-{date_match.group(2).zfill(2)}-{date_match.group(3).zfill(2)}"
         else:
-            # 嘗試找沒有年份的日期 (MM/DD)，假設是今年或明年
-            # 這裡簡化處理，如果不確定年份，就用貼文發布時間的年份，或者直接用貼文時間
-            short_date_match = re.search(r'(\d{1,2})[/-](\d{1,2})', time_str)
+            # 2. 嘗試找沒有年份的日期 (MM/DD, MM.DD, MM月DD日)
+            # 假設是今年，若日期明顯已過(例如90天前)，則假設是明年
+            short_date_match = re.search(r'(\d{1,2})[./-月](\d{1,2})', time_str)
             if short_date_match:
-                # 這裡比較難猜年份，先使用貼文時間當作 fallback，或者不做處理
-                pass
+                try:
+                    month = int(short_date_match.group(1))
+                    day = int(short_date_match.group(2))
+                    
+                    if 1 <= month <= 12 and 1 <= day <= 31:
+                        current_year = datetime.now().year
+                        # 先假設是今年
+                        candidate_date = datetime(current_year, month, day)
+                        
+                        # 如果該日期已經過了很久 (例如 > 90天)，且不像是剛過 (容許一點誤差)，
+                        # 或是考慮「跨年」的情況：
+                        # 例如現在是 2025/12，看到 "1/5"，應該是 2026/01/05 (未來) -> 沒問題 (因為 2025/01/05 是過去)
+                        # 例如現在是 2026/01，看到 "12/25"，應該是 2026/12/25 (未來) -> 沒問題
+                        
+                        # 只有當「推測出的今年日期」是「非常準確的過去」時，我們才考慮是否為明年？
+                        # 但通常演唱會不會在活動結束 3 個月後才發文宣傳「幾月幾號」。
+                        # 反之，若現在是 2025/11，看到 "3/5"，那應該是 2026/03/05 (明年)。
+                        
+                        now = datetime.now()
+                        diff_days = (now - candidate_date).days
+                        
+                        # 如果日期是過去超過 90 天，假設是明年 (針對早鳥宣傳)
+                        if diff_days > 90:
+                            candidate_date = candidate_date.replace(year=current_year + 1)
+                        
+                        event_date = candidate_date.strftime("%Y-%m-%d")
+                except Exception as e:
+                    logger.warning(f"解析日期失敗 {time_str}: {e}")
 
         # Fallback: 使用貼文發布時間
         if not event_date and post.date_local:
@@ -300,8 +332,8 @@ class InstagramScraper:
             r'時間[｜|：:]\s*(.+?)(?:\n|$)',
             r'Time[：:]\s*(.+?)(?:\n|$)',
             r'🕐\s*(.+?)(?:\n|$)',
-            r'(\d{4}[年/]\d{1,2}[月/]\d{1,2}[日/])\s*(?:\([^)]+\))?\s*(?:PM|AM)?\d{0,2}[：:]\d{0,2}',  # 完整日期時間格式
-            r'(\d{1,2}[月/]\d{1,2}[日/])',  # 日期格式
+            r'(\d{4}[./-年]\d{1,2}[./-月]\d{1,2}[日]?)',  # 完整日期 (YYYY/MM/DD, YYYY.MM.DD)
+            r'(\d{1,2}[./-月]\d{1,2}[日]?)',            # 月日 (MM/DD, MM.DD)
         ]
         
         for pattern in time_patterns:

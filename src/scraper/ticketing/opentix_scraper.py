@@ -76,7 +76,19 @@ class OpentixScraper(BaseScraper):
                    detail["price"] = price_container.get_text(strip=True)[:50] # Limit length
                 else: 
                    # It was a NavString, find parent
-                   detail["price"] = price_container.find_parent().get_text(strip=True)[:50]
+                   parent = price_container.find_parent()
+                   text = parent.get_text(strip=True)
+                   # If text is just "票價" or "票價：", go up one more level
+                   if len(text) < 5 and parent.parent:
+                       text = parent.parent.get_text(strip=True)
+                   detail["price"] = text[:50]
+                   
+            # Global "Free" check
+            if not detail.get("price"):
+                full_text = soup.get_text()
+                free_keywords = ["免費", "Free", "0元", "無需購票", "自由入場"]
+                if any(k in full_text for k in free_keywords):
+                    detail["price"] = "0"
                    
             return detail
         except Exception as e:
@@ -116,12 +128,12 @@ class OpentixScraper(BaseScraper):
             
             return {
                 "activity_id": activity_id,
-                "activity_name": name,
+                "name": name,
                 "activity_type": "concert",
                 "performers": [],
                 "date": date_iso,
                 "start_time": None,
-                "venue_name": venue,
+                "location": venue,
                 "city": city,
                 "price": None,
                 "ticket_platform": "OPENTIX",

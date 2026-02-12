@@ -143,14 +143,16 @@ class KktixScraper(BaseScraper):
                         sale_date = row.find('td').get_text(strip=True)
 
             # 3. Price Extraction
-            # Look for "售價" header or similar
-            price_header = soup.find(lambda tag: tag.name in ['th', 'div', 'span'] and "售價" in tag.get_text())
+            # Look for "售價" or "票價" header
+            price_header = soup.find(lambda tag: tag.name in ['th', 'div', 'span', 'strong'] and any(k in tag.get_text() for k in ["售價", "票價"]))
             if price_header:
+                 # Check if it's a table header
                  table = price_header.find_parent('table')
                  if table:
                     headers = [th.get_text(strip=True) for th in table.find_all('th')]
-                    if "售價" in headers:
-                        idx = headers.index("售價")
+                    target_h = next((h for h in headers if "售價" in h or "票價" in h), None)
+                    if target_h:
+                        idx = headers.index(target_h)
                         tbody = table.find('tbody')
                         if tbody:
                             rows = tbody.find_all('tr')
@@ -158,6 +160,20 @@ class KktixScraper(BaseScraper):
                                 cols = rows[0].find_all('td')
                                 if len(cols) > idx:
                                     price = cols[idx].get_text(strip=True)
+                 else:
+                     # Maybe it's a list item or div?
+                     parent = price_header.find_parent()
+                     if parent:
+                         # Return the full text to ensure we capture the values
+                         # e.g. "票價： 免費"
+                         price = parent.get_text(strip=True)
+
+            # Global "Free" check if price is still None
+            if not price:
+                full_text = soup.get_text()
+                free_keywords = ["此活動為免費", "本活動免費", "免費入場", "無需購票", "自由入場", "0元"]
+                if any(k in full_text for k in free_keywords):
+                    price = "0"
 
             return {"venue_name": venue, "ticket_sale_date": sale_date, "price": price}
         except Exception as e:
@@ -205,12 +221,12 @@ class KktixScraper(BaseScraper):
             
             return {
                 "activity_id": activity_id,
-                "activity_name": name,
+                "name": name,
                 "activity_type": "concert", # Default for music tag
                 "performers": [], # Hard to extract from list
                 "date": date_iso,
                 "start_time": start_time,
-                "venue_name": location,
+                "location": location,
                 "city": city,
                 "price": None, # Needs detail
                 "ticket_platform": "KKTIX",

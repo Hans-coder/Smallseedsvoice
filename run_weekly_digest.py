@@ -28,31 +28,37 @@ def is_free_event(event: dict) -> bool:
     """Check if event is free based on price field."""
     price = event.get('price')
     if not price:
-        return True # Default to True if unknown? Or False? Let's say False to be safe, or check source.
-                    # KKTIX often has empty price for free registration.
-                    # Let's inspect known free events.
-                    # Stratergy: If '免費' or 'Free' or '0' in price, or price is None/Empty (common for free signup)
-        return True # Risky, but common.
+        return False # Strict checking
         
-    price_str = str(price).lower()
-    if '免費' in price_str or 'free' in price_str or '0' in price_str:
+    price_str = str(price).lower().strip()
+    
+    # 1. Exact "0" check
+    if price_str == '0':
         return True
     
-    # If price contains digits but no free keywords, likely paid?
-    # e.g. "$500", "NT$300"
+    # 2. Explicit free keywords
+    free_keywords = ['免費', 'free', '0元', '無需購票', '自由入場']
+    if any(k in price_str for k in free_keywords):
+        return True
+    
+    # 3. Check for specific paid patterns if no free keyword found
+    # e.g. "$100", "NT$300", "300元"
+    # We want to AVOID incorrectly matching "2026" (year) as a price
     import re
-    if re.search(r'\d+', price_str):
-        # Has numbers. Check if all numbers are 0?
-        # "0元", "NT$0" -> OK
-        # "100元" -> Paid
-        # Hard to be perfect.
-        return False
-        
-    # If explicit paid keywords
-    if '付費' in price_str or 'ticket' in price_str or 'price' in price_str or '門票' in price_str:
-        return False
-
-    return True # Non-numeric text? Assume free if no paid keywords found.
+    # Look for $ or NT$ followed by digits, OR digits followed by 元
+    paid_pattern = r'(?:nt\$|\$|twd\$?)\s*(\d+(?:,\d+)*)|(\d+(?:,\d+)*)\s*元'
+    matches = re.findall(paid_pattern, price_str)
+    
+    for match in matches:
+        for group in match:
+            if group and group.replace(',', '').isdigit():
+                 val = int(group.replace(',', ''))
+                 if val > 0:
+                     return False # Found a positive price -> Paid
+    
+    # If we have text but no free keywords and no currency symbols, 
+    # and it's not "0", assume paid/unknown -> False (Strict)
+    return False
 
 def main():
     import argparse

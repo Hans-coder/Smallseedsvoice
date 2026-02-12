@@ -1,82 +1,136 @@
+"""Indievox Scraper"""
 from typing import Dict, List, Optional
-import requests
-from bs4 import BeautifulSoup
+import re
 from src.scraper.base_scraper import BaseScraper
 from src.utils.logger import setup_logger
 
 logger = setup_logger(__name__)
 
 class IndievoxScraper(BaseScraper):
-    """iNDIEVOX Scraper"""
+    """Indievox Event Scraper"""
     
-    def scrape_events(self, url: str = None) -> List[Dict]:
+    def scrape_events(self, url: str = "https://www.indievox.com/activity/list") -> List[Dict]:
         """
-        Scrape iNDIEVOX music events.
+        Scrape Indievox events.
+        Default to activity list page.
         """
-        if not url:
-            url = "https://www.indievox.com/activity/list"
-            
-        # iNDIEVOX is usually static friendly, but check request headers
-        soup = self.fetch_page(url)
-        if not soup:
-            logger.error(f"Failed to fetch iNDIEVOX page: {url}")
-            return []
-            
-        events = []
-        # Structure: <div class="thumbnails activity"> ...
-        event_items = soup.find_all('div', class_='thumbnails activity')
+        all_events = []
         
-        for item in event_items:
-            event_data = self.parse_event(item)
-            if event_data:
-                events.append(event_data)
+        # Scrape first few pages (e.g., 3 pages for radar)
+        max_pages = self.config.get('max_pages', 3)
+        
+        logger.info(f"Scraping Indievox: {url}")
+
+        for page in range(1, max_pages + 1):
+            if page > 1:
+                # Indievox pagination might be different, but typically ?page=N
+                # Need to verify if this works, otherwise just page 1 for now
+                page_url = f"{url}?page={page}"
+            else:
+                page_url = url
+            
+            logger.info(f"Fetching Indievox page {page}...")
+            soup = self.fetch_page(page_url)
+            if not soup: break
+            
+            # Find event items
+            # Based on typical bootstrap structure or similar
+            # Need to be robust. Look for common containers.
+            # Indievox usually has a table or grid. 
+            # Trying to find by class containing 'event' or 'activity'
+            
+            # Strategy: Look for specific structure seen in data/radar_events.json images
+            # Images are like: https://indievox.static.tixcraft.com/images/activity/...
+            
+            # Let's look for known structure (from prior knowledge or guess)
+            # Usually: <div class="table-responsive">...
+            
+            event_rows = soup.find_all('tr')
+            # If standard table not found, try card style
+            if not event_rows or len(event_rows) < 5:
+                 event_cards = soup.find_all('div', class_=lambda c: c and ('card' in c or 'col-' in c))
+                 # This is risky without seeing HTML.
+                 # Let's assume table for activity/list if it exists.
+                 pass
+
+            # Fallback to scraping whatever looks like an event
+            # Look for links containing '/activity/detail/'
+            links = soup.find_all('a', href=lambda h: h and '/activity/detail/' in h)
+            
+            seen_links = set()
+            page_events = []
+            
+            for link in links:
+                href = link['href']
+                if href in seen_links: continue
+                seen_links.add(href)
                 
-        logger.info(f"iNDIEVOX: Scraped {len(events)} events from {url}")
-        return events
+                # Usually the link wraps the whole item or title
+                # Try to parse the parent container
+                container = link.find_parent('tr') or link.find_parent('div', class_=lambda c: c and 'col' in c)
+                
+                if container:
+                    event_data = self.parse_event(container)
+                    if event_data:
+                        page_events.append(event_data)
+            
+            if not page_events:
+                logger.info("No events found on page. Stopping.")
+                break
+                
+            all_events.extend(page_events)
+            
+        logger.info(f"Indievox: Scraped {len(all_events)} events")
+        return all_events
 
     def parse_event(self, element) -> Optional[Dict]:
+        """Parse Indievox event element"""
         try:
-            # Check if this is wrapped in an <a> tag directly or if a is inside
-            # In dump: <a href="..."><div class="col-md-12 ..."> ... </a>
-            # The 'element' is the div.thumbnails.activity.
-            # Usually the <a> is the immediate child or the wrapper.
-            # In dump: <div class="thumbnails activity"><a href="...">...</a></div>
+            # Try to find title
+            title_tag = element.find(['h4', 'h5', 'h3', 'a'], class_=lambda c: c and ('title' in c or 'name' in c))
+            # If failing, find the link with text
+            link = element.find('a', href=lambda h: h and '/activity/detail/' in h)
             
-            link_tag = element.find('a')
-            if not link_tag:
-                return None
+            if not link: return None
             
-            event_url = link_tag.get('href')
-            if event_url and not event_url.startswith('http'):
+            name = link.get_text(strip=True)
+            if not name and title_tag:
+                name = title_tag.get_text(strip=True)
+            
+            if not name: return None # Skip empty names
+            
+            event_url = link['href']
+            if not event_url.startswith('http'):
                 event_url = f"https://www.indievox.com{event_url}"
                 
-            # Title
-            # <div class="multi_ellipsis">Title</div>
-            title_div = element.find(class_='multi_ellipsis')
-            name = title_div.get_text(strip=True) if title_div else "Unknown"
-            
-            # Date
-            # <div class="date">2026/01/04 (日) </div>
-            date_div = element.find(class_='date')
-            time_str = date_div.get_text(strip=True) if date_div else "Unknown"
+            # Date Parsing
+            # Look for 2026/01/23 type text
+            text_content = element.get_text()
+            date_match = re.search(r'(\d{4}[/-]\d{1,2}[/-]\d{1,2})', text_content)
+            date = date_match.group(1).replace('/', '-') if date_match else None
             
             # Image
-            # <div class="wrap"><img src="..."></div>
-            # Note: The img might have onerror attribute
-            img_tag = element.find('img')
-            image_url = img_tag.get('src') if img_tag else None
+            img = element.find('img')
+            image_url = img['src'] if img else None
             
-            # iNDIEVOX usually shows specific music events
+            # Venue
+            # Often near date
+            # Hard to parse strictly without specific selector
+            venue = "Live House (Indievox)" # Default
+            
             return {
-                'name': name,
-                'location': 'See Details', # Location specific usually in detail page
-                'time': time_str,
-                'price_type': 'Unknown', # Need detail page for price or interpret 'Free' keyword
-                'image_url': image_url,
-                'source_url': event_url,
-                'platform': 'indievox'
+                "activity_name": name,
+                "performers": [],
+                "date": date,
+                "time": "Unknown",
+                "venue": venue,
+                "city": "Unknown",
+                "is_free": "unknown",
+                "source": event_url,
+                "image_url": image_url,
+                "note": "Scraped from Indievox",
+                "reliability": "official"
             }
-            
         except Exception as e:
-            logger.error(f"Error parsing iNDIEVOX item: {e}")
+            logger.warning(f"Error parsing Indievox event: {e}")
             return None
