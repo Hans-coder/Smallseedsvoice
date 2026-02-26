@@ -79,7 +79,10 @@ class InstagramScraper:
                 if attempt == self.retry_count - 1:
                     logger.error(f"無法下載圖片: {image_url}")
                     return False
-                time.sleep(self.request_delay * (attempt + 1))
+                
+                import random
+                sleep_time = self.request_delay * (attempt + 1) + random.uniform(1, 5)
+                time.sleep(sleep_time)
         
         return False
     
@@ -109,15 +112,23 @@ class InstagramScraper:
                     events.append(event)
                     post_count += 1
                 
-                # 避免請求過快
+                # 避免請求過快 - 增加隨機延遲 (Base delay + 0~10s random)
                 import time
-                time.sleep(self.request_delay)
+                import random
+                sleep_time = self.request_delay + random.uniform(0, 10)
+                logger.debug(f"Sleeping for {sleep_time:.2f}s...")
+                time.sleep(sleep_time)
             
             logger.info(f"從 @{username} 抓取到 {len(events)} 個活動")
         except Exception as e:
             error_msg = str(e)
             if "401" in error_msg or "Unauthorized" in error_msg or "LoginRequired" in error_msg:
                 logger.warning(f"抓取Instagram貼文失敗 (可能是私人帳號或權限不足): {error_msg}")
+            elif "429" in error_msg or "Too Many Requests" in error_msg:
+                logger.error(f"Instagram 429 Rate Limit hit: {error_msg}")
+                # Wait longer if rate limited
+                import time
+                time.sleep(60)
             else:
                 logger.error(f"抓取Instagram貼文失敗: {error_msg}")
         

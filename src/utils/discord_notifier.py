@@ -1,0 +1,73 @@
+import requests
+import json
+import logging
+
+logger = logging.getLogger(__name__)
+
+class DiscordNotifier:
+    def __init__(self, webhook_url: str):
+        self.webhook_url = webhook_url
+
+    def send_message(self, content: str = None, embeds: list = None):
+        """
+        Send a message to Discord.
+        content: The message text.
+        embeds: List of embed dictionaries.
+        """
+        if not self.webhook_url:
+            logger.warning("Discord Webhook URL not configured.")
+            return False
+
+        payload = {}
+        if content:
+            payload["content"] = content
+        if embeds:
+            payload["embeds"] = embeds
+
+        try:
+            response = requests.post(
+                self.webhook_url,
+                data=json.dumps(payload),
+                headers={"Content-Type": "application/json"},
+                timeout=10
+            )
+            response.raise_for_status()
+            return True
+        except Exception as e:
+            logger.error(f"Failed to send Discord notification: {e}")
+            return False
+
+    def send_digest_post(self, post_number: int, text: str, images: list):
+        """
+        Specialized method for weekly digest posts with copy-paste formatting.
+        """
+        # Format text in a code block for easy one-tap copy on mobile
+        formatted_text = f"**[Weekly Digest Post #{post_number}]**\n```\n{text}\n```"
+        
+        embeds = []
+        if images:
+            # Discord only allows one image per embed in a basic way, 
+            # but we can send multiple embeds or just list them.
+            # For simplicity, we'll put the first image in the main embed 
+            # and list others or create a carousel-like effect with multiple embeds.
+            for i, img_url in enumerate(images[:10]): # Discord limit is 10 embeds per message
+                embeds.append({
+                    "url": "https://threads.net", # Placeholder
+                    "image": {"url": img_url}
+                })
+
+        return self.send_message(content=formatted_text, embeds=embeds)
+
+    def send_radar_post(self, text: str, images: list):
+        """
+        Specialized method for radar events.
+        """
+        formatted_text = f"**[樂團雷達站]**\n```\n{text}\n```"
+        embeds = []
+        if images:
+            for img_url in images[:10]:
+                embeds.append({
+                    "url": "https://threads.net",
+                    "image": {"url": img_url}
+                })
+        return self.send_message(content=formatted_text, embeds=embeds)

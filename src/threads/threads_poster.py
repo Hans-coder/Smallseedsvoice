@@ -159,7 +159,8 @@ class ThreadsPoster:
                 created_ids.append(post_id)
                 parent_id = post_id
                 # 稍微等待一下，避免速率限制
-                time.sleep(5) 
+                # time.sleep(5) 
+                self.random_sleep(30, 60)
             else:
                 logger.error(f"第 {i+1} 則貼文發布失敗，停止後續發布")
                 break
@@ -232,6 +233,14 @@ class ThreadsPoster:
             logger.info(f"Posting to: {url}")
             logger.info(f"Text preview: {text[:100]}...")
             response = requests.post(url, data=data)
+            
+            # Handle Rate Limit (429)
+            if response.status_code == 429:
+                logger.warning("Rate limit hit (429) during container creation. Waiting 5 minutes...")
+                time.sleep(300)
+                # Retry once
+                response = requests.post(url, data=data)
+
             logger.info(f"Container creation response status: {response.status_code}")
             logger.info(f"Container creation response: {response.text}")
             
@@ -289,6 +298,14 @@ class ThreadsPoster:
         try:
             logger.info(f"Publishing container: {container_id}")
             response = requests.post(url, data=data)
+            
+            # Handle Rate Limit (429)
+            if response.status_code == 429:
+                logger.warning("Rate limit hit (429) during publication. Waiting 5 minutes...")
+                time.sleep(300)
+                # Retry once
+                response = requests.post(url, data=data)
+
             logger.info(f"Publish response status: {response.status_code}")
             logger.info(f"Publish response: {response.text}")
             

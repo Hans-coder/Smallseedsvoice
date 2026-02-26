@@ -89,23 +89,24 @@ def main():
         events = []
         
         # 1. Instagram Scraper
-        try:
-            ig_config = config.get("pipelines", {}).get("weekly_digest", {}).get("sources", {}).get("instagram", {})
-            username = ig_config.get("username", "livetws")
-            max_posts = ig_config.get("max_posts", 20)
-            
-            logger.info(f"Scraping Instagram: @{username}")
-            
-            # Merge global scraper config with IG config
-            scraper_config = config.get("scraper", {})
-            scraper_config.update(ig_config)
-            
-            ig_scraper = InstagramScraper(scraper_config)
-            ig_events = ig_scraper.scrape_events(username, max_posts=max_posts)
-            events.extend(ig_events)
-            logger.info(f"Found {len(ig_events)} events from Instagram.")
-        except Exception as e:
-            logger.error(f"Instagram scrape failed: {e}")
+        # 1. Instagram Scraper
+#        try:
+#            ig_config = config.get("pipelines", {}).get("weekly_digest", {}).get("sources", {}).get("instagram", {})
+#            username = ig_config.get("username", "livetws")
+#            max_posts = ig_config.get("max_posts", 20)
+#            
+#            logger.info(f"Scraping Instagram: @{username}")
+#            
+#            # Merge global scraper config with IG config
+#            scraper_config = config.get("scraper", {})
+#            scraper_config.update(ig_config)
+#            
+#            ig_scraper = InstagramScraper(scraper_config)
+#            ig_events = ig_scraper.scrape_events(username, max_posts=max_posts)
+#            events.extend(ig_events)
+#            logger.info(f"Found {len(ig_events)} events from Instagram.")
+#        except Exception as e:
+#            logger.error(f"Instagram scrape failed: {e}")
 
         # 2. KKTIX Scraper (Music Tag)
         try:

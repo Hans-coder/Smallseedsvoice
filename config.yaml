@@ -3,7 +3,7 @@
 # 抓取設定
 scraper:
   # 請求間隔（秒）
-  request_delay: 2
+  request_delay: 15
   # 超時時間（秒）
   timeout: 30
   # 重試次數
@@ -25,7 +25,7 @@ pipelines:
       instagram:
         username: "livetws"
         max_posts: 50
-        enabled: true
+        enabled: false
     
     # 過濾條件
     filters:

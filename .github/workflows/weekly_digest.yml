@@ -30,29 +30,39 @@ jobs:
           sudo apt-get install -y chromium-browser chromium-chromedriver
           sudo ln -sf /usr/lib/chromium-browser/chromedriver /usr/local/bin/chromedriver
 
-      - name: Scrape Instagram
-        run: python run_weekly_digest.py --step scrape
+#      - name: Scrape Instagram
+#        run: python run_weekly_digest.py --step scrape
         
-      - name: Process & Generate Content
+      - name: Process & Generate Content (KKTIX, OPENTIX, Instagram)
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: python run_weekly_digest.py --step process
         
-      - name: Post to Threads
+      - name: Notify Discord
         env:
-          THREADS_ACCESS_TOKEN: ${{ secrets.THREADS_ACCESS_TOKEN }}
-        run: python run_weekly_digest.py --step post
-      
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: python scripts/notify_discord.py --type digest
+
+#      - name: Post to Threads
+#        env:
+#          THREADS_ACCESS_TOKEN: ${{ secrets.THREADS_ACCESS_TOKEN }}
+#        run: python run_weekly_digest.py --step post
+
+      - name: Generate Manual Guide
+        run: python preview_generator.py
+
       - name: Archive Digest Data
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: digest-data
+          name: weekly-digest-manual-guide
           path: |
+             preview.html
+             data/preview_cache/
              data/digest_raw.json
              data/digest_posts.json
           retention-days: 7
-          
+
       - name: Cleanup
         if: always()
-        run: rm -rf data/preview_cache/
+        run: rm -rf data/preview_cache/ preview.html

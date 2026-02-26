@@ -44,21 +44,26 @@ jobs:
         run: |
           python preview_generator.py
       
-      - name: Upload Preview Artifact
+#      - name: Post to Threads (auto mode)
+#        env:
+#          THREADS_ACCESS_TOKEN: ${{ secrets.THREADS_ACCESS_TOKEN }}
+#        run: |
+#          python post_radar_to_threads.py --auto
+
+      - name: Upload Radar Guide Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: radar-preview
+          name: radar-manual-guide
           path: |
             preview.html
             data/radar_events.json
             data/preview_cache/
-      
-      - name: Post to Threads (auto mode)
+
+      - name: Notify Discord
         env:
-          THREADS_ACCESS_TOKEN: ${{ secrets.THREADS_ACCESS_TOKEN }}
-        run: |
-          python post_radar_to_threads.py --auto
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: python scripts/notify_discord.py --type radar
       
       - name: Cleanup
         run: |
-          rm -rf data/preview_cache/
+          rm -rf data/preview_cache/ preview.html
