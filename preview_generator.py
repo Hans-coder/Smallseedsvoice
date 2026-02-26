@@ -133,12 +133,14 @@ def generate_html(official, radar, digest):
         for idx, post in enumerate(digest):
             post_id = f"digest-{idx}"
             display_text = post['text']
+            # Escape backticks for JS template literal
+            js_safe_text = display_text.replace('`', '\\`').replace('${', '\\${')
             
             html += f"""
             <div class="post-container">
                 <div class="post-header">
                     <strong>Post #{idx + 1}</strong>
-                    <button class="copy-btn" onclick="copyText(this, `{display_text.replace('`','\\`')}`)">Copy Text</button>
+                    <button class="copy-btn" onclick="copyText(this, `{js_safe_text}`)">Copy Text</button>
                 </div>
                 <div class="post-body">
                     <div class="post-text" id="{post_id}">{display_text}</div>
