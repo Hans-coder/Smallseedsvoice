@@ -50,7 +50,7 @@ jobs:
       - name: Notify Discord
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
-        run: python scripts/notify_discord.py --type sale
+        run: python scripts/notify_discord.py --type sale --name "售票情報鬧鐘"
       
       - name: Archive Data
         if: always()

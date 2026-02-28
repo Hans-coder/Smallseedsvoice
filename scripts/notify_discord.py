@@ -2,6 +2,7 @@ import os
 import json
 import argparse
 import sys
+import datetime
 from pathlib import Path
 
 # Add project root to path
@@ -12,9 +13,16 @@ from src.utils.logger import setup_logger
 
 logger = setup_logger("discord_notification")
 
+def get_taipei_time():
+    """獲取台北時間 (UTC+8)"""
+    utc_now = datetime.datetime.now(datetime.timezone.utc)
+    taipei_now = utc_now + datetime.timedelta(hours=8)
+    return taipei_now.strftime('%Y-%m-%d %H:%M:%S')
+
 def main():
     parser = argparse.ArgumentParser(description='Send notifications to Discord')
     parser.add_argument('--type', type=str, choices=['digest', 'radar', 'sale'], required=True)
+    parser.add_argument('--name', type=str, default='未定義排程', help='排程名稱')
     args = parser.parse_args()
 
     webhook_url = os.getenv("DISCORD_WEBHOOK_URL")
@@ -23,6 +31,8 @@ def main():
         sys.exit(1)
 
     notifier = DiscordNotifier(webhook_url)
+    exec_time = get_taipei_time()
+    header = f"🕒 **執行時間**: `{exec_time}` (台北)\n📋 **排程名稱**: `{args.name}`\n"
 
     if args.type == 'digest':
         digest_file = Path("data/digest_posts.json")
@@ -35,10 +45,13 @@ def main():
         
         if not posts:
             logger.info("ℹ️ No digest posts to send (empty list). Sending status to Discord.")
-            notifier.send_message(content="ℹ️ **每週精選更新**\n本次搜尋沒有發現符合條件的免費活動資料。")
+            notifier.send_message(content=header + "ℹ️ **每週精選更新**\n本次搜尋沒有發現符合條件的免費活動資料。")
             return
 
         logger.info(f"📤 Found {len(posts)} digest posts. Sending to Discord...")
+        # Only send the header once or with each post? 
+        # Better send a summary header first, then the posts.
+        notifier.send_message(content=header + f"📤 **每週精選更新**: 發現了 {len(posts)} 則貼文內容。")
         for i, post in enumerate(posts, 1):
             logger.info(f"   - Sending post #{i}...")
             notifier.send_digest_post(i, post['text'], post['images'])
@@ -56,10 +69,10 @@ def main():
         
         if not events:
             logger.info("ℹ️ No radar events found. Sending status to Discord.")
-            notifier.send_message(content="ℹ️ **樂團雷達站更新**\n本次搜尋沒有發現新的活動資料。")
+            notifier.send_message(content=header + "ℹ️ **樂團雷達站更新**\n本次搜尋沒有發現新的活動資料。")
             return
             
-        summary = f"📡 **樂團雷達站更新**\n發現了 {len(events)} 場新的活動！請查看 GitHub Artifacts 中的 `preview.html` 進行手動發布。"
+        summary = header + f"📡 **樂團雷達站更新**\n發現了 {len(events)} 場新的活動！請查看 GitHub Artifacts 中的 `preview.html` 進行手動發布。"
         if notifier.send_message(content=summary):
             logger.info("✅ Radar notification sent.")
         else:
@@ -77,10 +90,10 @@ def main():
             
         if not events:
             logger.info("ℹ️ No sale events found. Sending status to Discord.")
-            notifier.send_message(content="ℹ️ **售票情報更新**\n本次搜尋沒有發現新的售票資訊。")
+            notifier.send_message(content=header + "ℹ️ **售票情報更新**\n本次搜尋沒有發現新的售票資訊。")
             return
 
-        summary = f"🚨 **售票情報更新**\n發現了 {len(events)} 筆售票資訊！詳情請見預覽檔。"
+        summary = header + f"🚨 **售票情報更新**\n發現了 {len(events)} 筆售票資訊！詳情請見預覽檔。"
         if notifier.send_message(content=summary):
             logger.info("✅ Sale notification sent.")
         else:

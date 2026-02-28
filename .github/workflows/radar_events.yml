@@ -62,7 +62,7 @@ jobs:
       - name: Notify Discord
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
-        run: python scripts/notify_discord.py --type radar
+        run: python scripts/notify_discord.py --type radar --name "樂團雷達站"
       
       - name: Cleanup
         run: |

@@ -41,7 +41,7 @@ jobs:
       - name: Notify Discord
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
-        run: python scripts/notify_discord.py --type digest
+        run: python scripts/notify_discord.py --type digest --name "每週精選 (Free)"
 
 #      - name: Post to Threads
 #        env:
