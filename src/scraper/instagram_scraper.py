@@ -109,13 +109,15 @@ class InstagramScraper:
                 
                 event = self.parse_post(post, username)
                 if event:
+                    # 標註來源帳號，以便後續識別大型活動
+                    event['source_account'] = username
                     events.append(event)
                     post_count += 1
                 
                 # 避免請求過快 - 增加隨機延遲 (Base delay + 0~10s random)
                 import time
                 import random
-                sleep_time = self.request_delay + random.uniform(0, 10)
+                sleep_time = self.request_delay + random.uniform(0, 5)
                 logger.debug(f"Sleeping for {sleep_time:.2f}s...")
                 time.sleep(sleep_time)
             
@@ -133,6 +135,17 @@ class InstagramScraper:
                 logger.error(f"抓取Instagram貼文失敗: {error_msg}")
         
         return events
+
+    def scrape_multiple_accounts(self, usernames: List[str], max_posts: int = 20) -> List[Dict]:
+        """抓取多個帳號的活動"""
+        all_events = []
+        for username in usernames:
+            account_events = self.scrape_events(username, max_posts=max_posts)
+            all_events.extend(account_events)
+            # 帳號間切換增加延遲
+            import time
+            time.sleep(self.request_delay * 2)
+        return all_events
     
     def parse_post(self, post, username: str) -> Optional[Dict]:
         """

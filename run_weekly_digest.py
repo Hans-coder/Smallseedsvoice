@@ -60,6 +60,24 @@ def is_free_event(event: dict) -> bool:
     # and it's not "0", assume paid/unknown -> False (Strict)
     return False
 
+def is_hot_event(event: dict) -> bool:
+    """判斷是否為熱門大型活動 (如音樂祭)"""
+    name = str(event.get('name', '')).lower()
+    caption = str(event.get('caption', '')).lower()
+    
+    # 常見大型祭典關鍵字
+    hot_keywords = ['祭', '音樂節', 'festival', '大港開唱', '浮現祭', '浪人祭', '春浪', 'ultra']
+    
+    if any(k in name for k in hot_keywords) or any(k in caption for k in hot_keywords):
+        return True
+        
+    # 如果是從 IG 抓的，檢查來源帳號是否為知名音樂節
+    source_account = event.get('source_account')
+    if source_account in ['emerge_fest', 'megaportfest', 'ultrataiwan', 'springwave_asia']:
+        return True
+        
+    return False
+
 def main():
     import argparse
     import json
@@ -89,36 +107,47 @@ def main():
         events = []
         
         # 1. Instagram Scraper
-        # 1. Instagram Scraper
-#        try:
-#            ig_config = config.get("pipelines", {}).get("weekly_digest", {}).get("sources", {}).get("instagram", {})
-#            username = ig_config.get("username", "livetws")
-#            max_posts = ig_config.get("max_posts", 20)
-#            
-#            logger.info(f"Scraping Instagram: @{username}")
-#            
-#            # Merge global scraper config with IG config
-#            scraper_config = config.get("scraper", {})
-#            scraper_config.update(ig_config)
-#            
-#            ig_scraper = InstagramScraper(scraper_config)
-#            ig_events = ig_scraper.scrape_events(username, max_posts=max_posts)
-#            events.extend(ig_events)
-#            logger.info(f"Found {len(ig_events)} events from Instagram.")
-#        except Exception as e:
-#            logger.error(f"Instagram scrape failed: {e}")
-
-        # 2. KKTIX Scraper (Music Tag)
         try:
-            logger.info("Scraping KKTIX (Music)...")
+            ig_config = config.get("pipelines", {}).get("weekly_digest", {}).get("sources", {}).get("instagram", {})
+            if ig_config.get("enabled", True):
+                usernames = ig_config.get("usernames", ["livetws"])
+                max_posts = ig_config.get("max_posts", 20)
+                
+                logger.info(f"Scraping Instagram accounts: {usernames}")
+                
+                # Merge global scraper config with IG config
+                scraper_config = config.get("scraper", {})
+                scraper_config.update(ig_config)
+                
+                ig_scraper = InstagramScraper(scraper_config)
+                # 使用新開發的批量抓取方法
+                ig_events = ig_scraper.scrape_multiple_accounts(usernames, max_posts=max_posts)
+                
+                # 標註熱門活動
+                for e in ig_events:
+                    e['is_hot'] = is_hot_event(e)
+                
+                events.extend(ig_events)
+                logger.info(f"Found {len(ig_events)} events from Instagram.")
+        except Exception as e:
+            logger.error(f"Instagram scrape failed: {e}")
+
+        # 2. KKTIX Scraper (Music Tag + Keywords)
+        try:
+            logger.info("Scraping KKTIX (Music & Keywords)...")
             kktix_scraper = KktixScraper(config.get("scraper", {}))
-            # Just scrape music tag page
-            kktix_events = kktix_scraper.scrape_events(url="https://kktix.com/events?event_tag_ids_in=13")
+            # 腳本內部已更新，會自動抓取 Music Tag + 關鍵字搜尋
+            kktix_events = kktix_scraper.scrape_events()
             
-            # Filter Free
-            free_kktix = [e for e in kktix_events if is_free_event(e)]
-            events.extend(free_kktix)
-            logger.info(f"Found {len(free_kktix)} free events from KKTIX (Total: {len(kktix_events)}).")
+            # 過濾條件：免費 OR 大型熱門活動
+            relevant_kktix = []
+            for e in kktix_events:
+                e['is_hot'] = is_hot_event(e)
+                if is_free_event(e) or e['is_hot']:
+                    relevant_kktix.append(e)
+            
+            events.extend(relevant_kktix)
+            logger.info(f"Found {len(relevant_kktix)} relevant events from KKTIX (Total: {len(kktix_events)}).")
         except Exception as e:
             logger.error(f"KKTIX scrape failed: {e}")
 
@@ -128,10 +157,15 @@ def main():
             opentix_scraper = OpentixScraper(config.get("scraper", {}))
             opentix_events = opentix_scraper.scrape_events()
             
-            # Filter Free
-            free_opentix = [e for e in opentix_events if is_free_event(e)]
-            events.extend(free_opentix)
-            logger.info(f"Found {len(free_opentix)} free events from OPENTIX (Total: {len(opentix_events)}).")
+            # 過濾條件：免費 OR 大型熱門活動
+            relevant_opentix = []
+            for e in opentix_events:
+                e['is_hot'] = is_hot_event(e)
+                if is_free_event(e) or e['is_hot']:
+                    relevant_opentix.append(e)
+            
+            events.extend(relevant_opentix)
+            logger.info(f"Found {len(relevant_opentix)} relevant events from OPENTIX (Total: {len(opentix_events)}).")
         except Exception as e:
             logger.error(f"OPENTIX scrape failed: {e}")
 

@@ -21,7 +21,9 @@ class KktixScraper(BaseScraper):
             # Default behavior: Scrape Homepage AND Music Tag
             urls_to_scrape = [
                 ("https://kktix.com", False), # Homepage, no pagination
-                ("https://kktix.com/events?event_tag_ids_in=13", True) # Music Tag, with pagination
+                ("https://kktix.com/events?event_tag_ids_in=13", True), # Music Tag, with pagination
+                ("https://kktix.com/events?q=音樂節", True), # Keyword Search
+                ("https://kktix.com/events?q=祭", True) # Keyword Search
             ]
         else:
             urls_to_scrape = [(url, True)]

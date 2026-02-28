@@ -135,23 +135,28 @@ class DigestBuilder:
         
         # Try AI generation first
         if self.enricher and self.enricher.model:
+            # 識別熱門活動名稱以供 AI 參考
+            hot_titles = [e.get('name') for e in sorted_events if e.get('is_hot')]
+            hot_context = f"本週包含大型活動：{', '.join(hot_titles)}" if hot_titles else ""
+            
             prompt = f"""
             你是一個熱愛台灣獨立音樂的社群小編。
             請寫一段每週活動懶人包的「開場白」。
             
             資訊：
             - 時間範圍：{date_str}
-            - 這週共有 {count} 場免費活動
+            - 本週整理了 {count} 場精選活動。
+            - {hot_context}
             
             要求：
-            1. 語氣活潑、像真人、有溫度（不要像機器人）。
-            2. 提到「免費音樂活動」可以吸引人。
-            3. 字數 50 字以內。
+            1. 語氣活潑、有溫度，像個音樂大戶（不要像機器人）。
+            2. 如果有大型活動（如音樂祭），請特別興奮地提到它們。
+            3. 字數 60 字以內。
             4. 結尾要引導大家看下面的整理。
             """
             try:
                 ai_text = self.enricher.model.generate_content(prompt).text.strip()
-                return f"{ai_text}\n\n(整理在下方，歡迎分享給朋友推坑！)"
+                return f"{ai_text}\n\n(詳細整理如下 👇)"
             except Exception:
                 pass
                 
@@ -172,7 +177,10 @@ class DigestBuilder:
             
         weekday = self._get_weekday_zh(time_str) 
 
-        return f"\n📍 [{city}] {name}\n🗓 {time_str} ({weekday}) @ {venue}\n"
+        # 熱門活動標籤
+        hot_prefix = "🔥 [熱門盛事] " if event.get('is_hot') else "✨ "
+        
+        return f"\n{hot_prefix}[{city}] {name}\n🗓 {time_str} ({weekday}) @ {venue}\n"
 
     def _extract_city(self, location: str) -> str:
         # 簡單城市提取

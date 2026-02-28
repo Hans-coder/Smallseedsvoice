@@ -1,0 +1,151 @@
+
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="utf-8">
+        <title>Manual Posting Guide</title>
+        <style>
+            body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f0f2f5; padding: 20px; max-width: 1200px; margin: 0 auto; }
+            h1 { text-align: center; color: #1a1a1a; margin-bottom: 40px; }
+            h2 { color: #444; border-bottom: 2px solid #333; padding-bottom: 10px; margin-top: 50px; background: #fff; padding: 15px; border-radius: 8px 8px 0 0; margin-bottom: 0; }
+            .section { background: white; padding: 20px; border-radius: 0 0 8px 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 30px; }
+            .post-container { border: 1px solid #ddd; border-radius: 12px; margin-bottom: 30px; overflow: hidden; background: #fff; }
+            .post-header { background: #f8f9fa; padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+            .post-body { padding: 20px; }
+            .post-text { background: #fff; border: 1px solid #eee; padding: 15px; border-radius: 8px; white-space: pre-wrap; font-family: inherit; margin-bottom: 20px; position: relative; }
+            .copy-btn { background: #000; color: #fff; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px; transition: opacity 0.2s; }
+            .copy-btn:hover { opacity: 0.8; }
+            .copy-btn.copied { background: #28a745; }
+            .image-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-top: 15px; }
+            .image-item { border-radius: 8px; overflow: hidden; border: 1px solid #eee; position: relative; cursor: pointer; }
+            .image-item img { width: 100%; height: 150px; object-fit: cover; transition: transform 0.2s; }
+            .image-item:hover img { transform: scale(1.05); }
+            .image-url { font-size: 11px; color: #666; word-break: break-all; padding: 5px; background: rgba(255,255,255,0.9); position: absolute; bottom: 0; width: 100%; box-sizing: border-box; }
+            
+            .event-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; margin-top: 20px; }
+            .card { background: white; border: 1px solid #eee; border-radius: 12px; overflow: hidden; transition: transform 0.2s; }
+            .card:hover { transform: translateY(-5px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+            .card-img { width: 100%; height: 180px; object-fit: cover; background: #f0f0f0; }
+            .card-content { padding: 15px; }
+            .tag { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; margin-bottom: 8px; }
+            .tag-official { background: #e3f2fd; color: #1565c0; }
+            .tag-radar { background: #f3e5f5; color: #7b1fa2; }
+            .title { font-size: 15px; font-weight: bold; margin: 0 0 8px 0; line-height: 1.4; color: #1a1a1a; }
+            .info { font-size: 13px; color: #555; margin-bottom: 4px; }
+            .link-btn { display: inline-block; margin-top: 10px; color: #0066cc; text-decoration: none; font-size: 13px; }
+            .link-btn:hover { text-decoration: underline; }
+            
+            #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #333; color: #fff; padding: 12px 24px; border-radius: 30px; display: none; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+        </style>
+        <script>
+            function copyText(btn, text) {
+                navigator.clipboard.writeText(text).then(() => {
+                    const originalText = btn.innerText;
+                    btn.innerText = 'Copied!';
+                    btn.classList.add('copied');
+                    showToast('Text copied to clipboard');
+                    setTimeout(() => {
+                        btn.innerText = originalText;
+                        btn.classList.remove('copied');
+                    }, 2000);
+                });
+            }
+            function showToast(msg) {
+                const toast = document.getElementById('toast');
+                toast.innerText = msg;
+                toast.style.display = 'block';
+                setTimeout(() => { toast.style.display = 'none'; }, 2000);
+            }
+            function openImage(url) {
+                window.open(url, '_blank');
+            }
+        </script>
+    </head>
+    <body>
+        <h1>Manual Posting Guide ✍️</h1>
+        <div id="toast"></div>
+    <h2>Weekly Digest Posts (本週懶人包)</h2><div class='section'>
+            <div class="post-container">
+                <div class="post-header">
+                    <strong>Post #1</strong>
+                    <button class="copy-btn" onclick="copyText(this, `下週免費音樂活動懶人包 (02/17 - 02/24)
+
+這週很熱鬧，共整理了 4 場免費演出！
+詳細資訊請看留言 👇
+本週活動
+
+📍 [台灣] 年假中段｜Hard Bop 的午後能量補給
+🗓 2026-02-18 (週?) @ Unknown
+
+📍 [台灣] 年假午後｜百老匯旋律的爵士浪漫
+🗓 2026-02-19 (週?) @ Unknown
+
+📍 [屏東] 2026 麟洛郭家觀音菩薩恭迎王爺奶奶回娘家文化祭遶境慶典
+🗓 2026/02/21 (六) PM17:00 (週?) @ 屏東麟洛憶親園前廣場
+
+📍 [台灣] 1500 SOUND ACADEMY 聲量音創學院 2/23 (一) AI音樂創作實戰班
+🗓 2026-02-23 (週?) @ Unknown`)">Copy Text</button>
+                </div>
+                <div class="post-body">
+                    <div class="post-text" id="digest-0">下週免費音樂活動懶人包 (02/17 - 02/24)
+
+這週很熱鬧，共整理了 4 場免費演出！
+詳細資訊請看留言 👇
+本週活動
+
+📍 [台灣] 年假中段｜Hard Bop 的午後能量補給
+🗓 2026-02-18 (週?) @ Unknown
+
+📍 [台灣] 年假午後｜百老匯旋律的爵士浪漫
+🗓 2026-02-19 (週?) @ Unknown
+
+📍 [屏東] 2026 麟洛郭家觀音菩薩恭迎王爺奶奶回娘家文化祭遶境慶典
+🗓 2026/02/21 (六) PM17:00 (週?) @ 屏東麟洛憶親園前廣場
+
+📍 [台灣] 1500 SOUND ACADEMY 聲量音創學院 2/23 (一) AI音樂創作實戰班
+🗓 2026-02-23 (週?) @ Unknown</div>
+                    <strong>Images (4):</strong>
+                    <div class="image-grid">
+            
+                <div class="image-item" onclick="openImage('https://assets.kktix.io/upload_images/294443/20260218ig_medium.jpg')">
+                    <img src="data/preview_cache/07ee5c793b8306cbfe59d85dfd43a68e.jpg" loading="lazy">
+                    <div class="image-url">https://assets.kktix.io/upload_images/294443/20260218ig_medium.jpg</div>
+                </div>
+                
+                <div class="image-item" onclick="openImage('https://assets.kktix.io/upload_images/294444/20260219ig_medium.jpg')">
+                    <img src="data/preview_cache/cfe4cb617e6b146934f77c68c750ddaf.jpg" loading="lazy">
+                    <div class="image-url">https://assets.kktix.io/upload_images/294444/20260219ig_medium.jpg</div>
+                </div>
+                
+                <div class="image-item" onclick="openImage('https://instagram.ftpe14-1.fna.fbcdn.net/v/t51.2885-15/632231319_18098989067502340_4963154162910111250_n.jpg?stp=dst-jpg_e35_p1080x1080_sh0.08_tt6&_nc_ht=instagram.ftpe14-1.fna.fbcdn.net&_nc_cat=104&_nc_oc=Q6cZ2QGJE-L6GX8mwAj-psWq3nWNOOkiEzFl7wvt9WrhAMb9CjIGqX-_S4My_wj8YsEAuRI&_nc_ohc=d2x7opc1wA8Q7kNvwHhZR4t&_nc_gid=rkgzbgwE5C6b8yZ7ZJ14-g&edm=AOQ1c0wBAAAA&ccb=7-5&ig_cache_key=MzgzMDIwMzg5ODg4ODYwOTI1NA%3D%3D.3-ccb7-5&oh=00_Afte2GkhN6Ank5ROCvEWjb7wV8iOYS__gQA2iKNdn1zQZQ&oe=6993C64F&_nc_sid=8b3546')">
+                    <img src="https://instagram.ftpe14-1.fna.fbcdn.net/v/t51.2885-15/632231319_18098989067502340_4963154162910111250_n.jpg?stp=dst-jpg_e35_p1080x1080_sh0.08_tt6&_nc_ht=instagram.ftpe14-1.fna.fbcdn.net&_nc_cat=104&_nc_oc=Q6cZ2QGJE-L6GX8mwAj-psWq3nWNOOkiEzFl7wvt9WrhAMb9CjIGqX-_S4My_wj8YsEAuRI&_nc_ohc=d2x7opc1wA8Q7kNvwHhZR4t&_nc_gid=rkgzbgwE5C6b8yZ7ZJ14-g&edm=AOQ1c0wBAAAA&ccb=7-5&ig_cache_key=MzgzMDIwMzg5ODg4ODYwOTI1NA%3D%3D.3-ccb7-5&oh=00_Afte2GkhN6Ank5ROCvEWjb7wV8iOYS__gQA2iKNdn1zQZQ&oe=6993C64F&_nc_sid=8b3546" loading="lazy">
+                    <div class="image-url">https://instagram.ftpe14-1.fna.fbcdn.net/v/t51.2885-15/632231319_18098989067502340_4963154162910111250_n.jpg?stp=dst-jpg_e35_p1080x1080_sh0.08_tt6&_nc_ht=instagram.ftpe14-1.fna.fbcdn.net&_nc_cat=104&_nc_oc=Q6cZ2QGJE-L6GX8mwAj-psWq3nWNOOkiEzFl7wvt9WrhAMb9CjIGqX-_S4My_wj8YsEAuRI&_nc_ohc=d2x7opc1wA8Q7kNvwHhZR4t&_nc_gid=rkgzbgwE5C6b8yZ7ZJ14-g&edm=AOQ1c0wBAAAA&ccb=7-5&ig_cache_key=MzgzMDIwMzg5ODg4ODYwOTI1NA%3D%3D.3-ccb7-5&oh=00_Afte2GkhN6Ank5ROCvEWjb7wV8iOYS__gQA2iKNdn1zQZQ&oe=6993C64F&_nc_sid=8b3546</div>
+                </div>
+                
+                <div class="image-item" onclick="openImage('https://assets.kktix.io/upload_images/277897/AI%E9%9F%B3%E6%A8%82%E8%A3%BD%E4%BD%9C_%E9%9B%8D%E6%81%861030_KKTIX_medium.jpg')">
+                    <img src="data/preview_cache/622e9139f712201fbbce2dd1b6314490.jpg" loading="lazy">
+                    <div class="image-url">https://assets.kktix.io/upload_images/277897/AI%E9%9F%B3%E6%A8%82%E8%A3%BD%E4%BD%9C_%E9%9B%8D%E6%81%861030_KKTIX_medium.jpg</div>
+                </div>
+                </div></div></div></div><h2>Official Platform Events (剩餘售票資訊)</h2><div class='section'><div class='event-grid'>
+            <div class="card">
+                <img src="https://placehold.co/600x400?text=No+Image" class="card-img" loading="lazy">
+                <div class="card-content">
+                    <span class="tag tag-official">None</span>
+                    <div class="title">None</div>
+                    <div class="info">📅 2030-01-01</div>
+                    <div class="info">📍 None</div>
+                    <a href="None" class="link-btn" target="_blank">View Site ↗</a>
+                </div>
+            </div>
+            
+            <div class="card">
+                <img src="https://placehold.co/600x400?text=No+Image" class="card-img" loading="lazy">
+                <div class="card-content">
+                    <span class="tag tag-official">None</span>
+                    <div class="title">None</div>
+                    <div class="info">📅 2030-01-01</div>
+                    <div class="info">📍 None</div>
+                    <a href="None" class="link-btn" target="_blank">View Site ↗</a>
+                </div>
+            </div>
+            </div></div></body></html>

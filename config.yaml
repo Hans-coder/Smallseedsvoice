@@ -23,9 +23,14 @@ pipelines:
     # 來源配置
     sources:
       instagram:
-        username: "livetws"
+        usernames: 
+          - "livetws"
+          - "emerge_fest"      # 浮現祭
+          - "megaportfest"    # 大港開唱
+          - "ultrataiwan"     # Ultra Taiwan
+          - "springwave_asia" # 春浪
         max_posts: 50
-        enabled: false
+        enabled: true
     
     # 過濾條件
     filters:

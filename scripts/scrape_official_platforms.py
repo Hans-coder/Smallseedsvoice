@@ -50,7 +50,8 @@ def main():
         platform_files = {
             "kktix": "data/events_kktix.json",
             "opentix": "data/events_opentix.json",
-            "tixcraft": "data/events_tixcraft.json"
+            "tixcraft": "data/events_tixcraft.json",
+            "indievox": "data/events_indievox.json"
         }
         
         for p, fpath in platform_files.items():
@@ -124,7 +125,34 @@ def main():
         except Exception as e:
             logger.error(f"OPENTIX failed: {e}")
 
-    # 3. tixCraft
+    # 3. Indievox
+    if platform in ['indievox', 'all']:
+        try:
+            logger.info("Scraping Indievox...")
+            from src.scraper.ticketing.indievox_scraper import IndievoxScraper
+            scraper = IndievoxScraper(config)
+            indievox_events = scraper.scrape_events()
+            
+            if platform == 'indievox':
+                with open("data/events_indievox.json", "w", encoding="utf-8") as f:
+                    json.dump(indievox_events, f, indent=4, ensure_ascii=False)
+                logger.info(f"Saved {len(indievox_events)} Indievox events")
+            else:
+                # Convert Indievox format to Official format if necessary
+                # Indievox uses 'activity_name', 'source', 'venue'
+                # KKTIX/TixCraft uses 'name', 'ticket_url', 'venue_name'
+                for e in indievox_events:
+                    e['name'] = e.get('activity_name', 'Unknown')
+                    e['ticket_url'] = e.get('source')
+                    e['venue_name'] = e.get('venue', 'Unknown')
+                    e['ticket_platform'] = 'Indievox'
+                    e['activity_id'] = f"indievox_{e['name']}_{e['date']}"
+                events.extend(indievox_events)
+                
+        except Exception as e:
+            logger.error(f"Indievox failed: {e}")
+
+    # 4. tixCraft
     if platform in ['tixcraft', 'all']:
         try:
             logger.info("Scraping tixCraft...")
