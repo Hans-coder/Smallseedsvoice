@@ -23,6 +23,7 @@ load_dotenv()
 from src.utils.logger import setup_logger
 from src.scraper.ticketing.indievox_scraper import IndievoxScraper
 from src.scraper.instagram_scraper import InstagramScraper
+from src.scraper.discovery.streetvoice_scraper import StreetVoiceScraper
 
 logger = setup_logger("radar_scraper")
 
@@ -37,18 +38,26 @@ def main():
     # 1. Indievox
     try:
         logger.info("Scraping Indievox...")
-        # Config options can include max_pages
         iv_scraper = IndievoxScraper({"max_pages": 3})
-        # Scrape "Live House" category if URL structure allows, e.g. ?type=livehouse
-        # For now, use default list
-        iv_events = iv_scraper.scrape_events("https://www.indievox.com/activity/list")
+        # Use table view for easier parsing
+        iv_events = iv_scraper.scrape_events("https://www.indievox.com/activity/list?type=table")
         
-        # Transform keys to match expected output schema if needed
-        # IndievoxScraper already returns compatible dicts (activity_name, date, etc.)
         radar_events.extend(iv_events)
         logger.info(f"Added {len(iv_events)} events from Indievox.")
     except Exception as e:
         logger.error(f"Indievox scrape failed: {e}")
+
+    # 2. StreetVoice (Discovery)
+    try:
+        logger.info("Scraping StreetVoice for Discovery Radar...")
+        sv_scraper = StreetVoiceScraper({"timeout": 30})
+        sv_events = sv_scraper.scrape_events()
+        
+        # Transform SV events to Radar schema (SV already has compatible keys)
+        radar_events.extend(sv_events)
+        logger.info(f"Added {len(sv_events)} events from StreetVoice.")
+    except Exception as e:
+        logger.error(f"StreetVoice radar scrape failed: {e}")
 
 #    # 2. Instagram
 #    # Target Accounts: legacy_taiwan, revolvertaipei

@@ -31,10 +31,18 @@ jobs:
           # Set up ChromeDriver path
           sudo ln -sf /usr/lib/chromium-browser/chromedriver /usr/local/bin/chromedriver
           chromedriver --version
-      
+
       - name: Create data directory
         run: |
           mkdir -p data
+
+      - name: Cache Performer History
+        uses: actions/cache@v3
+        with:
+          path: data/events.db
+          key: ${{ runner.os }}-performer-history-radar-${{ github.run_id }}
+          restore-keys: |
+            ${{ runner.os }}-performer-history-
       
       - name: Scrape Radar Events
         run: |

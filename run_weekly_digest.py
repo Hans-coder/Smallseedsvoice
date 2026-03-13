@@ -195,6 +195,19 @@ def main():
             logger.info(f"Indievox: Found {len(relevant_indievox)} relevant events, skipped {skipped_count} (not free/hot).")
         except Exception as e:
             logger.error(f"Indievox scrape failed: {e}")
+            
+        # 5. StreetVoice Scraper (Discovery)
+        try:
+            logger.info("Scraping StreetVoice (Discovery)...")
+            from src.scraper.discovery.streetvoice_scraper import StreetVoiceScraper
+            sv_scraper = StreetVoiceScraper(config.get("scraper", {}))
+            sv_events = sv_scraper.scrape_events()
+            
+            # For StreetVoice, we take everything for now as it's targeted discovery
+            events.extend(sv_events)
+            logger.info(f"StreetVoice: Added {len(sv_events)} discovery events.")
+        except Exception as e:
+            logger.error(f"StreetVoice scrape failed: {e}")
 
         if not events:
             logger.warning(f"No events found from any source. Writing empty list to prevent stale data usage.")
@@ -228,7 +241,7 @@ def main():
             return
 
         # Process & Build Digest
-        start_date = datetime.datetime.now()
+        start_date = datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
         end_date = start_date + datetime.timedelta(days=7)
         
         # Initialize Builder with AI enrichment enabled

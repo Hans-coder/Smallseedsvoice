@@ -44,8 +44,19 @@ def main():
             posts = json.load(f)
         
         if not posts:
-            logger.info("ℹ️ No digest posts to send (empty list). Sending status to Discord.")
-            notifier.send_message(content=header + "ℹ️ **每週精選更新**\n本次搜尋沒有發現符合條件的免費活動資料。")
+            raw_event_count = 0
+            raw_file = Path("data/digest_raw.json")
+            if raw_file.exists():
+                try:
+                    with open(raw_file, 'r', encoding='utf-8') as f:
+                        raw_event_count = len(json.load(f))
+                except: pass
+            
+            logger.info(f"ℹ️ No digest posts (raw events: {raw_event_count}). Sending status to Discord.")
+            msg = header + "ℹ️ **每週精選更新**\n本次搜尋沒有發現符合條件的免費活動資料。"
+            if raw_event_count > 0:
+                msg += f"\n(系統共抓取到 {raw_event_count} 場活動，但皆不符合免費/熱門過濾條件)"
+            notifier.send_message(content=msg)
             return
 
         logger.info(f"📤 Found {len(posts)} digest posts. Sending to Discord...")

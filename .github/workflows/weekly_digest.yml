@@ -30,10 +30,18 @@ jobs:
           sudo apt-get install -y chromium-browser chromium-chromedriver
           sudo ln -sf /usr/lib/chromium-browser/chromedriver /usr/local/bin/chromedriver
 
-      - name: Scrape KKTIX, OPENTIX
+      - name: Cache Performer History
+        uses: actions/cache@v3
+        with:
+          path: data/events.db
+          key: ${{ runner.os }}-performer-history-${{ github.run_id }}
+          restore-keys: |
+            ${{ runner.os }}-performer-history-
+
+      - name: Scrape All Sources (KKTIX, OPENTIX, Indievox, StreetVoice)
         run: python run_weekly_digest.py --step scrape
         
-      - name: Process & Generate Content (KKTIX, OPENTIX)
+      - name: Process & Generate Content
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: python run_weekly_digest.py --step process

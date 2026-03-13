@@ -38,8 +38,28 @@ class DigestBuilder:
             ]
         """
         # 1. Filter & Sort Events
-        # Ensure events are within the date range and sorted by date
         sorted_events = self._sort_and_filter_events(events, start_date, end_date)
+        
+        # 1.5 New Blood Detection
+        from src.utils.performer_tracker import PerformerTracker
+        tracker = PerformerTracker()
+        
+        all_performers_this_week = set()
+        for event in sorted_events:
+            # Extract performers from dedicated list or activity name
+            performers = event.get('performers', [])
+            if not performers:
+                # Fallback: Use activity name as a single performer (common for solo artists)
+                performers = [event.get('name') or event.get('activity_name', 'Unknown')]
+            
+            new_blood = tracker.get_new_blood(performers)
+            event['is_discovery'] = len(new_blood) > 0
+            event['new_artists'] = new_blood
+            
+            all_performers_this_week.update(performers)
+        
+        # Update history with found performers
+        tracker.update_history(list(all_performers_this_week))
         
         if not sorted_events:
             return []
@@ -178,9 +198,15 @@ class DigestBuilder:
         weekday = self._get_weekday_zh(time_str) 
 
         # 熱門活動標籤
-        hot_prefix = "🔥 [熱門盛事] " if event.get('is_hot') else "✨ "
+        hot_prefix = "🔥 [熱門盛事] " if event.get('is_hot') else ""
         
-        return f"\n{hot_prefix}[{city}] {name}\n🗓 {time_str} ({weekday}) @ {venue}\n"
+        # 新血/發現標籤
+        discovery_prefix = "✨ [樂壇新血] " if event.get('is_discovery') else ""
+        
+        # Final prefix
+        prefix = hot_prefix or discovery_prefix or "🎸 "
+        
+        return f"\n{prefix}[{city}] {name}\n🗓 {time_str} ({weekday}) @ {venue}\n"
 
     def _extract_city(self, location: str) -> str:
         # 簡單城市提取
