@@ -34,6 +34,26 @@ def main():
     exec_time = get_taipei_time()
     header = f"🕒 **執行時間**: `{exec_time}` (台北)\n📋 **排程名稱**: `{args.name}`\n"
 
+    # --- NEW: Check for scraping errors ---
+    error_file = Path("data/scraping_errors.json")
+    if error_file.exists():
+        try:
+            with open(error_file, 'r', encoding='utf-8') as f:
+                errors = json.load(f)
+            if errors:
+                error_msgs = []
+                for e in errors:
+                    # Truncate traceback to avoid Discord 2000 char limit
+                    tb = e.get('traceback', '')[-500:] 
+                    error_msgs.append(f"**[{e.get('scraper')}]** {e.get('error_type')}: {e.get('message')}\n```python\n...{tb}\n```")
+                
+                header += "\n🚨 **系統錯誤警告** 🚨\n爬蟲在執行過程中遭遇以下錯誤：\n" + "\n".join(error_msgs) + "\n\n"
+            # Cleanup so we don't alert again
+            error_file.unlink()
+        except Exception as e:
+            logger.error(f"Failed to read or parse scraping errors: {e}")
+            
+
     if args.type == 'digest':
         digest_file = Path("data/digest_posts.json")
         if not digest_file.exists():

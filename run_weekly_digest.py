@@ -9,6 +9,7 @@ from src.scraper.ticketing.opentix_scraper import OpentixScraper
 from src.processor.digest_builder import DigestBuilder
 from src.threads.threads_poster import ThreadsPoster
 from src.utils.logger import setup_logger
+from src.utils.error_handler import log_scraping_error
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
@@ -131,6 +132,7 @@ def main():
                 logger.info(f"Found {len(ig_events)} events from Instagram.")
         except Exception as e:
             logger.error(f"Instagram scrape failed: {e}")
+            log_scraping_error("Instagram", e)
 
         # 2. KKTIX Scraper (Music Tag + Keywords)
         try:
@@ -153,6 +155,7 @@ def main():
             logger.info(f"KKTIX: Found {len(relevant_kktix)} relevant events, skipped {skipped_count} (not free/hot).")
         except Exception as e:
             logger.error(f"KKTIX scrape failed: {e}")
+            log_scraping_error("KKTIX", e)
 
         # 3. OPENTIX Scraper
         try:
@@ -174,6 +177,7 @@ def main():
             logger.info(f"OPENTIX: Found {len(relevant_opentix)} relevant events, skipped {skipped_count} (not free/hot).")
         except Exception as e:
             logger.error(f"OPENTIX scrape failed: {e}")
+            log_scraping_error("OPENTIX", e)
             
         # 4. Indievox Scraper
         try:
@@ -195,6 +199,7 @@ def main():
             logger.info(f"Indievox: Found {len(relevant_indievox)} relevant events, skipped {skipped_count} (not free/hot).")
         except Exception as e:
             logger.error(f"Indievox scrape failed: {e}")
+            log_scraping_error("Indievox", e)
             
         # 5. StreetVoice Scraper (Discovery)
         try:
@@ -208,6 +213,7 @@ def main():
             logger.info(f"StreetVoice: Added {len(sv_events)} discovery events.")
         except Exception as e:
             logger.error(f"StreetVoice scrape failed: {e}")
+            log_scraping_error("StreetVoice", e)
 
         if not events:
             logger.warning(f"No events found from any source. Writing empty list to prevent stale data usage.")

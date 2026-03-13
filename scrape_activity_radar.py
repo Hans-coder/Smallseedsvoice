@@ -12,6 +12,8 @@ import sys
 import logging
 from datetime import datetime
 from pathlib import Path
+from src.utils.performer_tracker import PerformerTracker
+from src.utils.error_handler import log_scraping_error
 from dotenv import load_dotenv
 
 # Add project root to path
@@ -46,6 +48,7 @@ def main():
         logger.info(f"Added {len(iv_events)} events from Indievox.")
     except Exception as e:
         logger.error(f"Indievox scrape failed: {e}")
+        log_scraping_error("Radar-Indievox", e)
 
     # 2. StreetVoice (Discovery)
     try:
@@ -58,6 +61,7 @@ def main():
         logger.info(f"Added {len(sv_events)} events from StreetVoice.")
     except Exception as e:
         logger.error(f"StreetVoice radar scrape failed: {e}")
+        log_scraping_error("Radar-StreetVoice", e)
 
 #    # 2. Instagram
 #    # Target Accounts: legacy_taiwan, revolvertaipei

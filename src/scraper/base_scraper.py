@@ -143,6 +143,7 @@ class BaseScraper(ABC):
             return BeautifulSoup(html, 'lxml')
         except Exception as e:
             logger.error(f"Selenium fetch failed for {url}: {e}")
-            return None
+            raise e
+
 
 
