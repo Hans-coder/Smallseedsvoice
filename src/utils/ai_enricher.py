@@ -47,3 +47,43 @@ class AIEnricher:
         except Exception as e:
             logger.error(f"AI Enrichment failed: {e}")
             return ""
+
+    def get_performer_profile(self, performer_name: str) -> dict:
+        """
+        獲取表演者的簡短介紹與 Instagram 帳號。
+        回傳格式: {"description": "...", "ig_handle": "..."}
+        """
+        if not self.model:
+            return {}
+
+        prompt = f"""
+        你是一個台灣獨立音樂資料庫。
+        請幫我尋找樂團/歌手「{performer_name}」的資訊。
+        
+        1. description: 請用「一句話」描述他們的音樂風格或代表作（15-20字內）。如果不認識或沒有特定風格，請回傳空字串。
+        2. ig_handle: 如果你知道他們的 Instagram 帳號（不要加 @），請提供。如果不確定，請回傳空字串。
+        
+        請務必且只能回傳合法的 JSON 格式：
+        {{
+            "description": "...",
+            "ig_handle": "..."
+        }}
+        """
+        try:
+            response = self.model.generate_content(prompt)
+            import json
+            import re
+            
+            # Find JSON block in the response
+            text = response.text.strip()
+            match = re.search(r'\{[^{}]*\}', text)
+            if match:
+                data = json.loads(match.group(0))
+                return {
+                    "description": data.get("description", ""),
+                    "ig_handle": data.get("ig_handle", "")
+                }
+            return {}
+        except Exception as e:
+            logger.error(f"Failed to get profile for {performer_name}: {e}")
+            return {}

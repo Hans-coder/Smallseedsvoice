@@ -40,26 +40,45 @@ class DigestBuilder:
         # 1. Filter & Sort Events
         sorted_events = self._sort_and_filter_events(events, start_date, end_date)
         
-        # 1.5 New Blood Detection
+        # 1.5 New Blood Detection & Performer Profiles
         from src.utils.performer_tracker import PerformerTracker
         tracker = PerformerTracker()
         
         all_performers_this_week = set()
         for event in sorted_events:
-            # Extract performers from dedicated list or activity name
             performers = event.get('performers', [])
             if not performers:
-                # Fallback: Use activity name as a single performer (common for solo artists)
+                performers = [event.get('name') or event.get('activity_name', 'Unknown')]
+            all_performers_this_week.update(performers)
+            
+        # Register them first so update_profile works
+        tracker.update_history(list(all_performers_this_week))
+        
+        for event in sorted_events:
+            performers = event.get('performers', [])
+            if not performers:
                 performers = [event.get('name') or event.get('activity_name', 'Unknown')]
             
             new_blood = tracker.get_new_blood(performers)
             event['is_discovery'] = len(new_blood) > 0
             event['new_artists'] = new_blood
             
-            all_performers_this_week.update(performers)
-        
-        # Update history with found performers
-        tracker.update_history(list(all_performers_this_week))
+            profiles = tracker.get_profiles(performers)
+            
+            # Enrich New Blood via AI
+            for artist in new_blood:
+                if self.enricher and self.enricher.model:
+                    import time
+                    time.sleep(1) # Rate limit protection
+                    profile_data = self.enricher.get_performer_profile(artist)
+                    if profile_data:
+                        desc = profile_data.get('description', '')
+                        handle = profile_data.get('ig_handle', '')
+                        if desc or handle:
+                            tracker.update_profile(artist, description=desc, ig_handle=handle)
+                            profiles[artist.lower()] = {"description": desc, "ig_handle": handle}
+            
+            event['performer_profiles'] = profiles
         
         if not sorted_events:
             return []
@@ -206,7 +225,44 @@ class DigestBuilder:
         # Final prefix
         prefix = hot_prefix or discovery_prefix or "🎸 "
         
-        return f"\n{prefix}[{city}] {name}\n🗓 {time_str} ({weekday}) @ {venue}\n"
+        base_line = f"\n{prefix}[{city}] {name}\n🗓 {time_str} ({weekday}) @ {venue}"
+        
+        # Format performers and profiles
+        profiles = event.get('performer_profiles', {})
+        performers = event.get('performers', [])
+        
+        performer_lines = []
+        if performers:
+            display_names = []
+            desc_lines = []
+            
+            for p in performers:
+                prof = profiles.get(p.lower(), {})
+                handle = prof.get('ig_handle', '')
+                desc = prof.get('description', '')
+                
+                # Use handle if available, otherwise just name
+                if handle:
+                    # Clean handle just in case it starts with @
+                    handle = handle.lstrip('@')
+                    display_names.append(f"@{handle}")
+                else:
+                    display_names.append(p)
+                    
+                # Add description if this is a new artist and has a description
+                if desc and p in event.get('new_artists', []):
+                    desc_lines.append(f"💡 {p}：{desc}")
+                    
+            if display_names and display_names != [name]: # Avoid repeating if name is the same as performer
+                performer_lines.append(f"🎤 演出：{'、'.join(display_names)}")
+                
+            for d in desc_lines:
+                performer_lines.append(d)
+                
+        if performer_lines:
+            return base_line + "\n" + "\n".join(performer_lines) + "\n"
+        
+        return base_line + "\n"
 
     def _extract_city(self, location: str) -> str:
         # 簡單城市提取

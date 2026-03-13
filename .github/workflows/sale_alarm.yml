@@ -12,10 +12,10 @@ jobs:
     
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.9'
           
@@ -24,14 +24,8 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           
-      - name: Install Chrome & Driver
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y chromium-browser chromium-chromedriver
-          sudo ln -sf /usr/lib/chromium-browser/chromedriver /usr/local/bin/chromedriver
-
       - name: Cache Performer History
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: data/events.db
           key: ${{ runner.os }}-performer-history-sale-${{ github.run_id }}
