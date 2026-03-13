@@ -30,7 +30,7 @@ pipelines:
           - "ultrataiwan"     # Ultra Taiwan
           - "springwave_asia" # 春浪
         max_posts: 50
-        enabled: true
+        enabled: false
     
     # 過濾條件
     filters:
@@ -41,7 +41,6 @@ pipelines:
     publishing:
       max_images: 20
       split_text: true        # 超過500字自動拆分
-      template: |
       template: |
         下週免費音樂活動懶人包 ({date_range})
         
@@ -61,7 +60,7 @@ pipelines:
           enabled: true
         - name: "indievox"
           url: "https://www.indievox.com/activity"
-          enabled: false
+          enabled: true
           
     # 發布配置
     publishing:

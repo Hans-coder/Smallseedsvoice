@@ -25,7 +25,7 @@ def main():
     import argparse
     
     parser = argparse.ArgumentParser(description='Official Ticketing Platforms Scraper')
-    parser.add_argument('--platform', type=str, choices=['kktix', 'opentix', 'tixcraft', 'all'], help='Target platform to scrape')
+    parser.add_argument('--platform', type=str, choices=['kktix', 'opentix', 'tixcraft', 'indievox', 'all'], help='Target platform to scrape')
     parser.add_argument('--merge', action='store_true', help='Merge all platform json files into one')
     args = parser.parse_args()
     

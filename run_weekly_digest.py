@@ -141,13 +141,16 @@ def main():
             
             # 過濾條件：免費 OR 大型熱門活動
             relevant_kktix = []
+            skipped_count = 0
             for e in kktix_events:
                 e['is_hot'] = is_hot_event(e)
                 if is_free_event(e) or e['is_hot']:
                     relevant_kktix.append(e)
+                else:
+                    skipped_count += 1
             
             events.extend(relevant_kktix)
-            logger.info(f"Found {len(relevant_kktix)} relevant events from KKTIX (Total: {len(kktix_events)}).")
+            logger.info(f"KKTIX: Found {len(relevant_kktix)} relevant events, skipped {skipped_count} (not free/hot).")
         except Exception as e:
             logger.error(f"KKTIX scrape failed: {e}")
 
@@ -159,15 +162,39 @@ def main():
             
             # 過濾條件：免費 OR 大型熱門活動
             relevant_opentix = []
+            skipped_count = 0
             for e in opentix_events:
                 e['is_hot'] = is_hot_event(e)
                 if is_free_event(e) or e['is_hot']:
                     relevant_opentix.append(e)
+                else:
+                    skipped_count += 1
             
             events.extend(relevant_opentix)
-            logger.info(f"Found {len(relevant_opentix)} relevant events from OPENTIX (Total: {len(opentix_events)}).")
+            logger.info(f"OPENTIX: Found {len(relevant_opentix)} relevant events, skipped {skipped_count} (not free/hot).")
         except Exception as e:
             logger.error(f"OPENTIX scrape failed: {e}")
+            
+        # 4. Indievox Scraper
+        try:
+            logger.info("Scraping Indievox (Table View)...")
+            from src.scraper.ticketing.indievox_scraper import IndievoxScraper
+            indievox_scraper = IndievoxScraper(config.get("scraper", {}))
+            indievox_events = indievox_scraper.scrape_events()
+            
+            relevant_indievox = []
+            skipped_count = 0
+            for e in indievox_events:
+                e['is_hot'] = is_hot_event(e)
+                if is_free_event(e) or e['is_hot']:
+                    relevant_indievox.append(e)
+                else:
+                    skipped_count += 1
+            
+            events.extend(relevant_indievox)
+            logger.info(f"Indievox: Found {len(relevant_indievox)} relevant events, skipped {skipped_count} (not free/hot).")
+        except Exception as e:
+            logger.error(f"Indievox scrape failed: {e}")
 
         if not events:
             logger.warning(f"No events found from any source. Writing empty list to prevent stale data usage.")

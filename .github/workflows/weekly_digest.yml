@@ -30,10 +30,10 @@ jobs:
           sudo apt-get install -y chromium-browser chromium-chromedriver
           sudo ln -sf /usr/lib/chromium-browser/chromedriver /usr/local/bin/chromedriver
 
-      - name: Scrape Instagram, KKTIX, OPENTIX
+      - name: Scrape KKTIX, OPENTIX
         run: python run_weekly_digest.py --step scrape
         
-      - name: Process & Generate Content (KKTIX, OPENTIX, Instagram)
+      - name: Process & Generate Content (KKTIX, OPENTIX)
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: python run_weekly_digest.py --step process

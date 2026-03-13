@@ -39,6 +39,9 @@ jobs:
       - name: Scrape tixCraft
         run: python scripts/scrape_official_platforms.py --platform tixcraft
         
+      - name: Scrape Indievox
+        run: python scripts/scrape_official_platforms.py --platform indievox
+        
       - name: Merge Data
         run: python scripts/scrape_official_platforms.py --merge
         
