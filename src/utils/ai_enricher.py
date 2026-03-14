@@ -1,6 +1,6 @@
 """AI Content Enricher using Gemini"""
 import os
-import google.generativeai as genai
+from google import genai
 from typing import Optional
 from src.utils.logger import setup_logger
 
@@ -10,9 +10,10 @@ class AIEnricher:
     def __init__(self, api_key: Optional[str] = None):
         self.api_key = api_key or os.getenv("GEMINI_API_KEY")
         if self.api_key:
-            genai.configure(api_key=self.api_key)
-            self.model = genai.GenerativeModel('gemini-1.5-flash')
+            self.client = genai.Client(api_key=self.api_key)
+            self.model = 'gemini-2.5-flash'
         else:
+            self.client = None
             self.model = None
             logger.warning("GEMINI_API_KEY not found. AI enrichment will be disabled.")
 
@@ -42,7 +43,7 @@ class AIEnricher:
         """
         
         try:
-            response = self.model.generate_content(prompt)
+            response = self.client.models.generate_content(model=self.model, contents=prompt)
             return response.text.strip() + "\n\n"
         except Exception as e:
             logger.error(f"AI Enrichment failed: {e}")
@@ -70,7 +71,7 @@ class AIEnricher:
         }}
         """
         try:
-            response = self.model.generate_content(prompt)
+            response = self.client.models.generate_content(model=self.model, contents=prompt)
             import json
             import re
             
@@ -87,3 +88,41 @@ class AIEnricher:
         except Exception as e:
             logger.error(f"Failed to get profile for {performer_name}: {e}")
             return {}
+
+    def generate_community_prompt(self, events: list, post_type: str = "digest") -> str:
+        """
+        根據活動列表與貼文類型（ digest 或 radar ），
+        生成一句用於結尾的社群互動問答（CTA）。
+        """
+        if not self.model or not events:
+            return ""
+
+        # Extract some context
+        hot_events = [e.get('name') for e in events if e.get('is_hot', False)][:3]
+        total = len(events)
+        
+        context_str = f"本週共整理 {total} 場活動。"
+        if hot_events:
+            context_str += f" 其中包含熱門活動：{', '.join(hot_events)}。"
+            
+        prompt = f"""
+        你是一位台灣獨立音樂推廣者。請根據以下本週活動脈絡，寫「1 句話」的互動問句（Call to Action），放在貼文最後面讓大家留言討論。
+        
+        活動脈絡：
+        {context_str}
+        
+        要求：
+        1. 語氣像朋友聊天，輕鬆自然。
+        2. 如果有熱門活動，可以針對它提問（例如：有人準備衝 OOO 嗎？）。
+        3. 如果沒有特別的熱門活動，可以問大家這週有沒有推薦的隱藏版好團，或最期待哪場。
+        4. 絕對不可超過 30 個字。
+        5. 不要使用 Hashtag。
+        
+        直接輸出那一句話即可。
+        """
+        try:
+            response = self.client.models.generate_content(model=self.model, contents=prompt)
+            return response.text.strip()
+        except Exception as e:
+            logger.error(f"Failed to generate community prompt: {e}")
+            return ""

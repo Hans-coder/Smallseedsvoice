@@ -76,6 +76,10 @@ class AccupassScraper(BaseScraper):
                 img_tag = element.find('img')
             image_url = img_tag.get('src') if img_tag else None
             
+            # Remove query parameters from thumbnail URLs to get high-res original
+            if image_url and '?' in image_url:
+                image_url = image_url.split('?')[0]
+            
             return {
                 'name': name,
                 'location': location,

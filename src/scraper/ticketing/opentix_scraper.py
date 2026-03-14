@@ -89,6 +89,11 @@ class OpentixScraper(BaseScraper):
                 free_keywords = ["免費", "Free", "0元", "無需購票", "自由入場"]
                 if any(k in full_text for k in free_keywords):
                     detail["price"] = "0"
+            
+            # Extract high-res image from og:image
+            og_img = soup.find('meta', property='og:image')
+            if og_img and og_img.get('content'):
+                detail['image_url'] = og_img.get('content')
                    
             return detail
         except Exception as e:

@@ -105,6 +105,17 @@ def main():
             if e['image_url'].startswith('http'):
                 image_urls.append(e['image_url'])
 
+    # Append AI Community Prompt
+    try:
+        from src.utils.ai_enricher import AIEnricher
+        enricher = AIEnricher()
+        if enricher.model:
+            cta = enricher.generate_community_prompt(selected, post_type="radar")
+            if cta:
+                lines.append(f"\n{cta}")
+    except Exception as e:
+        logger.warning(f"Could not generate community prompt: {e}")
+
     lines.append("#獨立音樂 #LiveHouse #樂團")
     post_text = "\n".join(lines)
     

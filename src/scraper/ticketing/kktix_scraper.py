@@ -176,8 +176,12 @@ class KktixScraper(BaseScraper):
                 free_keywords = ["此活動為免費", "本活動免費", "免費入場", "無需購票", "自由入場", "0元"]
                 if any(k in full_text for k in free_keywords):
                     price = "0"
+            
+            # Extract high-res image from og:image
+            og_img = soup.find('meta', property='og:image')
+            detail_image = og_img.get('content') if og_img else None
 
-            return {"venue_name": venue, "ticket_sale_date": sale_date, "price": price}
+            return {"venue_name": venue, "ticket_sale_date": sale_date, "price": price, "image_url": detail_image}
         except Exception as e:
             logger.warning(f"Failed to fetch detail for {url}: {e}")
             return {}

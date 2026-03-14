@@ -53,7 +53,11 @@ jobs:
       - name: Generate Manual Guide
         run: python preview_generator.py
 
-      - name: Archive Digest Data
+      - name: Generate Performance Dashboard
+        if: always()
+        run: python scripts/generate_dashboard.py
+
+      - name: Archive Digest Data & Dashboard
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -63,8 +67,10 @@ jobs:
              data/preview_cache/
              data/digest_raw.json
              data/digest_posts.json
+             data/scraping_errors.json
+             data/dashboard.html
           retention-days: 7
 
       - name: Cleanup
         if: always()
-        run: rm -rf data/preview_cache/ preview.html
+        run: rm -rf data/preview_cache/ preview.html data/dashboard.html

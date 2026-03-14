@@ -126,7 +126,19 @@ class DigestBuilder:
         if current_text:
             posts.append({'text': current_text.strip(), 'images': current_images})
             
-        # 4. Redistribute Images (Optional optimization)
+        # 4. Integrate AI Community Prompt
+        if self.enricher and posts:
+            cta = self.enricher.generate_community_prompt(sorted_events, post_type="digest")
+            if cta:
+                # Append to the last post
+                post_to_append = posts[-1]
+                if len(post_to_append['text']) + len(cta) + 4 <= self.max_chars:
+                    post_to_append['text'] += f"\n\n{cta}"
+                else:
+                    # Create a new mini-post if the last one was too full
+                    posts.append({'text': cta, 'images': []})
+
+        # 5. Redistribute Images (Optional optimization)
         # Threads allows mixing text and images. 
         # We need to ensure no post has > 10 images (Threads limit per carousel is 10, typically).
         # And total conversation limit? Actually Threads allows images in replies.
@@ -273,8 +285,16 @@ class DigestBuilder:
         return "台灣"
 
     def _get_weekday_zh(self, time_str: str) -> str:
-        # TODO: 依賴 DataProcessor 解析出的準確 datetime
-        return "週?"
+        if not time_str:
+            return ""
+        try:
+            from dateutil import parser
+            # Parse the date part to find the weekday
+            dt = parser.parse(time_str.split(' ')[0], fuzzy=True)
+            weekdays = ['一', '二', '三', '四', '五', '六', '日']
+            return f"週{weekdays[dt.weekday()]}"
+        except Exception:
+            return ""
 
     def _enforce_image_limits(self, posts: List[Dict]):
         # "每個活動僅使用 1 張圖片"
