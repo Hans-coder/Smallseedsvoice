@@ -69,7 +69,11 @@ def main():
         # Deduplication Logic
         unique_events = {}
         for e in merged_events:
-            unique_events[e['activity_id']] = e
+            aid = e.get('activity_id')
+            if aid:
+                unique_events[aid] = e
+            else:
+                logger.warning(f"Skipping event with missing activity_id: {e.get('name', 'Unknown')}")
         
         final_list = list(unique_events.values())
         
@@ -138,15 +142,6 @@ def main():
                     json.dump(indievox_events, f, indent=4, ensure_ascii=False)
                 logger.info(f"Saved {len(indievox_events)} Indievox events")
             else:
-                # Convert Indievox format to Official format if necessary
-                # Indievox uses 'activity_name', 'source', 'venue'
-                # KKTIX/TixCraft uses 'name', 'ticket_url', 'venue_name'
-                for e in indievox_events:
-                    e['name'] = e.get('activity_name', 'Unknown')
-                    e['ticket_url'] = e.get('source')
-                    e['venue_name'] = e.get('venue', 'Unknown')
-                    e['ticket_platform'] = 'Indievox'
-                    e['activity_id'] = f"indievox_{e['name']}_{e['date']}"
                 events.extend(indievox_events)
                 
         except Exception as e:
@@ -173,7 +168,11 @@ def main():
     if platform == 'all':
         unique_events = {}
         for e in events:
-            unique_events[e['activity_id']] = e
+            aid = e.get('activity_id')
+            if aid:
+                unique_events[aid] = e
+            else:
+                 logger.warning(f"Skipping event with missing activity_id: {e.get('name', 'Unknown')}")
         
         final_list = list(unique_events.values())
         

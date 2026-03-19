@@ -163,15 +163,17 @@ def generate_html(official, radar, digest):
         html += f"<h2>Official Platform Events (剩餘售票資訊)</h2><div class='section'><div class='event-grid'>"
         for e in official:
             img_src = download_image(e.get('image_url'))
+            name = e.get('name') or e.get('activity_name', 'Unknown')
+            venue = e.get('venue_name') or e.get('venue', 'Unknown')
             html += f"""
             <div class="card">
                 <img src="{img_src}" class="card-img" loading="lazy">
                 <div class="card-content">
-                    <span class="tag tag-official">{e.get('ticket_platform')}</span>
-                    <div class="title">{e.get('activity_name')}</div>
+                    <span class="tag tag-official">{e.get('ticket_platform', 'Unknown')}</span>
+                    <div class="title">{name}</div>
                     <div class="info">📅 {e.get('date')}</div>
-                    <div class="info">📍 {e.get('venue_name')}</div>
-                    <a href="{e.get('ticket_url')}" class="link-btn" target="_blank">View Site ↗</a>
+                    <div class="info">📍 {venue}</div>
+                    <a href="{e.get('ticket_url', e.get('source'))}" class="link-btn" target="_blank">View Site ↗</a>
                 </div>
             </div>
             """
@@ -182,15 +184,17 @@ def generate_html(official, radar, digest):
         html += f"<h2>Radar Events (最新探索)</h2><div class='section'><div class='event-grid'>"
         for e in radar:
             img_src = download_image(e.get('image_url'))
+            name = e.get('activity_name') or e.get('name', 'Unknown')
+            venue = e.get('venue') or e.get('venue_name', 'Unknown')
             html += f"""
             <div class="card">
                 <img src="{img_src}" class="card-img" loading="lazy">
                 <div class="card-content">
-                    <span class="tag tag-radar">{e.get('venue')}</span>
-                    <div class="title">{e.get('activity_name')}</div>
+                    <span class="tag tag-radar">{venue}</span>
+                    <div class="title">{name}</div>
                     <div class="info">📅 {e.get('date')}</div>
                     <div class="info">💰 {e.get('is_free')}</div>
-                    <a href="{e.get('source')}" class="link-btn" target="_blank">Source Link ↗</a>
+                    <a href="{e.get('source', e.get('ticket_url'))}" class="link-btn" target="_blank">Source Link ↗</a>
                 </div>
             </div>
             """

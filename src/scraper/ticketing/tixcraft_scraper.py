@@ -88,6 +88,11 @@ class TixCraftScraper(BaseScraper):
                         elif label == "票價":
                             detail["price"] = value
 
+            # Extract high-res image from og:image
+            og_img = soup.find('meta', property='og:image')
+            if og_img and og_img.get('content'):
+                detail["image_url"] = og_img.get('content')
+                
             return detail
         except Exception as e:
             logger.warning(f"Failed to fetch detail for {url}: {e}")

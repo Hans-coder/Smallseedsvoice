@@ -58,10 +58,32 @@ class StreetVoiceScraper(BaseScraper):
             for item in items:
                 event_data = self.parse_event(item, current_date_str)
                 if event_data:
+                    # Fetch high-res image from detail page
+                    if event_data.get('source_url'):
+                        detail = self._fetch_detail(event_data['source_url'])
+                        if detail:
+                            event_data.update(detail)
                     all_events.append(event_data)
                 
         logger.info(f"StreetVoice: Scraped {len(all_events)} events")
         return all_events
+
+    def _fetch_detail(self, url: str) -> Dict:
+        """Fetch detail page for high-res image."""
+        try:
+            # StreetVoice activity page is usually simple and has og:image
+            soup = self.fetch_page(url)
+            if not soup: return {}
+            
+            detail = {}
+            og_img = soup.find('meta', property='og:image')
+            if og_img and og_img.get('content'):
+                detail["image_url"] = og_img.get('content')
+                
+            return detail
+        except Exception as e:
+            logger.warning(f"Failed to fetch StreetVoice detail for {url}: {e}")
+            return {}
 
     def parse_event(self, element, date_str: Optional[str]) -> Optional[Dict]:
         """Parse a single StreetVoice activity item"""

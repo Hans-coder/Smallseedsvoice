@@ -162,5 +162,15 @@ def main():
         else:
             logger.error("❌ Alarm Post Failed")
 
+    if post_id or dry_run:
+        # Save post text for Discord
+        try:
+            os.makedirs("data", exist_ok=True)
+            with open("data/sale_post.txt", "w", encoding="utf-8") as f:
+                f.write(post_text)
+            logger.info("Saved sale post text to data/sale_post.txt")
+        except Exception as e:
+            logger.warning(f"Failed to save sale post text: {e}")
+
 if __name__ == "__main__":
     main()

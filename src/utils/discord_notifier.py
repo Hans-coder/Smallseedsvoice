@@ -71,3 +71,37 @@ class DiscordNotifier:
                     "image": {"url": img_url}
                 })
         return self.send_message(content=formatted_text, embeds=embeds)
+
+    def send_file(self, file_path: str, content: str = None):
+        """
+        Upload a file to Discord.
+        """
+        import os
+        if not self.webhook_url:
+            logger.warning("Discord Webhook URL not configured.")
+            return False
+
+        if not os.path.exists(file_path):
+            logger.error(f"File not found: {file_path}")
+            return False
+
+        payload = {}
+        if content:
+            payload["payload_json"] = json.dumps({"content": content})
+
+        try:
+            with open(file_path, 'rb') as f:
+                files = {
+                    'file': (os.path.basename(file_path), f)
+                }
+                response = requests.post(
+                    self.webhook_url,
+                    data=payload,
+                    files=files,
+                    timeout=30
+                )
+                response.raise_for_status()
+            return True
+        except Exception as e:
+            logger.error(f"Failed to upload file to Discord: {e}")
+            return False

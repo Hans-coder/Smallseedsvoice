@@ -102,15 +102,20 @@ class IndievoxScraper(BaseScraper):
             # For now, stick with what we can get or leave None.
             image_url = None 
             
+            # ID: Platform + Name + Date
+            activity_id = f"indievox_{name}_{date}"
+            
             return {
-                "activity_name": name,
+                "activity_id": activity_id,
+                "name": name,
                 "performers": [],
                 "date": date,
                 "time": "Unknown",
-                "venue": venue,
+                "venue_name": venue,
                 "city": "Unknown",
                 "is_free": "unknown",
-                "source": event_url,
+                "ticket_platform": "Indievox",
+                "ticket_url": event_url,
                 "image_url": image_url,
                 "note": "Scraped from Indievox (Table View)",
                 "reliability": "official"

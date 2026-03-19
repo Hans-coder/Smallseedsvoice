@@ -142,10 +142,15 @@ def main():
     else:
         post_id = poster.create_post(post_text)
         
-    if post_id:
-        logger.info(f"Radar posted successfully: {post_id}")
-    else:
-        logger.error("Failed to post radar.")
+    if post_id or dry_run:
+        # Save post text for Discord
+        try:
+            os.makedirs("data", exist_ok=True)
+            with open("data/radar_post.txt", "w", encoding="utf-8") as f:
+                f.write(post_text)
+            logger.info("Saved radar post text to data/radar_post.txt")
+        except Exception as e:
+            logger.warning(f"Failed to save post text: {e}")
 
 if __name__ == "__main__":
     main()

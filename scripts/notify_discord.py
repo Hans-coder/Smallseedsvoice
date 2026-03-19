@@ -103,11 +103,22 @@ def main():
             notifier.send_message(content=header + "ℹ️ **樂團雷達站更新**\n本次搜尋沒有發現新的活動資料。")
             return
             
-        summary = header + f"📡 **樂團雷達站更新**\n發現了 {len(events)} 場新的活動！請查看 GitHub Artifacts 中的 `preview.html` 進行手動發布。"
-        if notifier.send_message(content=summary):
-            logger.info("✅ Radar notification sent.")
-        else:
-            logger.error("❌ Failed to send radar notification.")
+        summary = header + f"📡 **樂團雷達站更新**\n發現了 {len(events)} 場新的活動！"
+        notifier.send_message(content=summary)
+        
+        # Upload Preview HTML
+        if os.path.exists("preview.html"):
+            notifier.send_file("preview.html", content="📄 **排版預覽檔 (HTML)**: 可下載後於瀏覽器開啟。")
+
+        # Send Formatted Post Text for easy copying
+        post_text_file = Path("data/radar_post.txt")
+        if post_text_file.exists():
+            with open(post_text_file, 'r', encoding='utf-8') as f:
+                post_text = f.read()
+            notifier.send_radar_post(post_text, []) # We already have images listed in original posts or artifact
+            logger.info("✅ Radar post text sent.")
+        
+        logger.info("✅ Radar notifications done.")
 
     elif args.type == 'sale':
         logger.info("🚨 Checking for sale events...")
@@ -124,11 +135,23 @@ def main():
             notifier.send_message(content=header + "ℹ️ **售票情報更新**\n本次搜尋沒有發現新的售票資訊。")
             return
 
-        summary = header + f"🚨 **售票情報更新**\n發現了 {len(events)} 筆售票資訊！詳情請見預覽檔。"
-        if notifier.send_message(content=summary):
-            logger.info("✅ Sale notification sent.")
-        else:
-            logger.error("❌ Failed to send sale notification.")
+        summary = header + f"🚨 **售票情報更新**\n發現了 {len(events)} 筆售票資訊！"
+        notifier.send_message(content=summary)
+
+        # Upload Preview HTML
+        if os.path.exists("preview.html"):
+            notifier.send_file("preview.html", content="📄 **售票情報預覽 (HTML)**: 可下載後開啟。")
+
+        # Send Formatted Post Text
+        post_text_file = Path("data/sale_post.txt")
+        if post_text_file.exists():
+            with open(post_text_file, 'r', encoding='utf-8') as f:
+                post_text = f.read()
+            # Use general formatting for sale alarm
+            notifier.send_message(content=f"**[售票情報內文預覽]**\n```\n{post_text}\n```")
+            logger.info("✅ Sale post text sent.")
+
+        logger.info("✅ Sale notifications done.")
 
 if __name__ == "__main__":
     main()
