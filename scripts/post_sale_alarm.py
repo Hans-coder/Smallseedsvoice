@@ -118,7 +118,8 @@ def main():
         lines.append(f"🔥 **明天 ({tomorrow_str}) 開賣：**")
         for i, event in enumerate(urgent_events, 1):
             sale_time = event['ticket_sale_date'].split(' ')[-1] if ' ' in event['ticket_sale_date'] else "時間待定"
-            line = f"{i}. {event['activity_name']}\n   ⏰ {sale_time} | 🔗 {event['ticket_url']}"
+            name = event.get('name') or event.get('activity_name', 'Unknown')
+            line = f"{i}. {name}\n   ⏰ {sale_time} | 🔗 {event['ticket_url']}"
             lines.append(line)
             
             # Images (Prioritize urgent)
@@ -163,14 +164,16 @@ def main():
             logger.error("❌ Alarm Post Failed")
 
     if post_id or dry_run:
-        # Save post text for Discord
+        # Save post data for Discord
         try:
             os.makedirs("data", exist_ok=True)
-            with open("data/sale_post.txt", "w", encoding="utf-8") as f:
-                f.write(post_text)
-            logger.info("Saved sale post text to data/sale_post.txt")
+            # Standardize to a list of posts
+            posts_data = [{"text": post_text, "images": image_urls}]
+            with open("data/sale_posts.json", "w", encoding="utf-8") as f:
+                json.dump(posts_data, f, indent=4, ensure_ascii=False)
+            logger.info("Saved sale posts data to data/sale_posts.json")
         except Exception as e:
-            logger.warning(f"Failed to save sale post text: {e}")
+            logger.warning(f"Failed to save sale posts JSON: {e}")
 
 if __name__ == "__main__":
     main()

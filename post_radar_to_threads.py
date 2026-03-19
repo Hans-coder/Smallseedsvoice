@@ -90,14 +90,14 @@ def main():
         # Format:
         # 1. Band Name/Event
         # 🗓 Date @ Venue
-        name = e['activity_name']
-        date = e['date']
-        venue = e['venue']
+        name = e.get('name') or e.get('activity_name', 'Unknown')
+        date = e.get('date', 'Unknown')
+        venue = e.get('venue_name') or e.get('venue', 'Unknown')
         
         lines.append(f"{i}. {name}")
         lines.append(f"   🗓 {date} @ {venue}")
-        if e.get('source'):
-             lines.append(f"   🔗 {e['source']}")
+        if e.get('source') or e.get('source_url'):
+             lines.append(f"   🔗 {e.get('source') or e.get('source_url')}")
         lines.append("") # Empty line
         
         # Images
@@ -143,14 +143,16 @@ def main():
         post_id = poster.create_post(post_text)
         
     if post_id or dry_run:
-        # Save post text for Discord
+        # Save post data for Discord
         try:
             os.makedirs("data", exist_ok=True)
-            with open("data/radar_post.txt", "w", encoding="utf-8") as f:
-                f.write(post_text)
-            logger.info("Saved radar post text to data/radar_post.txt")
+            # Standardize to a list of posts to match digest format
+            posts_data = [{"text": post_text, "images": image_urls}]
+            with open("data/radar_posts.json", "w", encoding="utf-8") as f:
+                json.dump(posts_data, f, indent=4, ensure_ascii=False)
+            logger.info("Saved radar posts data to data/radar_posts.json")
         except Exception as e:
-            logger.warning(f"Failed to save post text: {e}")
+            logger.warning(f"Failed to save radar posts JSON: {e}")
 
 if __name__ == "__main__":
     main()

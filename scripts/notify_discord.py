@@ -90,66 +90,54 @@ def main():
 
     elif args.type == 'radar':
         logger.info("📡 Checking for radar events...")
-        radar_file = Path("data/radar_events.json")
+        radar_file = Path("data/radar_posts.json")
         if not radar_file.exists():
             logger.warning(f"⚠️ {radar_file} not found. Skipping radar notification.")
             return
         
         with open(radar_file, 'r', encoding='utf-8') as f:
-            events = json.load(f)
+            posts = json.load(f)
         
-        if not events:
-            logger.info("ℹ️ No radar events found. Sending status to Discord.")
+        if not posts:
+            logger.info("ℹ️ No radar posts found. Sending status to Discord.")
             notifier.send_message(content=header + "ℹ️ **樂團雷達站更新**\n本次搜尋沒有發現新的活動資料。")
             return
             
-        summary = header + f"📡 **樂團雷達站更新**\n發現了 {len(events)} 場新的活動！"
-        notifier.send_message(content=summary)
+        notifier.send_message(content=header + f"📡 **樂團雷達站更新**: 準備了 {len(posts)} 則貼文。")
         
-        # Upload Preview HTML
-        if os.path.exists("preview.html"):
-            notifier.send_file("preview.html", content="📄 **排版預覽檔 (HTML)**: 可下載後於瀏覽器開啟。")
-
-        # Send Formatted Post Text for easy copying
-        post_text_file = Path("data/radar_post.txt")
-        if post_text_file.exists():
-            with open(post_text_file, 'r', encoding='utf-8') as f:
-                post_text = f.read()
-            notifier.send_radar_post(post_text, []) # We already have images listed in original posts or artifact
-            logger.info("✅ Radar post text sent.")
+        for i, post in enumerate(posts, 1):
+            # Send as Post + Image
+            notifier.send_radar_post(post['text'], post['images'])
+            logger.info(f"✅ Radar post #{i} sent.")
         
         logger.info("✅ Radar notifications done.")
 
     elif args.type == 'sale':
         logger.info("🚨 Checking for sale events...")
-        sale_file = Path("data/official_events.json")
+        sale_file = Path("data/sale_posts.json")
         if not sale_file.exists():
              logger.warning(f"⚠️ {sale_file} not found. Skipping sale notification.")
              return
         
         with open(sale_file, 'r', encoding='utf-8') as f:
-            events = json.load(f)
+            posts = json.load(f)
             
-        if not events:
-            logger.info("ℹ️ No sale events found. Sending status to Discord.")
+        if not posts:
+            logger.info("ℹ️ No sale posts found. Sending status to Discord.")
             notifier.send_message(content=header + "ℹ️ **售票情報更新**\n本次搜尋沒有發現新的售票資訊。")
             return
 
-        summary = header + f"🚨 **售票情報更新**\n發現了 {len(events)} 筆售票資訊！"
-        notifier.send_message(content=summary)
+        notifier.send_message(content=header + f"🚨 **售票情報更新**: 準備了 {len(posts)} 則貼文。")
 
-        # Upload Preview HTML
-        if os.path.exists("preview.html"):
-            notifier.send_file("preview.html", content="📄 **售票情報預覽 (HTML)**: 可下載後開啟。")
-
-        # Send Formatted Post Text
-        post_text_file = Path("data/sale_post.txt")
-        if post_text_file.exists():
-            with open(post_text_file, 'r', encoding='utf-8') as f:
-                post_text = f.read()
-            # Use general formatting for sale alarm
-            notifier.send_message(content=f"**[售票情報內文預覽]**\n```\n{post_text}\n```")
-            logger.info("✅ Sale post text sent.")
+        for i, post in enumerate(posts, 1):
+            # Send as Post + Image
+            content = f"**[售票情報內文預覽]**\n```\n{post['text']}\n```"
+            embeds = []
+            if post.get('images'):
+                 for img_url in post['images'][:10]:
+                     embeds.append({"image": {"url": img_url}})
+            notifier.send_message(content=content, embeds=embeds)
+            logger.info(f"✅ Sale post #{i} sent.")
 
         logger.info("✅ Sale notifications done.")
 
