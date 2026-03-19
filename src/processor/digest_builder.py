@@ -222,11 +222,18 @@ class DigestBuilder:
         venue = location 
         
         # Time/Date handling
-        time_str = event.get('time')
-        if not time_str and event.get('date'):
-            time_str = event['date']
+        # Normalize Time/Date
+        time_val = event.get('time')
+        date_val = event.get('date')
+        
+        # Use specific time if valid, otherwise fallback to date
+        if not time_val or time_val == "Unknown":
+            time_str = date_val or "時間待定"
+        else:
+            time_str = time_val
             
-        weekday = self._get_weekday_zh(time_str) 
+        # Always parse weekday from date for reliability
+        weekday = self._get_weekday_zh(date_val) if date_val else ""
 
         # 熱門活動標籤
         hot_prefix = "🔥 [熱門盛事] " if event.get('is_hot') else ""

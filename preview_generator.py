@@ -127,15 +127,67 @@ def generate_html(official, radar, digest):
         <div id="toast"></div>
     """
     
+    # --- Shared Formatting Helper ---
+    def format_fallback_post(events, title, platform_key, url_key='ticket_url'):
+        if not events: return ""
+        lines = [f"【{title}】"]
+        imgs = []
+        for i, e in enumerate(events, 1):
+            name = e.get('name') or e.get('activity_name', 'Unknown')
+            date = e.get('date', 'Unknown')
+            venue_name = e.get('venue_name') or e.get('venue', 'Unknown')
+            url = e.get(url_key) or e.get('source', '')
+            platform = e.get(platform_key, 'Official')
+            
+            # Simple weekday guess
+            try:
+                from dateutil import parser
+                dt = parser.parse(date)
+                weekdays = ['一', '二', '三', '四', '五', '六', '日']
+                wd = f" (週{weekdays[dt.weekday()]})"
+            except: wd = ""
+            
+            lines.append(f"{i}. {name}")
+            lines.append(f"   🗓 {date}{wd} @ {venue_name}")
+            if url: lines.append(f"   🔗 {url}")
+            lines.append("")
+            
+            if e.get('image_url'): imgs.append(e['image_url'])
+        
+        lines.append("#獨立音樂 #LiveHouse #音樂祭")
+        text = "\n".join(lines)
+        js_safe_text = text.replace('`', '\\`').replace('${', '\\${')
+        
+        section_html = f"<h2>{title} 更新</h2><div class='section'>"
+        section_html += f"""
+        <div class="post-container">
+            <div class="post-header">
+                <strong>{title} 全文草稿 (一鍵複製)</strong>
+                <button class="copy-btn" onclick="copyText(this, `{js_safe_text}`)">Copy All</button>
+            </div>
+            <div class="post-body">
+                <div class="post-text">{text}</div>
+                <strong>圖片預覽 ({len(imgs)}):</strong>
+                <div class="image-grid">
+        """
+        for img_url in imgs[:20]:
+            local_img = download_image(img_url)
+            section_html += f"""
+            <div class="image-item" onclick="openImage('{img_url}')">
+                <img src="{local_img}" loading="lazy">
+                <div class="image-url">{img_url}</div>
+            </div>
+            """
+        section_html += "</div></div></div></div>"
+        return section_html
+
     # 1. Weekly Digest Section
     if digest:
         html += "<h2>Weekly Digest Posts (本週懶人包)</h2><div class='section'>"
         for idx, post in enumerate(digest):
             post_id = f"digest-{idx}"
             display_text = post['text']
-            # Escape backticks for JS template literal
             js_safe_text = display_text.replace('`', '\\`').replace('${', '\\${')
-            
             html += f"""
             <div class="post-container">
                 <div class="post-header">
@@ -159,46 +211,10 @@ def generate_html(official, radar, digest):
         html += "</div>"
 
     # 2. Official Events Section
-    if official:
-        html += f"<h2>Official Platform Events (剩餘售票資訊)</h2><div class='section'><div class='event-grid'>"
-        for e in official:
-            img_src = download_image(e.get('image_url'))
-            name = e.get('name') or e.get('activity_name', 'Unknown')
-            venue = e.get('venue_name') or e.get('venue', 'Unknown')
-            html += f"""
-            <div class="card">
-                <img src="{img_src}" class="card-img" loading="lazy">
-                <div class="card-content">
-                    <span class="tag tag-official">{e.get('ticket_platform', 'Unknown')}</span>
-                    <div class="title">{name}</div>
-                    <div class="info">📅 {e.get('date')}</div>
-                    <div class="info">📍 {venue}</div>
-                    <a href="{e.get('ticket_url', e.get('source'))}" class="link-btn" target="_blank">View Site ↗</a>
-                </div>
-            </div>
-            """
-        html += "</div></div>"
+    html += format_fallback_post(official, "官方售票情報", 'ticket_platform')
 
     # 3. Radar Events Section
-    if radar:
-        html += f"<h2>Radar Events (最新探索)</h2><div class='section'><div class='event-grid'>"
-        for e in radar:
-            img_src = download_image(e.get('image_url'))
-            name = e.get('activity_name') or e.get('name', 'Unknown')
-            venue = e.get('venue') or e.get('venue_name', 'Unknown')
-            html += f"""
-            <div class="card">
-                <img src="{img_src}" class="card-img" loading="lazy">
-                <div class="card-content">
-                    <span class="tag tag-radar">{venue}</span>
-                    <div class="title">{name}</div>
-                    <div class="info">📅 {e.get('date')}</div>
-                    <div class="info">💰 {e.get('is_free')}</div>
-                    <a href="{e.get('source', e.get('ticket_url'))}" class="link-btn" target="_blank">Source Link ↗</a>
-                </div>
-            </div>
-            """
-        html += "</div></div>"
+    html += format_fallback_post(radar, "樂團雷達站", 'venue', 'source')
         
     if not (digest or official or radar):
         html += "<p style='text-align:center;'>No data found. Please run scrapers first.</p>"

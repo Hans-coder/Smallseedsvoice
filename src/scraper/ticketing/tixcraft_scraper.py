@@ -138,7 +138,7 @@ class TixCraftScraper(BaseScraper):
 
             return {
                 "activity_id": activity_id,
-                "activity_name": name,
+                "name": name,
                 "activity_type": "concert",
                 "performers": [],
                 "date": date_iso,
