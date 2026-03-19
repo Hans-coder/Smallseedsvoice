@@ -135,13 +135,14 @@ class StreetVoiceScraper(BaseScraper):
                         image_url = img_tag.get('data-src') or img_tag.get('lazy-src')
 
             return {
-                'activity_name': name,
+                'name': name,
                 'date': date_str,
                 'time': time_val,
-                'venue': venue,
+                'venue_name': venue,
                 'city': city,
                 'performers': performers,
                 'source_url': link,
+                'ticket_url': link,
                 'image_url': image_url,
                 'source': 'StreetVoice',
                 'is_free': 'unknown'

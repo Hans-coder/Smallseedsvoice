@@ -119,14 +119,18 @@ def main():
 #    except Exception as e:
 #        logger.error(f"Instagram scraping section failed: {e}")
 
-    # Deduplication (by source URL)
+    # Deduplication (by URL or Name+Date+Venue)
     unique_events = {}
     for e in radar_events:
-        if e.get('source'):
-            unique_events[e['source']] = e
+        # Use URL if available
+        url = e.get('ticket_url') or e.get('source_url') or e.get('source')
+        if url and str(url).startswith('http'):
+            unique_events[url] = e
         else:
-            # Fallback dedup key
-            key = f"{e['activity_name']}_{e['date']}"
+            name = e.get('name') or e.get('activity_name', 'Unknown')
+            date = e.get('date', 'Unknown')
+            venue = e.get('venue_name') or e.get('venue', 'Unknown')
+            key = f"{name}_{date}_{venue}"
             unique_events[key] = e
             
     final_list = list(unique_events.values())
