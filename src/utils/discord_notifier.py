@@ -58,18 +58,23 @@ class DiscordNotifier:
 
         return self.send_message(content=formatted_text, embeds=embeds)
 
-    def send_radar_post(self, text: str, images: list):
+    def send_standard_post(self, title: str, text: str, images: list = None):
         """
-        Specialized method for radar events.
+        Unified method for sending formatted posts to Discord.
         """
-        formatted_text = f"**[樂團雷達站]**\n```\n{text}\n```"
+        # Format text in a code block for easy copy-pasting
+        formatted_text = f"**[{title}]**\n```\n{text}\n```"
+        
         embeds = []
         if images:
+            # Discord limit is 10 embeds per message
             for img_url in images[:10]:
-                embeds.append({
-                    "url": "https://threads.net",
-                    "image": {"url": img_url}
-                })
+                if img_url and str(img_url).startswith('http'):
+                     embeds.append({
+                         "url": "https://threads.net", 
+                         "image": {"url": img_url}
+                     })
+
         return self.send_message(content=formatted_text, embeds=embeds)
 
     def send_file(self, file_path: str, content: str = None):

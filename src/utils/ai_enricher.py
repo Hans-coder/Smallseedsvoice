@@ -11,7 +11,7 @@ class AIEnricher:
         self.api_key = api_key or os.getenv("GEMINI_API_KEY")
         if self.api_key:
             self.client = genai.Client(api_key=self.api_key)
-            self.model = 'gemini-2.5-flash'
+            self.model = 'gemini-1.5-flash' # Using a stable model name
         else:
             self.client = None
             self.model = None

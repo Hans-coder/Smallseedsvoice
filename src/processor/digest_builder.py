@@ -91,7 +91,7 @@ class DigestBuilder:
         posts = []
         
         # Initialize first post with cover text
-        cover_text = self._generate_cover_text(start_date, end_date, len(sorted_events))
+        cover_text = self._generate_cover_text(start_date, end_date, len(sorted_events), sorted_events)
         current_text = cover_text
         current_images = []
         
@@ -181,13 +181,13 @@ class DigestBuilder:
         # For MVP, let's return a single group "本週活動"
         return {"本週活動": events}
 
-    def _generate_cover_text(self, start: datetime, end: datetime, count: int) -> str:
+    def _generate_cover_text(self, start: datetime, end: datetime, count: int, events: List[Dict]) -> str:
         date_str = f"{start.strftime('%m/%d')} - {end.strftime('%m/%d')}"
         
         # Try AI generation first
         if self.enricher and self.enricher.model:
             # 識別熱門活動名稱以供 AI 參考
-            hot_titles = [e.get('name') for e in sorted_events if e.get('is_hot')]
+            hot_titles = [e.get('name') or e.get('activity_name') for e in events if e.get('is_hot')]
             hot_context = f"本週包含大型活動：{', '.join(hot_titles)}" if hot_titles else ""
             
             prompt = f"""
@@ -206,10 +206,17 @@ class DigestBuilder:
             4. 結尾要引導大家看下面的整理。
             """
             try:
-                ai_text = self.enricher.model.generate_content(prompt).text.strip()
+                # Use the enricher's client to generate content
+                response = self.enricher.client.models.generate_content(
+                    model=self.enricher.model, 
+                    contents=prompt
+                )
+                ai_text = response.text.strip()
                 return f"{ai_text}\n\n(詳細整理如下 👇)"
-            except Exception:
-                pass
+            except Exception as e:
+                from src.utils.logger import setup_logger
+                logger = setup_logger("digest_builder_ai")
+                logger.warning(f"AI cover text generation failed: {e}")
                 
         # Fallback
         return f"下週免費音樂活動懶人包 ({date_str})\n\n這週很熱鬧，共整理了 {count} 場免費演出！\n詳細資訊請看留言 👇"

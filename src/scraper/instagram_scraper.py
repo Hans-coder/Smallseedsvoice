@@ -426,7 +426,7 @@ class InstagramScraper:
                 logger.warning(f"獲取圖片URL時出錯: {str(e)}")
             
             if image_url:
-                return super().download_image(image_url, save_path)
+                return self.download_image(image_url, save_path)
             return False
         except Exception as e:
             logger.error(f"下載Instagram圖片失敗: {str(e)}")
