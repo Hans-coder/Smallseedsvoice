@@ -135,6 +135,65 @@ def main():
             
     final_list = list(unique_events.values())
     
+    # 3. AI Enrichment (Spotlight recent performers)
+    logger.info("Enriching radar events with AI Spotlight...")
+    try:
+        from src.utils.ai_enricher import AIEnricher
+        from src.utils.performer_tracker import PerformerTracker
+        
+        enricher = AIEnricher()
+        tracker = PerformerTracker()
+        
+        # Sort by date
+        sorted_events = sorted(final_list, key=lambda x: x.get('date') or '9999-99-99')
+        
+        # Filter for future events starting from today
+        today = datetime.now().strftime("%Y-%m-%d")
+        upcoming = [e for e in sorted_events if e.get('date') and e['date'] >= today][:10]
+        
+        spotlight_count = 0
+        for e in upcoming:
+            if spotlight_count >= 3: break
+            
+            # Extract performers
+            # SV has performers list, Indievox might have it in name
+            performers = e.get('performers', [])
+            if not performers:
+                name = e.get('name') or e.get('activity_name', '')
+                if '：' in name: performers = [name.split('：')[1].strip()]
+                elif '｜' in name: performers = [name.split('｜')[0].strip()]
+                elif ' w/ ' in name: performers = [p.strip() for p in name.split(' w/ ')]
+                else: performers = [name]
+            
+            if performers:
+                artist = performers[0]
+                # Avoid generic titles
+                if len(artist) > 20 or artist in ["BTC 蛻變密碼"]: continue
+                
+                # Check tracker (cache)
+                profiles = tracker.get_profiles([artist])
+                profile = profiles.get(artist.lower())
+                
+                if not profile or not profile.get('description'):
+                    # Fetch from AI
+                    logger.info(f"Fetching AI profile for: {artist}")
+                    profile = enricher.get_performer_profile(artist)
+                    if profile and profile.get('description'):
+                        tracker.update_history([artist])
+                        tracker.update_profile(artist, description=profile['description'], ig_handle=profile.get('ig_handle'))
+                
+                if profile and profile.get('description'):
+                    e['spotlight'] = {
+                        "performer": artist,
+                        "description": profile['description'],
+                        "ig_handle": profile.get('ig_handle')
+                    }
+                    spotlight_count += 1
+                    logger.info(f"Added spotlight for {artist}")
+                    
+    except Exception as e:
+        logger.warning(f"AI Spotlight enrichment failed: {e}")
+
     # Save Output
     output_path = "data/radar_events.json"
     with open(output_path, "w", encoding="utf-8") as f:

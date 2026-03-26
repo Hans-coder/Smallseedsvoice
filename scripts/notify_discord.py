@@ -33,7 +33,24 @@ def format_raw_events_to_text(events, type_name):
     if not events:
         return "本次無抓取到符合條件的活動。"
     
+    # 提取有 Spotlight 的活動
+    spotlights = [e.get('spotlight') for e in events if e.get('spotlight')]
+    
     lines = [f"【{type_name} - 原始資料摘要】", ""]
+    
+    if spotlights:
+        lines.append("✨ **演出者特別介紹** ✨")
+        for s in spotlights:
+            performer = s.get('performer')
+            desc = s.get('description')
+            ig = s.get('ig_handle')
+            ig_str = f" (IG: @{ig})" if ig else ""
+            lines.append(f"🎸 **{performer}**{ig_str}")
+            lines.append(f"   💡 {desc}")
+        lines.append("-" * 20)
+        lines.append("")
+
+    lines.append("📅 **活動列表**")
     for i, e in enumerate(events[:15], 1): # Limit to 15
         name = e.get('activity_name') or e.get('name') or "未知活動"
         date = e.get('date') or e.get('time') or "時間待定"
@@ -128,12 +145,13 @@ def main():
                     raw_data = upcoming
 
                 summary_text = format_raw_events_to_text(raw_data, title_prefix)
-                # 取得第一張圖片作為預覽 (如果有)
+                # 取得前幾張圖片作為預覽 (最多 5 張)
                 images = []
                 for e in raw_data:
                     url = e.get('image_url')
-                    if url and url.startswith('http'):
+                    if url and url.startswith('http') and url not in images:
                         images.append(url)
+                    if len(images) >= 5:
                         break
                 
                 posts = [{"text": summary_text, "images": images}]

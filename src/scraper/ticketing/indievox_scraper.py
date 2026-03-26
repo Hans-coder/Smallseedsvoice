@@ -40,8 +40,8 @@ class IndievoxScraper(BaseScraper):
                 event_data = self.parse_event(row)
                 if event_data:
                     # Fetch detail to get image since table view lacks images
-                    if event_data.get('source'):
-                        detail = self._fetch_detail(event_data['source'])
+                    if event_data.get('ticket_url'):
+                        detail = self._fetch_detail(event_data['ticket_url'])
                         if detail:
                             event_data.update(detail)
                     page_events.append(event_data)
@@ -63,9 +63,15 @@ class IndievoxScraper(BaseScraper):
             if not soup: return {}
             
             detail = {}
-            og_img = soup.find('meta', property='og:image')
+            # Try og:image with property (standard) or name (IndieVox uses name)
+            og_img = soup.find('meta', property='og:image') or soup.find('meta', {"name": "og:image"})
             if og_img and og_img.get('content'):
                 detail["image_url"] = og_img.get('content')
+            else:
+                # Fallback to direct selector
+                img_tag = soup.select_one('.title-img img')
+                if img_tag and img_tag.get('src'):
+                    detail["image_url"] = img_tag.get('src')
                 
             return detail
         except Exception as e:
