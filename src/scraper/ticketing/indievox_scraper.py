@@ -9,7 +9,7 @@ logger = setup_logger(__name__)
 class IndievoxScraper(BaseScraper):
     """Indievox Event Scraper"""
     
-    def scrape_events(self, url: str = "https://www.indievox.com/activity/list?type=table") -> List[Dict]:
+    def scrape_events(self, url: str = "https://www.indievox.com/activity/list?type=table", with_details: bool = True) -> List[Dict]:
         """
         Scrape Indievox events.
         Default to activity list page (Table View).
@@ -39,8 +39,8 @@ class IndievoxScraper(BaseScraper):
             for row in event_rows:
                 event_data = self.parse_event(row)
                 if event_data:
-                    # Fetch detail to get image since table view lacks images
-                    if event_data.get('ticket_url'):
+                    # Fetch detail to get image if requested
+                    if with_details and event_data.get('ticket_url'):
                         detail = self._fetch_detail(event_data['ticket_url'])
                         if detail:
                             event_data.update(detail)
@@ -58,8 +58,9 @@ class IndievoxScraper(BaseScraper):
     def _fetch_detail(self, url: str) -> Dict:
         """Fetch detail page for high-res image."""
         try:
-            # Use selenium to ensure we get the content
-            soup = self.fetch_with_selenium(url, wait_time=2)
+            # Detail pages are usually less protected than list pages.
+            # Using fetch_page (requests) is much faster for a large number of events.
+            soup = self.fetch_page(url)
             if not soup: return {}
             
             detail = {}

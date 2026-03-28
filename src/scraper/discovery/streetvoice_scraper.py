@@ -10,7 +10,7 @@ logger = setup_logger(__name__)
 class StreetVoiceScraper(BaseScraper):
     """StreetVoice Activity Scraper for discovering independent music events"""
     
-    def scrape_events(self, url: str = "https://streetvoice.com/gigs/all/0/") -> List[Dict]:
+    def scrape_events(self, url: str = "https://streetvoice.com/gigs/all/0/", with_details: bool = True) -> List[Dict]:
         """
         Scrape StreetVoice activities.
         """
@@ -58,8 +58,8 @@ class StreetVoiceScraper(BaseScraper):
             for item in items:
                 event_data = self.parse_event(item, current_date_str)
                 if event_data:
-                    # Fetch high-res image from detail page
-                    if event_data.get('source_url'):
+                    # Fetch high-res image from detail page only if requested
+                    if with_details and event_data.get('source_url'):
                         detail = self._fetch_detail(event_data['source_url'])
                         if detail:
                             event_data.update(detail)
@@ -71,8 +71,8 @@ class StreetVoiceScraper(BaseScraper):
     def _fetch_detail(self, url: str) -> Dict:
         """Fetch detail page for high-res image."""
         try:
-            # Use Selenium to handle lazy-loaded elements or metadata
-            soup = self.fetch_with_selenium(url, wait_time=2)
+            # StreetVoice activity page is usually simple and has og:image in source
+            soup = self.fetch_page(url)
             if not soup: return {}
             
             detail = {}

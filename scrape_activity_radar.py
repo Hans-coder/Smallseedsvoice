@@ -12,6 +12,7 @@ import sys
 import logging
 from datetime import datetime
 from pathlib import Path
+import re
 from src.utils.performer_tracker import PerformerTracker
 from src.utils.error_handler import log_scraping_error
 from dotenv import load_dotenv
@@ -29,6 +30,18 @@ from src.scraper.discovery.streetvoice_scraper import StreetVoiceScraper
 
 logger = setup_logger("radar_scraper")
 
+def clean_artist_name(name):
+    """Clean artist name for better AI enrichment."""
+    # Remove metadata in brackets (supports (), （）, 【】, [])
+    name = re.sub(r'[\(（【\[].*?[\)）】\]]', '', name)
+    # Remove quotes
+    name = re.sub(r'[「」『』""]', '', name)
+    # Remove common separators and everything after them
+    for sep in ['：', '｜', ' - ', ' – ', '／', ' w/ ', ' feat.', ' ft.', ' Feat.', ' Ft.']:
+        if sep in name: 
+            name = name.split(sep)[0]
+    return name.strip()
+
 def main():
     logger.info("Starting Radar Activity Scraper...")
     
@@ -41,11 +54,11 @@ def main():
     try:
         logger.info("Scraping Indievox...")
         iv_scraper = IndievoxScraper({"max_pages": 3})
-        # Use table view for easier parsing
-        iv_events = iv_scraper.scrape_events("https://www.indievox.com/activity/list?type=table")
+        # Fast scrape without details (skips bulk browser overhead)
+        iv_events = iv_scraper.scrape_events("https://www.indievox.com/activity/list?type=table", with_details=False)
         
         radar_events.extend(iv_events)
-        logger.info(f"Added {len(iv_events)} events from Indievox.")
+        logger.info(f"Added {len(iv_events)} events from Indievox (Fast).")
     except Exception as e:
         logger.error(f"Indievox scrape failed: {e}")
         log_scraping_error("Radar-Indievox", e)
@@ -54,7 +67,8 @@ def main():
     try:
         logger.info("Scraping StreetVoice for Discovery Radar...")
         sv_scraper = StreetVoiceScraper({"timeout": 30})
-        sv_events = sv_scraper.scrape_events()
+        # Fast scrape without details
+        sv_events = sv_scraper.scrape_events(with_details=False)
         
         # Transform SV events to Radar schema (SV already has compatible keys)
         radar_events.extend(sv_events)
@@ -155,15 +169,12 @@ def main():
         for e in upcoming:
             if spotlight_count >= 5: break
             
-            # Extract performers
-            # SV has performers list, Indievox might have it in name
+            # Extract performers refined for AI Introduction
             performers = e.get('performers', [])
             if not performers:
                 name = e.get('name') or e.get('activity_name', '')
-                if '：' in name: performers = [name.split('：')[1].strip()]
-                elif '｜' in name: performers = [name.split('｜')[0].strip()]
-                elif ' w/ ' in name: performers = [p.strip() for p in name.split(' w/ ')]
-                else: performers = [name]
+                artist_name = clean_artist_name(name)
+                performers = [artist_name]
             
             if performers:
                 artist = performers[0]
@@ -178,6 +189,13 @@ def main():
                     # Fetch from AI
                     logger.info(f"Fetching AI profile for: {artist}")
                     try:
+                        # Ensure we have detail info (images/specific venue) for spotlighted items
+                        if e.get('ticket_platform') == 'Indievox' or 'indievox.com' in (e.get('source') or ''):
+                             # Reuse IndievoxScraper to fetch detail only for this specific spotlighted item
+                             iv_detail_scraper = IndievoxScraper({})
+                             detail = iv_detail_scraper._fetch_detail(e.get('ticket_url') or e.get('source'))
+                             if detail: e.update(detail)
+                        
                         profile = enricher.get_performer_profile(artist)
                         if profile and profile.get('description'):
                             tracker.update_history([artist])

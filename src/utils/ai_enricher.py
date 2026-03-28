@@ -1,5 +1,7 @@
 """AI Content Enricher using Gemini"""
 import os
+import json
+import re
 from google import genai
 from typing import Optional
 from src.utils.logger import setup_logger
@@ -11,7 +13,7 @@ class AIEnricher:
         self.api_key = api_key or os.getenv("GEMINI_API_KEY")
         if self.api_key:
             self.client = genai.Client(api_key=self.api_key)
-            self.model = 'gemini-1.5-flash' # Using a stable model name
+            self.model = 'gemini-flash-latest' # Stable 1.5 model with higher availability
         else:
             self.client = None
             self.model = None
@@ -72,10 +74,9 @@ class AIEnricher:
         """
         try:
             response = self.client.models.generate_content(model=self.model, contents=prompt)
-            import json
-            import re
-            
-            # Find JSON block in the response
+            # Find JSON block in the response (Model: self.model)
+            text = response.text.strip()
+            logger.info(f"Gemini Profile Response for {performer_name}: {text}")
             text = response.text.strip()
             match = re.search(r'\{[^{}]*\}', text)
             if match:
