@@ -60,13 +60,14 @@ class AIEnricher:
             return {}
 
         prompt = f"""
-        你是一個台灣獨立音樂資料庫。
+        你是一位在台灣獨立音樂圈打滾多年的資深樂迷，說話語氣自然、專業、帶點誠懇的熱情。
         請幫我尋找樂團/歌手「{performer_name}」的資訊。
         
-        1. description: 請用「一句話」描述他們的音樂風格或代表作（15-20字內）。如果不認識或沒有特定風格，請回傳空字串。
-        2. ig_handle: 如果你知道他們的 Instagram 帳號（不要加 @），請提供。如果不確定，請回傳空字串。
+        1. description: 請用「真人的推薦語」描述他們必聽的理由或音樂魅力（20字內）。
+           「禁忌」：絕對不要用「這是一個...的樂團」、「結合了...元素」等機器人感重的廢話。
+        2. ig_handle: 如果你知道 Instagram 帳號（不加 @），請提供。
         
-        請務必且只能回傳合法的 JSON 格式：
+        JSON 格式：
         {{
             "description": "...",
             "ig_handle": "..."
@@ -103,19 +104,20 @@ class AIEnricher:
             return {}
             
         prompt = f"""
-        你是一個台灣獨立音樂資料庫專家。
-        請幫我整理以下 {len(unique_names)} 位樂團/歌手的資訊：
-        {", ".join(unique_names)}
+        你是一位在台灣獨立音樂圈打滾多年的博學樂迷，熱愛推薦好團。
+        請幫我整理以下 {len(unique_names)} 個表演者的資訊。
+        
+        名單：{", ".join(unique_names)}
         
         要求：
-        1. description: 「一句話」描述音樂風格或代表作（15-20字內）。如果不認識，請寫空字串。
-        2. ig_handle: Instagram 帳號（不要加 @）。如果不確定，請寫空字串。
+        1. description: 用「極其短促、像真人的推薦語」，帶出他們的現場魅力或必聽點（20字內）。
+           「範例」：
+           - 曲風迷幻到不行，適合深夜一個人的時候聽。
+           - 現場爆發力強到會讓你的耳朵懷孕，一定要去一次。
+        2. ig_handle: Instagram 帳號（不要加 @）。
         
-        請務必且只能回傳合法的 JSON 格式（以樂團名稱標頭為 Key）：
-        {{
-            "樂團名A": {{ "description": "...", "ig_handle": "..." }},
-            "樂團名B": {{ "description": "...", "ig_handle": "..." }}
-        }}
+        回傳 JSON（以團名標籤為 Key）：
+        {{ "團名": {{ "description": "...", "ig_handle": "..." }} }}
         """
         try:
             response = self.client.models.generate_content(model=self.model, contents=prompt)

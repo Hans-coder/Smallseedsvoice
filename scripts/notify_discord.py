@@ -49,6 +49,11 @@ def format_raw_events_to_text(events, type_name):
             lines.append(f"   💡 {desc}")
         lines.append("-" * 20)
         lines.append("")
+    elif any(e.get('name') or e.get('activity_name') for e in events[:5]):
+        # 本應有介紹但沒有，且有活動資料
+        lines.append("⚠️ **系統提醒：AI 額度用盡或回應異常，本次未生成特別介紹。**")
+        lines.append("-" * 20)
+        lines.append("")
 
     lines.append("📅 **活動列表**")
     for i, e in enumerate(events[:15], 1): # Limit to 15
