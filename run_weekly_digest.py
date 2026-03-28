@@ -83,7 +83,7 @@ def main():
     import argparse
     import json
     
-    parser = argparse.ArgumentParser(description='Weekly Digest Pipeline (Free)')
+    parser = argparse.ArgumentParser(description='Weekly Digest Pipeline')
     parser.add_argument('--step', type=str, choices=['scrape', 'process', 'post', 'all'], default='all', help='Pipeline step to execute')
     args = parser.parse_args()
     
@@ -146,13 +146,11 @@ def main():
             skipped_count = 0
             for e in kktix_events:
                 e['is_hot'] = is_hot_event(e)
-                if is_free_event(e) or e['is_hot']:
-                    relevant_kktix.append(e)
-                else:
-                    skipped_count += 1
+                # Take all events as requested
+                relevant_kktix.append(e)
             
             events.extend(relevant_kktix)
-            logger.info(f"KKTIX: Found {len(relevant_kktix)} relevant events, skipped {skipped_count} (not free/hot).")
+            logger.info(f"KKTIX: Found {len(relevant_kktix)} relevant events.")
         except Exception as e:
             logger.error(f"KKTIX scrape failed: {e}")
             log_scraping_error("KKTIX", e)
@@ -168,13 +166,11 @@ def main():
             skipped_count = 0
             for e in opentix_events:
                 e['is_hot'] = is_hot_event(e)
-                if is_free_event(e) or e['is_hot']:
-                    relevant_opentix.append(e)
-                else:
-                    skipped_count += 1
+                # Take all events as requested
+                relevant_opentix.append(e)
             
             events.extend(relevant_opentix)
-            logger.info(f"OPENTIX: Found {len(relevant_opentix)} relevant events, skipped {skipped_count} (not free/hot).")
+            logger.info(f"OPENTIX: Found {len(relevant_opentix)} relevant events.")
         except Exception as e:
             logger.error(f"OPENTIX scrape failed: {e}")
             log_scraping_error("OPENTIX", e)
@@ -190,13 +186,11 @@ def main():
             skipped_count = 0
             for e in indievox_events:
                 e['is_hot'] = is_hot_event(e)
-                if is_free_event(e) or e['is_hot']:
-                    relevant_indievox.append(e)
-                else:
-                    skipped_count += 1
+                # Take all events as requested
+                relevant_indievox.append(e)
             
             events.extend(relevant_indievox)
-            logger.info(f"Indievox: Found {len(relevant_indievox)} relevant events, skipped {skipped_count} (not free/hot).")
+            logger.info(f"Indievox: Found {len(relevant_indievox)} relevant events.")
         except Exception as e:
             logger.error(f"Indievox scrape failed: {e}")
             log_scraping_error("Indievox", e)

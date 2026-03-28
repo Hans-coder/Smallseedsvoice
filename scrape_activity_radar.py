@@ -153,7 +153,7 @@ def main():
         
         spotlight_count = 0
         for e in upcoming:
-            if spotlight_count >= 3: break
+            if spotlight_count >= 5: break
             
             # Extract performers
             # SV has performers list, Indievox might have it in name
@@ -167,8 +167,8 @@ def main():
             
             if performers:
                 artist = performers[0]
-                # Avoid generic titles
-                if len(artist) > 20 or artist in ["BTC 蛻變密碼"]: continue
+                # Avoid overly long titles only
+                if len(artist) > 40: continue
                 
                 # Check tracker (cache)
                 profiles = tracker.get_profiles([artist])
@@ -177,10 +177,14 @@ def main():
                 if not profile or not profile.get('description'):
                     # Fetch from AI
                     logger.info(f"Fetching AI profile for: {artist}")
-                    profile = enricher.get_performer_profile(artist)
-                    if profile and profile.get('description'):
-                        tracker.update_history([artist])
-                        tracker.update_profile(artist, description=profile['description'], ig_handle=profile.get('ig_handle'))
+                    try:
+                        profile = enricher.get_performer_profile(artist)
+                        if profile and profile.get('description'):
+                            tracker.update_history([artist])
+                            tracker.update_profile(artist, description=profile['description'], ig_handle=profile.get('ig_handle'))
+                    except Exception as ai_err:
+                        logger.warning(f"AI enrichment failed for {artist}: {ai_err}")
+                        continue
                 
                 if profile and profile.get('description'):
                     e['spotlight'] = {
@@ -193,6 +197,8 @@ def main():
                     
     except Exception as e:
         logger.warning(f"AI Spotlight enrichment failed: {e}")
+        import traceback
+        logger.error(traceback.format_exc())
 
     # Save Output
     output_path = "data/radar_events.json"

@@ -71,8 +71,8 @@ class StreetVoiceScraper(BaseScraper):
     def _fetch_detail(self, url: str) -> Dict:
         """Fetch detail page for high-res image."""
         try:
-            # StreetVoice activity page is usually simple and has og:image
-            soup = self.fetch_page(url)
+            # Use Selenium to handle lazy-loaded elements or metadata
+            soup = self.fetch_with_selenium(url, wait_time=2)
             if not soup: return {}
             
             detail = {}
@@ -143,7 +143,7 @@ class StreetVoiceScraper(BaseScraper):
                 'performers': performers,
                 'source_url': link,
                 'ticket_url': link,
-                'image_url': image_url,
+                'image_url': image_url.split('?x-oss-process=')[0] if image_url else None,
                 'source': 'StreetVoice',
                 'is_free': 'unknown'
             }

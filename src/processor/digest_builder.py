@@ -219,7 +219,7 @@ class DigestBuilder:
                 logger.warning(f"AI cover text generation failed: {e}")
                 
         # Fallback
-        return f"下週免費音樂活動懶人包 ({date_str})\n\n這週很熱鬧，共整理了 {count} 場免費演出！\n詳細資訊請看留言 👇"
+        return f"音樂活動懶人包 ({date_str})\n\n這週很熱鬧，共整理了 {count} 場演出！\n詳細資訊請看留言 👇"
 
     def _format_event_line(self, event: Dict) -> str:
         # Normalize fields

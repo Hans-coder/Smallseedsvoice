@@ -1,9 +1,9 @@
-name: Weekly Digest (Free)
+name: Weekly Digest
 
 on:
   schedule:
     # Sunday 20:00 Taiwan (UTC+8) -> 12:00 UTC
-    - cron: '0 12 * * 0'
+    - cron: '0 2 * * 0'
   workflow_dispatch:
 
 jobs:
@@ -43,7 +43,7 @@ jobs:
       - name: Notify Discord
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
-        run: python scripts/notify_discord.py --type digest --name "每週精選 (Free)"
+        run: python scripts/notify_discord.py --type digest --name "每週精選"
 
 #      - name: Post to Threads
 #        env:

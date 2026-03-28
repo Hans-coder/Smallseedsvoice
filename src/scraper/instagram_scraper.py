@@ -278,10 +278,11 @@ class InstagramScraper:
         # 獲取圖片URL
         try:
             # instaloader的Post對象，嘗試多種方式獲取圖片URL
-            if hasattr(post, 'url'):
-                event['image_url'] = post.url
-            elif hasattr(post, 'display_url'):
+            # Prioritize display_url for higher resolution
+            if hasattr(post, 'display_url') and post.display_url:
                 event['image_url'] = post.display_url
+            elif hasattr(post, 'url') and post.url:
+                event['image_url'] = post.url
             elif hasattr(post, 'typename') and post.typename == 'GraphImage':
                 # 單圖貼文
                 if hasattr(post, 'display_url'):

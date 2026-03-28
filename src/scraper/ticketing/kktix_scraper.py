@@ -85,8 +85,8 @@ class KktixScraper(BaseScraper):
     def _fetch_detail(self, url: str) -> Dict:
         """Fetch detail page for venue and sale time using requests"""
         try:
-            # Use requests for detail page (proven accessible via curl)
-            soup = self.fetch_page(url)
+            # Use Selenium for detail page to ensure consistency and bypass blocks
+            soup = self.fetch_with_selenium(url, wait_time=2)
             if not soup: return {}
             
             venue = "Unknown"

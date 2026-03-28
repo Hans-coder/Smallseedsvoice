@@ -70,10 +70,11 @@ class DiscordNotifier:
             # Discord limit is 10 embeds per message
             for img_url in images[:10]:
                 if img_url and str(img_url).startswith('http'):
-                     embeds.append({
-                         "url": "https://threads.net", 
-                         "image": {"url": img_url}
-                     })
+                    # Clean StreetVoice resizing for highest available quality
+                    clean_url = str(img_url).split('?x-oss-process=')[0]
+                    embeds.append({
+                        "image": {"url": clean_url}
+                    })
 
         return self.send_message(content=formatted_text, embeds=embeds)
 

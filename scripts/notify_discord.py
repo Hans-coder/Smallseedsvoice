@@ -61,7 +61,11 @@ def format_raw_events_to_text(events, type_name):
     if len(events) > 15:
         lines.append(f"\n...以及其他 {len(events)-15} 場活動。")
     
-    return "\n".join(lines)
+    # Remove image resizing parameters for better quality (e.g. StreetVoice)
+    text = "\n".join(lines)
+    text = text.replace('?x-oss-process=image/resize,m_fill,h_152,w_290,limit_0/interlace,1/quality,q_95/format,jpg', '')
+    
+    return text
 
 def main():
     parser = argparse.ArgumentParser(description='Send notifications to Discord')
@@ -103,11 +107,11 @@ def main():
     if args.type == 'digest':
         post_file = Path("data/digest_posts.json")
         raw_file = Path("data/digest_raw.json")
-        title_prefix = "每週精選摘要"
+        title_prefix = "每週精選"
     elif args.type == 'radar':
         post_file = Path("data/radar_posts.json")
         raw_file = Path("data/radar_events.json")
-        title_prefix = "樂團雷達站情報"
+        title_prefix = "樂團推薦 / 音樂人特別介紹"
     else: # sale
         post_file = Path("data/sale_posts.json")
         raw_file = Path("data/official_events.json")
@@ -132,7 +136,7 @@ def main():
                 # 特別處理 Sale，只顯示未來 3 天開賣的
                 if args.type == 'sale':
                     from datetime import timedelta
-                    today = datetime.datetime.now() + datetime.timedelta(hours=8)
+                    today = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=8)
                     upcoming = []
                     for e in raw_data:
                         try:
@@ -149,8 +153,11 @@ def main():
                 images = []
                 for e in raw_data:
                     url = e.get('image_url')
-                    if url and url.startswith('http') and url not in images:
-                        images.append(url)
+                    if url and url.startswith('http'):
+                        # Remove StreetVoice resizing if present
+                        url = url.split('?x-oss-process=')[0]
+                        if url not in images:
+                            images.append(url)
                     if len(images) >= 5:
                         break
                 

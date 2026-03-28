@@ -58,8 +58,8 @@ class IndievoxScraper(BaseScraper):
     def _fetch_detail(self, url: str) -> Dict:
         """Fetch detail page for high-res image."""
         try:
-            # Usually detail page is easily accessible
-            soup = self.fetch_page(url)
+            # Use selenium to ensure we get the content
+            soup = self.fetch_with_selenium(url, wait_time=2)
             if not soup: return {}
             
             detail = {}
