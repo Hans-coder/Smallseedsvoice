@@ -170,49 +170,32 @@ def main():
             if spotlight_count >= 5: break
             
             # Extract performers refined for AI Introduction
-            performers = e.get('performers', [])
-            if not performers:
-                name = e.get('name') or e.get('activity_name', '')
-                artist_name = clean_artist_name(name)
-                performers = [artist_name]
+            if spotlight_count >= 5:
+                break
+                
+            name = e.get('name') or e.get('activity_name', '')
+            artist = clean_artist_name(name)
+            profile = tracker.get_profile(artist)
             
-            if performers:
-                artist = performers[0]
-                # Avoid overly long titles only
-                if len(artist) > 40: continue
+            if profile.get('description'):
+                # Fetch details if needed (Indievox image/venue)
+                if e.get('ticket_platform') == 'Indievox':
+                    iv_scraper = IndievoxScraper({})
+                    detail = iv_scraper._fetch_detail(e.get('ticket_url') or e.get('source_url'))
+                    if detail:
+                        e.update(detail)
                 
-                # Check tracker (cache)
-                profiles = tracker.get_profiles([artist])
-                profile = profiles.get(artist.lower())
+                e['spotlight'] = {
+                    'performer': artist,
+                    'description': profile['description'],
+                    'ig_handle': profile.get('ig_handle')
+                }
+                tracker.update_history([artist])
+                spotlight_count += 1
+                logger.info(f"Added spotlight for: {artist}")
+
+        tracker.save()
                 
-                if not profile or not profile.get('description'):
-                    # Fetch from AI
-                    logger.info(f"Fetching AI profile for: {artist}")
-                    try:
-                        # Ensure we have detail info (images/specific venue) for spotlighted items
-                        if e.get('ticket_platform') == 'Indievox' or 'indievox.com' in (e.get('source') or ''):
-                             # Reuse IndievoxScraper to fetch detail only for this specific spotlighted item
-                             iv_detail_scraper = IndievoxScraper({})
-                             detail = iv_detail_scraper._fetch_detail(e.get('ticket_url') or e.get('source'))
-                             if detail: e.update(detail)
-                        
-                        profile = enricher.get_performer_profile(artist)
-                        if profile and profile.get('description'):
-                            tracker.update_history([artist])
-                            tracker.update_profile(artist, description=profile['description'], ig_handle=profile.get('ig_handle'))
-                    except Exception as ai_err:
-                        logger.warning(f"AI enrichment failed for {artist}: {ai_err}")
-                        continue
-                
-                if profile and profile.get('description'):
-                    e['spotlight'] = {
-                        "performer": artist,
-                        "description": profile['description'],
-                        "ig_handle": profile.get('ig_handle')
-                    }
-                    spotlight_count += 1
-                    logger.info(f"Added spotlight for {artist}")
-                    
     except Exception as e:
         logger.warning(f"AI Spotlight enrichment failed: {e}")
         import traceback

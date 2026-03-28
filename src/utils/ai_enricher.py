@@ -13,7 +13,7 @@ class AIEnricher:
         self.api_key = api_key or os.getenv("GEMINI_API_KEY")
         if self.api_key:
             self.client = genai.Client(api_key=self.api_key)
-            self.model = 'gemini-flash-latest' # Stable 1.5 model with higher availability
+            self.model = 'gemini-2.0-flash-lite' # Lighter model with separate/better quota
         else:
             self.client = None
             self.model = None
@@ -88,6 +88,47 @@ class AIEnricher:
             return {}
         except Exception as e:
             logger.error(f"Failed to get profile for {performer_name}: {e}")
+            return {}
+
+    def get_batch_profiles(self, performers: list) -> dict:
+        """
+        批次獲取多位表演者的簡短介紹與 Instagram 帳號。
+        """
+        if not self.model or not performers:
+            return {}
+            
+        # 移除重複與過長的名稱
+        unique_names = list(set([p for p in performers if p and len(p) < 40]))
+        if not unique_names:
+            return {}
+            
+        prompt = f"""
+        你是一個台灣獨立音樂資料庫專家。
+        請幫我整理以下 {len(unique_names)} 位樂團/歌手的資訊：
+        {", ".join(unique_names)}
+        
+        要求：
+        1. description: 「一句話」描述音樂風格或代表作（15-20字內）。如果不認識，請寫空字串。
+        2. ig_handle: Instagram 帳號（不要加 @）。如果不確定，請寫空字串。
+        
+        請務必且只能回傳合法的 JSON 格式（以樂團名稱標頭為 Key）：
+        {{
+            "樂團名A": {{ "description": "...", "ig_handle": "..." }},
+            "樂團名B": {{ "description": "...", "ig_handle": "..." }}
+        }}
+        """
+        try:
+            response = self.client.models.generate_content(model=self.model, contents=prompt)
+            text = response.text.strip()
+            # 尋找 JSON 區塊
+            match = re.search(r'\{.*\}', text, re.DOTALL)
+            if match:
+                data = json.loads(match.group(0))
+                logger.info(f"Successfully batch fetched {len(data)} AI profiles.")
+                return data
+            return {}
+        except Exception as e:
+            logger.error(f"Batch AI enrichment failed: {e}")
             return {}
 
     def generate_community_prompt(self, events: list, post_type: str = "digest") -> str:
