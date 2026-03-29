@@ -46,6 +46,8 @@ class AIEnricher:
         
         try:
             response = self.client.models.generate_content(model=self.model, contents=prompt)
+            if hasattr(response, 'usage_metadata'):
+                logger.info(f"AI Enrichment Token Usage: {response.usage_metadata.prompt_token_count} prompt, {response.usage_metadata.candidates_token_count} candidates")
             return response.text.strip() + "\n\n"
         except Exception as e:
             logger.error(f"AI Enrichment failed: {e}")
@@ -75,9 +77,10 @@ class AIEnricher:
         """
         try:
             response = self.client.models.generate_content(model=self.model, contents=prompt)
+            if hasattr(response, 'usage_metadata'):
+                logger.debug(f"AI Profile Token Usage ({performer_name}): {response.usage_metadata.prompt_token_count} prompt, {response.usage_metadata.candidates_token_count} candidates")
+            
             # Find JSON block in the response (Model: self.model)
-            text = response.text.strip()
-            logger.info(f"Gemini Profile Response for {performer_name}: {text}")
             text = response.text.strip()
             match = re.search(r'\{[^{}]*\}', text)
             if match:
@@ -121,6 +124,9 @@ class AIEnricher:
         """
         try:
             response = self.client.models.generate_content(model=self.model, contents=prompt)
+            if hasattr(response, 'usage_metadata'):
+                logger.info(f"AI Batch Profile Token Usage: {response.usage_metadata.prompt_token_count} prompt, {response.usage_metadata.candidates_token_count} candidates")
+            
             text = response.text.strip()
             # 尋找 JSON 區塊
             match = re.search(r'\{.*\}', text, re.DOTALL)
@@ -166,7 +172,10 @@ class AIEnricher:
         """
         try:
             response = self.client.models.generate_content(model=self.model, contents=prompt)
+            if hasattr(response, 'usage_metadata'):
+                logger.info(f"AI CTA Token Usage: {response.usage_metadata.prompt_token_count} prompt, {response.usage_metadata.candidates_token_count} candidates")
             return response.text.strip()
         except Exception as e:
             logger.error(f"Failed to generate community prompt: {e}")
             return ""
+

@@ -126,17 +126,9 @@ class DigestBuilder:
         if current_text:
             posts.append({'text': current_text.strip(), 'images': current_images})
             
-        # 4. Integrate AI Community Prompt
-        if self.enricher and posts:
-            cta = self.enricher.generate_community_prompt(sorted_events, post_type="digest")
-            if cta:
-                # Append to the last post
-                post_to_append = posts[-1]
-                if len(post_to_append['text']) + len(cta) + 4 <= self.max_chars:
-                    post_to_append['text'] += f"\n\n{cta}"
-                else:
-                    # Create a new mini-post if the last one was too full
-                    posts.append({'text': cta, 'images': []})
+        # Community Prompt (CTA) - Removed as per user request to save tokens
+        # if self.enricher and posts:
+        #    ...
 
         # 5. Redistribute Images (Optional optimization)
         # Threads allows mixing text and images. 
@@ -183,43 +175,13 @@ class DigestBuilder:
 
     def _generate_cover_text(self, start: datetime, end: datetime, count: int, events: List[Dict]) -> str:
         date_str = f"{start.strftime('%m/%d')} - {end.strftime('%m/%d')}"
-        
-        # Try AI generation first
-        if self.enricher and self.enricher.model:
-            # 識別熱門活動名稱以供 AI 參考
-            hot_titles = [e.get('name') or e.get('activity_name') for e in events if e.get('is_hot')]
-            hot_context = f"本週包含大型活動：{', '.join(hot_titles)}" if hot_titles else ""
-            
-            prompt = f"""
-            你是一個熱愛台灣獨立音樂的社群小編。
-            請寫一段每週活動懶人包的「開場白」。
-            
-            資訊：
-            - 時間範圍：{date_str}
-            - 本週整理了 {count} 場精選活動。
-            - {hot_context}
-            
-            要求：
-            1. 語氣活潑、有溫度，像個音樂大戶（不要像機器人）。
-            2. 如果有大型活動（如音樂祭），請特別興奮地提到它們。
-            3. 字數 60 字以內。
-            4. 結尾要引導大家看下面的整理。
-            """
-            try:
-                # Use the enricher's client to generate content
-                response = self.enricher.client.models.generate_content(
-                    model=self.enricher.model, 
-                    contents=prompt
-                )
-                ai_text = response.text.strip()
-                return f"{ai_text}\n\n(詳細整理如下 👇)"
-            except Exception as e:
-                from src.utils.logger import setup_logger
-                logger = setup_logger("digest_builder_ai")
-                logger.warning(f"AI cover text generation failed: {e}")
-                
-        # Fallback
-        return f"音樂活動懶人包 ({date_str})\n\n這週很熱鬧，共整理了 {count} 場演出！\n詳細資訊請看留言 👇"
+        # Fixed cover text template to save AI tokens (User request)
+        return (
+            f"🎵 音樂活動懶人包 ({date_str})\n\n"
+            f"這週很熱鬧，共整理了 {count} 場演出！\n"
+            "大家準備好要去哪一場了嗎？詳細資訊請看下方整理 👇"
+        )
+
 
     def _format_event_line(self, event: Dict) -> str:
         # Normalize fields

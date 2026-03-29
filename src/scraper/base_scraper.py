@@ -67,6 +67,10 @@ class BaseScraper(ABC):
         Returns:
             是否成功
         """
+        if os.path.exists(save_path):
+            logger.info(f"圖片已存在，跳過下載: {save_path}")
+            return True
+
         try:
             response = self.session.get(image_url, timeout=self.timeout)
             response.raise_for_status()

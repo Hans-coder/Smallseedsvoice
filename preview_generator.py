@@ -31,12 +31,14 @@ def download_image(url: str) -> str:
         if not url.startswith('http'):
             return url
 
-        # Hash URL for filename
-        ext = url.split('.')[-1].split('?')[0]
+        # Hash URL for filename - STRIP QUERY PARAMETERS for better deduplication
+        # Many platforms like Instagram/StreetVoice change signature/token params for the same image
+        clean_url = url.split('?')[0]
+        ext = clean_url.split('.')[-1]
         if len(ext) > 4 or not ext:
             ext = "jpg"
         
-        filename = hashlib.md5(url.encode('utf-8')).hexdigest() + f".{ext}"
+        filename = hashlib.md5(clean_url.encode('utf-8')).hexdigest() + f".{ext}"
         local_path = os.path.join(CACHE_DIR, filename)
         
         if os.path.exists(local_path):
@@ -123,51 +125,53 @@ def generate_html(official, radar, digest):
         </script>
     </head>
     <body>
-        <h1>Manual Posting Guide ✍️</h1>
+        <h1>Manual Posting Guide \u270d\ufe0f</h1>
         <div id="toast"></div>
     """
     
     # --- Shared Formatting Helper ---
     def format_fallback_post(events, title, platform_key, url_key='ticket_url'):
         if not events: return ""
-        lines = [f"【{title}】"]
+        lines = [f"\u3010{title}\u3011"]
         imgs = []
         for i, e in enumerate(events, 1):
             name = e.get('name') or e.get('activity_name', 'Unknown')
             date = e.get('date', 'Unknown')
             venue_name = e.get('venue_name') or e.get('venue', 'Unknown')
             url = e.get(url_key) or e.get('source', '')
-            platform = e.get(platform_key, 'Official')
             
             # Simple weekday guess
             try:
                 from dateutil import parser
                 dt = parser.parse(date)
-                weekdays = ['一', '二', '三', '四', '五', '六', '日']
-                wd = f" (週{weekdays[dt.weekday()]})"
+                weekdays = ['\u4e00', '\u4e8c', '\u4e09', '\u56db', '\u4e94', '\u516d', '\u65e5']
+                wd = f" (\u9031{weekdays[dt.weekday()]})"
             except: wd = ""
             
             lines.append(f"{i}. {name}")
-            lines.append(f"   🗓 {date}{wd} @ {venue_name}")
-            if url: lines.append(f"   🔗 {url}")
+            lines.append(f"   \ud83d\uddd3 {date}{wd} @ {venue_name}")
+            if url: lines.append(f"   \ud83d\udd17 {url}")
             lines.append("")
             
-            if e.get('image_url'): imgs.append(e['image_url'])
+            if e.get('image_url'):
+                img_url = e['image_url']
+                if img_url not in imgs:
+                    imgs.append(img_url)
         
-        lines.append("#獨立音樂 #LiveHouse #音樂祭")
+        lines.append("#\u7368\u7acb\u97f3\u6a02 #LiveHouse #\u97f3\u6a02\u796d")
         text = "\n".join(lines)
         js_safe_text = text.replace('`', '\\`').replace('${', '\\${')
         
-        section_html = f"<h2>{title} 更新</h2><div class='section'>"
+        section_html = f"<h2>{title} \u66f4\u65b0</h2><div class='section'>"
         section_html += f"""
         <div class="post-container">
             <div class="post-header">
-                <strong>{title} 全文草稿 (一鍵複製)</strong>
+                <strong>{title} \u5168\u6587\u8349\u7a3f (\u4e00\u9375\u8907\u88fd)</strong>
                 <button class="copy-btn" onclick="copyText(this, `{js_safe_text}`)">Copy All</button>
             </div>
             <div class="post-body">
                 <div class="post-text">{text}</div>
-                <strong>圖片預覽 ({len(imgs)}):</strong>
+                <strong>\u5716\u7247\u9810\u89bd ({len(imgs)}):</strong>
                 <div class="image-grid">
         """
         for img_url in imgs[:20]:
@@ -183,7 +187,7 @@ def generate_html(official, radar, digest):
 
     # 1. Weekly Digest Section
     if digest:
-        html += "<h2>Weekly Digest Posts (本週懶人包)</h2><div class='section'>"
+        html += "<h2>Weekly Digest Posts (\u672c\u9031\u61f6\u4eba\u5305)</h2><div class='section'>"
         for idx, post in enumerate(digest):
             post_id = f"digest-{idx}"
             display_text = post['text']
@@ -196,10 +200,15 @@ def generate_html(official, radar, digest):
                 </div>
                 <div class="post-body">
                     <div class="post-text" id="{post_id}">{display_text}</div>
-                    <strong>Images ({len(post['images'])}):</strong>
-                    <div class="image-grid">
-            """
-            for img_url in post['images']:
+    """
+            # Deduplicate images for digest posts
+            unique_post_images = []
+            for img in post.get('images', []):
+                if img not in unique_post_images:
+                    unique_post_images.append(img)
+
+            html += f"<strong>Images ({len(unique_post_images)}):</strong><div class='image-grid'>"
+            for img_url in unique_post_images:
                 local_img = download_image(img_url)
                 html += f"""
                 <div class="image-item" onclick="openImage('{img_url}')">
@@ -211,10 +220,10 @@ def generate_html(official, radar, digest):
         html += "</div>"
 
     # 2. Official Events Section
-    html += format_fallback_post(official, "官方售票情報", 'ticket_platform')
+    html += format_fallback_post(official, "\u5b98\u65b9\u552e\u7968\u60c5\u5831", 'ticket_platform')
 
     # 3. Radar Events Section
-    html += format_fallback_post(radar, "樂團雷達站", 'venue', 'source')
+    html += format_fallback_post(radar, "\u6a02\u571d\u96f7\u9054\u7ad9", 'venue', 'source')
         
     if not (digest or official or radar):
         html += "<p style='text-align:center;'>No data found. Please run scrapers first.</p>"
@@ -252,4 +261,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
