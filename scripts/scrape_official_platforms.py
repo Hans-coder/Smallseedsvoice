@@ -17,6 +17,8 @@ from src.utils.logger import setup_logger
 from src.scraper.ticketing.kktix_scraper import KktixScraper
 from src.scraper.ticketing.opentix_scraper import OpentixScraper
 from src.scraper.ticketing.tixcraft_scraper import TixCraftScraper
+from src.scraper.ticketing.ticketplus_scraper import TicketPlusScraper
+from src.utils.text_cleaners import get_event_hash, refine_image_url
 
 # Setup logger
 logger = setup_logger("official_scraper")
@@ -25,7 +27,7 @@ def main():
     import argparse
     
     parser = argparse.ArgumentParser(description='Official Ticketing Platforms Scraper')
-    parser.add_argument('--platform', type=str, choices=['kktix', 'opentix', 'tixcraft', 'indievox', 'all'], help='Target platform to scrape')
+    parser.add_argument('--platform', type=str, choices=['kktix', 'opentix', 'tixcraft', 'indievox', 'ticketplus', 'all'], help='Target platform to scrape')
     parser.add_argument('--merge', action='store_true', help='Merge all platform json files into one')
     args = parser.parse_args()
     
@@ -51,7 +53,8 @@ def main():
             "kktix": "data/events_kktix.json",
             "opentix": "data/events_opentix.json",
             "tixcraft": "data/events_tixcraft.json",
-            "indievox": "data/events_indievox.json"
+            "indievox": "data/events_indievox.json",
+            "ticketplus": "data/events_ticketplus.json"
         }
         
         for p, fpath in platform_files.items():
@@ -66,14 +69,28 @@ def main():
             else:
                 logger.warning(f"File not found: {fpath}")
         
-        # Deduplication Logic
+        # Improved Content-Based Deduplication Logic
         unique_events = {}
         for e in merged_events:
-            aid = e.get('activity_id')
-            if aid:
-                unique_events[aid] = e
+            # Hash by cleaned content (Title, Date, Venue)
+            name = e.get('name') or e.get('activity_name', 'Unknown')
+            date = e.get('date', 'Unknown')
+            venue = e.get('venue_name') or e.get('venue', 'Unknown')
+            
+            content_hash = get_event_hash(name, date, venue)
+            
+            if content_hash not in unique_events:
+                # Refine URL quality before saving
+                if e.get('image_url'):
+                    e['image_url'] = refine_image_url(e['image_url'])
+                unique_events[content_hash] = e
             else:
-                logger.warning(f"Skipping event with missing activity_id: {e.get('name', 'Unknown')}")
+                # Prefer version with image
+                if not unique_events[content_hash].get('image_url') and e.get('image_url'):
+                     # Refine URL quality before saving
+                    if e.get('image_url'):
+                        e['image_url'] = refine_image_url(e['image_url'])
+                    unique_events[content_hash] = e
         
         final_list = list(unique_events.values())
         
@@ -164,15 +181,42 @@ def main():
         except Exception as e:
             logger.error(f"tixCraft failed: {e}")
 
+    # 5. Ticket Plus
+    if platform in ['ticketplus', 'all']:
+        try:
+            logger.info("Scraping Ticket Plus...")
+            scraper = TicketPlusScraper(config)
+            tp_events = scraper.scrape_events()
+            
+            if platform == 'ticketplus':
+                with open("data/events_ticketplus.json", "w", encoding="utf-8") as f:
+                    json.dump(tp_events, f, indent=4, ensure_ascii=False)
+                logger.info(f"Saved {len(tp_events)} Ticket Plus events")
+            else:
+                events.extend(tp_events)
+                
+        except Exception as e:
+            logger.error(f"Ticket Plus failed: {e}")
+
     # If 'all' mode, perform legacy save to main file
     if platform == 'all':
         unique_events = {}
         for e in events:
-            aid = e.get('activity_id')
-            if aid:
-                unique_events[aid] = e
+            # Same content-based deduplication
+            name = e.get('name') or e.get('activity_name', 'Unknown')
+            date = e.get('date', 'Unknown')
+            venue = e.get('venue_name') or e.get('venue', 'Unknown')
+            content_hash = get_event_hash(name, date, venue)
+            
+            if content_hash not in unique_events:
+                 if e.get('image_url'):
+                    e['image_url'] = refine_image_url(e['image_url'])
+                 unique_events[content_hash] = e
             else:
-                 logger.warning(f"Skipping event with missing activity_id: {e.get('name', 'Unknown')}")
+                if not unique_events[content_hash].get('image_url') and e.get('image_url'):
+                    if e.get('image_url'):
+                        e['image_url'] = refine_image_url(e['image_url'])
+                    unique_events[content_hash] = e
         
         final_list = list(unique_events.values())
         

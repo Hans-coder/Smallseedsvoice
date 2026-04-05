@@ -10,6 +10,7 @@ from src.processor.digest_builder import DigestBuilder
 from src.threads.threads_poster import ThreadsPoster
 from src.utils.logger import setup_logger
 from src.utils.error_handler import log_scraping_error
+from src.utils.text_cleaners import get_event_hash, refine_image_url
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
@@ -216,11 +217,35 @@ def main():
                 json.dump([], f, indent=4, ensure_ascii=False)
             return
 
-        logger.info(f"Total Unique Events Found: {len(events)}")
+        # 6. Improved Cross-Platform Deduplication
+        unique_events = {}
+        for e in events:
+            # 1. Refine image quality
+            if e.get('image_url'):
+                e['image_url'] = refine_image_url(e['image_url'])
+            
+            # 2. Content-based deduplication
+            name = e.get('name') or e.get('activity_name')
+            date = e.get('date') or e.get('time')
+            venue = e.get('venue_name') or e.get('location') or e.get('venue')
+            
+            content_hash = get_event_hash(name, date, venue)
+            
+            # If already exists, keep the one with a better image or more detail? 
+            # Current logic: first one found (Instagram > KKTIX > Others usually)
+            if content_hash not in unique_events:
+                unique_events[content_hash] = e
+            else:
+                # Prefer events with images
+                if not unique_events[content_hash].get('image_url') and e.get('image_url'):
+                    unique_events[content_hash] = e
+
+        final_events = list(unique_events.values())
+        logger.info(f"Total Events: {len(events)} -> Deduplicated: {len(final_events)}")
         
         # Save raw events
         with open("data/digest_raw.json", "w", encoding="utf-8") as f:
-            json.dump(events, f, indent=4, ensure_ascii=False)
+            json.dump(final_events, f, indent=4, ensure_ascii=False)
         logger.info("Saved raw events to data/digest_raw.json")
         
     # --- Step 2: Process ---

@@ -9,6 +9,7 @@ import hashlib
 import requests
 from pathlib import Path
 from src.utils.logger import setup_logger
+from src.utils.text_cleaners import clean_event_title, format_short_date
 
 logger = setup_logger("preview_generator")
 
@@ -148,8 +149,8 @@ def generate_html(official, radar, digest):
                 wd = f" (\u9031{weekdays[dt.weekday()]})"
             except: wd = ""
             
-            lines.append(f"{i}. {name}")
-            lines.append(f"   \ud83d\uddd3 {date}{wd} @ {venue_name}")
+            lines.append(f"{i}. {clean_event_title(name)}")
+            lines.append(f"   {format_short_date(date)}{wd} @ {venue_name}")
             if url: lines.append(f"   \ud83d\udd17 {url}")
             lines.append("")
             

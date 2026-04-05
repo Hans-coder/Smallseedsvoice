@@ -3,6 +3,7 @@ from typing import Dict, List, Optional
 import re
 from src.scraper.base_scraper import BaseScraper
 from src.utils.logger import setup_logger
+from src.utils.text_cleaners import refine_image_url, clean_event_title
 
 logger = setup_logger(__name__)
 
@@ -63,18 +64,11 @@ class IndievoxScraper(BaseScraper):
             soup = self.fetch_page(url)
             if not soup: return {}
             
-            detail = {}
-            # Try og:image with property (standard) or name (IndieVox uses name)
-            og_img = soup.find('meta', property='og:image') or soup.find('meta', {"name": "og:image"})
-            if og_img and og_img.get('content'):
-                detail["image_url"] = og_img.get('content')
-            else:
-                # Fallback to direct selector
-                img_tag = soup.select_one('.title-img img')
-                if img_tag and img_tag.get('src'):
-                    detail["image_url"] = img_tag.get('src')
-                
-            return detail
+            # Extract high-res image from og:image
+            og_img = soup.find('meta', property='og:image')
+            detail_image = refine_image_url(og_img.get('content')) if og_img else None
+
+            return {"image_url": detail_image}
         except Exception as e:
             logger.warning(f"Failed to fetch detail for {url}: {e}")
             return {}
@@ -86,7 +80,7 @@ class IndievoxScraper(BaseScraper):
             link = element.select_one('a.fcLightBlue')
             if not link: return None
             
-            name = link.get_text(strip=True)
+            name = clean_event_title(link.get_text(strip=True))
             event_url = link['href']
             if not event_url.startswith('http'):
                 event_url = f"https://www.indievox.com{event_url}"

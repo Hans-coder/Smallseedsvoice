@@ -11,6 +11,7 @@ Key features:
 from typing import List, Dict, Tuple
 from datetime import datetime, timedelta
 import re
+from src.utils.text_cleaners import clean_event_title, format_short_date
 
 class DigestBuilder:
     def __init__(self, config: Dict):
@@ -176,10 +177,11 @@ class DigestBuilder:
     def _generate_cover_text(self, start: datetime, end: datetime, count: int, events: List[Dict]) -> str:
         date_str = f"{start.strftime('%m/%d')} - {end.strftime('%m/%d')}"
         # Fixed cover text template to save AI tokens (User request)
+        # Simplified and removed emoji/redundant words
         return (
-            f"🎵 音樂活動懶人包 ({date_str})\n\n"
-            f"這週很熱鬧，共整理了 {count} 場演出！\n"
-            "大家準備好要去哪一場了嗎？詳細資訊請看下方整理 👇"
+            f"音樂活動懶人包 ({date_str})\n\n"
+            f"本週精選了 {count} 場演出！\n"
+            "詳細資訊請看下方整理 👇"
         )
 
 
@@ -211,9 +213,13 @@ class DigestBuilder:
         discovery_prefix = "✨ [樂壇新血] " if event.get('is_discovery') else ""
         
         # Final prefix
-        prefix = hot_prefix or discovery_prefix or "🎸 "
+        prefix = hot_prefix or discovery_prefix or "• " # Normal dot instead of emoji to be less AI-like
         
-        base_line = f"\n{prefix}[{city}] {name}\n🗓 {time_str} ({weekday}) @ {venue}"
+        # Clean Name & Date
+        clean_name = clean_event_title(name)
+        short_date = format_short_date(date_val or time_val)
+        
+        base_line = f"\n{prefix}[{city}] {clean_name}\n {short_date} ({weekday}) @ {venue}"
         
         # Format performers and profiles
         profiles = event.get('performer_profiles', {})

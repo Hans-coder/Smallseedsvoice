@@ -10,6 +10,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from src.utils.discord_notifier import DiscordNotifier
 from src.utils.logger import setup_logger
+from src.utils.text_cleaners import clean_event_title, format_short_date
 
 logger = setup_logger("discord_notification")
 
@@ -57,11 +58,15 @@ def format_raw_events_to_text(events, type_name):
 
     lines.append("📅 **活動列表**")
     for i, e in enumerate(events[:15], 1): # Limit to 15
-        name = e.get('activity_name') or e.get('name') or "未知活動"
-        date = e.get('date') or e.get('time') or "時間待定"
+        raw_name = e.get('activity_name') or e.get('name') or "未知活動"
+        name = clean_event_title(raw_name)
+        
+        raw_date = e.get('date') or e.get('time') or "時間待定"
+        date = format_short_date(raw_date)
+        
         venue = e.get('venue') or e.get('venue_name') or "地點待定"
         wd = parse_iso_date(e.get('date'))
-        lines.append(f"{i}. {name}\n   🗓 {date}{wd} @ {venue}")
+        lines.append(f"{i}. {name}\n   {date}{wd} @ {venue}")
     
     if len(events) > 15:
         lines.append(f"\n...以及其他 {len(events)-15} 場活動。")

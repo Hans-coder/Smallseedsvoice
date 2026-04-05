@@ -5,6 +5,7 @@ from datetime import datetime
 from src.scraper.base_scraper import BaseScraper
 from src.utils.logger import setup_logger
 from src.utils.date_parser import parse_taiwan_date, parse_time
+from src.utils.text_cleaners import refine_image_url, clean_event_title
 
 logger = setup_logger(__name__)
 
@@ -179,7 +180,7 @@ class KktixScraper(BaseScraper):
             
             # Extract high-res image from og:image
             og_img = soup.find('meta', property='og:image')
-            detail_image = og_img.get('content') if og_img else None
+            detail_image = refine_image_url(og_img.get('content')) if og_img else None
 
             return {"venue_name": venue, "ticket_sale_date": sale_date, "price": price, "image_url": detail_image}
         except Exception as e:
@@ -197,7 +198,8 @@ class KktixScraper(BaseScraper):
                 
             # Basic Info
             title_container = element.find(class_='event-title')
-            name = title_container.find('h2').get_text(strip=True) if title_container else "Unknown"
+            raw_title = title_container.find('h2').get_text(strip=True) if title_container else "Unknown"
+            name = clean_event_title(raw_title)
             
             # Time & Date
             # Format: 2025/11/11(二)
