@@ -242,48 +242,55 @@ const lineG = svg.append('g').attr('id','leaders').attr('fill','none');
 const dotG  = svg.append('g').attr('id','dots');
 
 // ════════════════════════════════════════════════════════════════
-//  CORNER DECORATIONS (High-end Festival Culture Vectors)
+//  CORNER DECORATIONS (Ultra Premium Audiophile Vectors)
 // ════════════════════════════════════════════════════════════════
 ;(()=>{
-  // Top Left: Camping Tent (Outdoor Indie)
+  // Top Left: Minimalist Turntable
   const g=svg.append('g').attr('opacity',0.06).attr('transform','translate(20,20)');
-  g.append('polygon').attr('points','50,10 20,60 80,60').attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',3);
-  g.append('line').attr('x1',50).attr('y1',10).attr('x2',50).attr('y2',60).attr('stroke','#4A3020').attr('stroke-width',2); // tent opening
-  g.append('polygon').attr('points','50,30 35,60 65,60').attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',2);
-  g.append('path').attr('d','M 50,10 C 70,0 90,15 110,5').attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',1.5);
-  g.append('polygon').attr('points','60,8 65,15 70,5').attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',1.5);
+  g.append('rect').attr('x',0).attr('y',0).attr('width',100).attr('height',70).attr('rx',4).attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',2);
+  g.append('circle').attr('cx',35).attr('cy',35).attr('r',28).attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',1.5);
+  g.append('circle').attr('cx',35).attr('cy',35).attr('r',26).attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',0.5);
+  g.append('circle').attr('cx',35).attr('cy',35).attr('r',10).attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',1);
+  g.append('circle').attr('cx',35).attr('cy',35).attr('r',1.5).attr('fill','#4A3020');
+  g.append('circle').attr('cx',80).attr('cy',15).attr('r',6).attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',2);
+  g.append('circle').attr('cx',80).attr('cy',15).attr('r',2).attr('fill','#4A3020');
+  g.append('line').attr('x1',80).attr('y1',21).attr('x2',65).attr('y2',55).attr('stroke','#4A3020').attr('stroke-width',2);
+  g.append('rect').attr('x',57).attr('y',50).attr('width',10).attr('height',14).attr('rx',1).attr('transform','rotate(25 62 57)').attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',1.5);
+  g.append('circle').attr('cx',80).attr('cy',55).attr('r',4).attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',2);
+  g.append('circle').attr('cx',90).attr('cy',55).attr('r',2.5).attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',2);
 })();
 ;(()=>{
-  // Top Right: Festival Banners
-  const g=svg.append('g').attr('opacity',0.06).attr('transform','translate(930,20)');
-  g.append('path').attr('d','M 0,20 C 40,40 80,40 120,0').attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',2.5);
-  g.append('polygon').attr('points','20,28 30,50 40,32').attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',2);
-  g.append('polygon').attr('points','50,34 60,56 70,35').attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',2);
-  g.append('polygon').attr('points','80,32 90,54 100,26').attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',2);
+  // Top Right: Abstract Soundwave Frequency
+  const g=svg.append('g').attr('opacity',0.06).attr('transform','translate(920,20)');
+  g.append('path').attr('d','M 0,35 C 20,5 25,5 30,35 C 35,65 40,65 45,35 C 50,5 55,5 60,35 C 65,65 70,65 75,35 C 80,5 85,5 95,35').attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',2.2);
+  g.append('path').attr('d','M 0,45 C 20,15 25,15 30,45 C 35,75 40,75 45,45 C 50,15 55,15 60,45 C 65,75 70,75 75,45 C 80,15 85,15 95,45').attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',0.8);
+  g.append('line').attr('x1',-5).attr('y1',40).attr('x2',100).attr('y2',40).attr('stroke','#4A3020').attr('stroke-width',1).attr('stroke-dasharray','2,3');
 })();
 ;(()=>{
-  // Bottom Left: Live Amp Stack & Mic (Stage Energy)
+  // Bottom Left: Elegant Tuning Fork
   const g=svg.append('g').attr('opacity',0.06).attr('transform','translate(20,865)');
-  g.append('rect').attr('x',0).attr('y',0).attr('width',64).attr('height',24).attr('rx',3).attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',2.2);
-  g.append('rect').attr('x',0).attr('y',28).attr('width',64).attr('height',60).attr('rx',3).attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',2.2);
-  [12,22,32,42,52].forEach(x=> g.append('circle').attr('cx',x).attr('cy',12).attr('r',2.5).attr('fill','#4A3020'));
-  g.append('circle').attr('cx',32).attr('cy',58).attr('r',20).attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',1.5);
-  g.append('circle').attr('cx',32).attr('cy',58).attr('r',16).attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',1);
-  g.append('circle').attr('cx',32).attr('cy',58).attr('r',4).attr('fill','#4A3020');
-  g.append('line').attr('x1',80).attr('y1',88).attr('x2',80).attr('y2',15).attr('stroke','#4A3020').attr('stroke-width',2.5);
-  g.append('line').attr('x1',70).attr('y1',88).attr('x2',90).attr('y2',88).attr('stroke','#4A3020').attr('stroke-width',3);
-  g.append('ellipse').attr('cx',80).attr('cy',10).attr('rx',6).attr('ry',4).attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',2);
+  g.append('line').attr('x1',50).attr('y1',60).attr('x2',50).attr('y2',20).attr('stroke','#4A3020').attr('stroke-width',3.5);
+  g.append('path').attr('d','M 35,0 L 35,10 C 35,25 65,25 65,10 L 65,0').attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',3.5);
+  g.append('circle').attr('cx',35).attr('cy',0).attr('r',2.5).attr('fill','#4A3020');
+  g.append('circle').attr('cx',65).attr('cy',0).attr('r',2.5).attr('fill','#4A3020');
+  g.append('path').attr('d','M 20,-5 C 10,0 10,15 20,20').attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',2);
+  g.append('path').attr('d','M 12,-10 C -2,0 -2,25 12,35').attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',1);
+  g.append('path').attr('d','M 80,-5 C 90,0 90,15 80,20').attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',2);
+  g.append('path').attr('d','M 88,-10 C 102,0 102,25 88,35').attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',1);
 })();
 ;(()=>{
-  // Bottom Right: Craft Beers Cheers (Festival Vibes)
-  const g=svg.append('g').attr('opacity',0.06).attr('transform','translate(940,860)');
-  g.append('path').attr('d','M 20,60 C 20,80 50,80 50,60 L 50,20 L 20,20 Z').attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',2.5).attr('transform','translate(0,20) rotate(-15 35 50)');
-  g.append('path').attr('d','M 60,60 C 60,80 90,80 90,60 L 90,20 L 60,20 Z').attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',2.5).attr('transform','translate(0,20) rotate(15 75 50)');
-  g.append('path').attr('d','M 12,50 C -5,50 -5,75 14,70').attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',2.5);
-  g.append('path').attr('d','M 98,50 C 115,50 115,75 96,70').attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',2.5);
-  g.append('circle').attr('cx',55).attr('cy',25).attr('r',4).attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',2);
-  g.append('circle').attr('cx',45).attr('cy',18).attr('r',2.5).attr('fill','#4A3020');
-  g.append('circle').attr('cx',62).attr('cy',15).attr('r',3).attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',2);
+  // Bottom Right: Synthesizer Keybed
+  const g=svg.append('g').attr('opacity',0.06).attr('transform','translate(940,865)');
+  g.append('rect').attr('x',0).attr('y',15).attr('width',100).attr('height',45).attr('rx',3).attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',2);
+  [15,35,55,75].forEach(x => {
+    g.append('circle').attr('cx',x).attr('cy',28).attr('r',4).attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',2);
+    g.append('line').attr('x1',x).attr('y1',28).attr('x2',x-2).attr('y2',25).attr('stroke','#4A3020').attr('stroke-width',1.5);
+  });
+  g.append('rect').attr('x',0).attr('y',45).attr('width',100).attr('height',15).attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',2);
+  for(let i=10; i<100; i+=10) {
+    g.append('line').attr('x1',i).attr('y1',45).attr('x2',i).attr('y2',60).attr('stroke','#4A3020').attr('stroke-width',i%30===0?2:1);
+  }
+  g.append('line').attr('x1',90).attr('y1',25).attr('x2',90).attr('y2',32).attr('stroke','#4A3020').attr('stroke-width',2);
 })();
 
 // ════════════════════════════════════════════════════════════════
@@ -302,9 +309,9 @@ svg.append('text').attr('x',W/2).attr('y',116).attr('text-anchor','middle')
 //  LOAD TOPOJSON
 // ════════════════════════════════════════════════════════════════
 d3.json('https://cdn.jsdelivr.net/npm/taiwan-atlas/counties-10t.json').then(tw => {
-  // Entirely remove Kinmen and Lienchiang from data to hide them completely
+  // Entirely remove Kinmen, Lienchiang, and Penghu to perfectly condense lateral space
   tw.objects.counties.geometries = tw.objects.counties.geometries.filter(
-    d => d.properties.COUNTYNAME !== '金門縣' && d.properties.COUNTYNAME !== '連江縣'
+    d => !['金門縣', '連江縣', '澎湖縣'].includes(d.properties.COUNTYNAME)
   );
 
   const counties  = topojson.feature(tw, tw.objects.counties);
@@ -331,8 +338,6 @@ d3.json('https://cdn.jsdelivr.net/npm/taiwan-atlas/counties-10t.json').then(tw =
     .attr('fill','none').attr('stroke','#5A3E28').attr('stroke-width',2.2).attr('stroke-linejoin','round');
 
   // Offshore labels
-  const [phx,phy]=ll(119.56,23.57);
-  svg.append('text').attr('x',phx).attr('y',phy+4).attr('font-size',9).attr('fill','#9A8878').attr('text-anchor','middle').attr('opacity',0.4).text('澎湖');
   const [gx,gy]=ll(121.47,22.67);
   svg.append('text').attr('x',gx+15).attr('y',gy+4).attr('font-size',8.5).attr('fill','#9A8878').text('綠島');
   const [ox,oy]=ll(121.53,22.04);
@@ -362,8 +367,8 @@ const FS   = 12.5;   // event text size
 const FSL  = 14.5;   // city label size
 const RH   = 13.6;   // row height (tighter)
 const GAP  = 6;      // gap between groups
-const LX   = 32;     // left col left x (pushed inward)
-const RXE  = W-32;   // right col right x (pushed inward)
+const LX   = 60;     // deeply compressed left x margin
+const RXE  = W-60;   // deeply compressed right col x margin
 
 function renderGroups() {
   renderSide(LEFT_GROUPS,  'L');
@@ -388,7 +393,7 @@ function renderSide(groups, side) {
     top = Math.max(top, prevBottom + GAP);
 
     // Group anchor coords (dot next to text)
-    const anchorX = isLeft ? 212 : W - 212;
+    const anchorX = isLeft ? 240 : W - 240;
     const anchorY = top + totalH / 2;
 
     // Draw lines to all actual city dots in this group
@@ -423,13 +428,8 @@ function renderSide(groups, side) {
     grp.events.forEach(([date, name]) => {
       const row = svg.append('text').attr('x', lx).attr('y', y)
         .attr('font-size', FS).attr('text-anchor', anchor);
-      if (isLeft) {
-        row.append('tspan').attr('fill','#9A8060').attr('font-size', 10.5).text(date + '  ');
-        row.append('tspan').attr('fill','#1A1410').text(name);
-      } else {
-        row.append('tspan').attr('fill','#1A1410').text(name + '  ');
-        row.append('tspan').attr('fill','#9A8060').attr('font-size', 10.5).text(date);
-      }
+      row.append('tspan').attr('fill','#1A1410').text(name + '  ');
+      row.append('tspan').attr('fill','#9A8060').attr('font-size', 10.5).text(date);
       y += RH;
     });
 
