@@ -80,13 +80,15 @@ class DigestBuilder:
                             profiles[artist.lower()] = {"description": desc, "ig_handle": handle}
             
             event['performer_profiles'] = profiles
+            
+            # Simple Genre Classification
+            event['genre'] = self._classify_genre(event)
         
         if not sorted_events:
             return []
 
-        # 2. Group by Date Section (e.g., Mon-Wed, Thu-Fri, Sat-Sun)
-        # This helps structure the digest logically.
-        grouped_sections = self._group_events_by_section(sorted_events)
+        # 2. Group by City/Region
+        grouped_sections = self._group_events_by_city(sorted_events)
         
         # 3. Generate Posts
         posts = []
@@ -96,8 +98,9 @@ class DigestBuilder:
         current_text = cover_text
         current_images = []
         
-        for section_name, section_events in grouped_sections.items():
-            section_header = f"\n{section_name}\n"
+        # Threads limit enforcement
+        for city, city_events in grouped_sections.items():
+            section_header = f"\n📍 {city}\n"
             
             # If adding header exceeds limit, push current post and start new
             if len(current_text) + len(section_header) > self.max_chars:
@@ -107,37 +110,24 @@ class DigestBuilder:
             else:
                 current_text += section_header
             
-            for event in section_events:
-                event_line = self._format_event_line(event)
+            for event in city_events:
+                event_line = self._format_event_line_concise(event)
                 
                 if len(current_text) + len(event_line) > self.max_chars:
                     # Push current post
                     posts.append({'text': current_text.strip(), 'images': current_images})
-                    # Start new post with event line
                     current_text = event_line.strip()
                     current_images = []
                 else:
                     current_text += event_line
                 
-                # Add image if available (Threads API needs URL)
                 if event.get('image_url'):
                     current_images.append(event['image_url'])
         
-        # Add the last remaining post
         if current_text:
             posts.append({'text': current_text.strip(), 'images': current_images})
             
-        # Community Prompt (CTA) - Removed as per user request to save tokens
-        # if self.enricher and posts:
-        #    ...
-
-        # 5. Redistribute Images (Optional optimization)
-        # Threads allows mixing text and images. 
-        # We need to ensure no post has > 10 images (Threads limit per carousel is 10, typically).
-        # And total conversation limit? Actually Threads allows images in replies.
-        # Let's enforce max 10 images per single post unit.
         self._enforce_image_limits(posts)
-        
         return posts
 
     def _sort_and_filter_events(self, events: List[Dict], start: datetime, end: datetime) -> List[Dict]:
@@ -167,12 +157,32 @@ class DigestBuilder:
         
         return filtered_events 
 
-    def _group_events_by_section(self, events: List[Dict]) -> Dict[str, List[Dict]]:
-        """Groups events into sections like '上半週 (Mon-Wed)', '下半週 (Thu-Fri)', '週末 (Sat-Sun)'."""
-        # Placeholder logic: just group by date string if possible, or return a single 'All Events' group
-        # Real implementation would parse dates. 
-        # For MVP, let's return a single group "本週活動"
-        return {"本週活動": events}
+    def _group_events_by_city(self, events: List[Dict]) -> Dict[str, List[Dict]]:
+        """Groups events into regional sections (Taipei, Taichung, Kaohsiung, etc.)"""
+        from collections import defaultdict
+        grouped = defaultdict(list)
+        
+        # Priority cities
+        target_cities = ['台北', '新北', '桃園', '新竹', '台中', '嘉義', '台南', '高雄', '宜蘭', '花蓮', '台東']
+        
+        for event in events:
+            location = event.get('location') or event.get('venue_name') or "台灣"
+            found_city = "其他地區"
+            for city in target_cities:
+                if city in location:
+                    found_city = city
+                    break
+            grouped[found_city].append(event)
+            
+        # Sort keys: Priority cities first, then others
+        sorted_grouped = {}
+        for city in target_cities:
+            if city in grouped:
+                sorted_grouped[city] = grouped[city]
+        if "其他地區" in grouped:
+            sorted_grouped["其他地區"] = grouped["其他地區"]
+            
+        return sorted_grouped
 
     def _generate_cover_text(self, start: datetime, end: datetime, count: int, events: List[Dict]) -> str:
         date_str = f"{start.strftime('%m/%d')} - {end.strftime('%m/%d')}"
@@ -185,78 +195,22 @@ class DigestBuilder:
         )
 
 
-    def _format_event_line(self, event: Dict) -> str:
-        # Normalize fields
-        name = event.get('name') or event.get('activity_name') or "Unknown Event"
-        location = event.get('location') or event.get('venue_name') or "台灣"
-        city = self._extract_city(location)
-        venue = location 
+    def _format_event_line_concise(self, event: Dict) -> str:
+        """鏡像使用者手動發文風格：強調 地點、時間、標題，不列出過多表演者細節"""
+        name = clean_event_title(event.get('name') or event.get('activity_name') or "Unknown Event")
+        venue = event.get('venue_name') or event.get('location') or "Venue"
+        # 移除地點中重複的城市名
+        venue = venue.replace('台北', '').replace('台中', '').replace('高雄', '').strip(' |·-')
         
-        # Time/Date handling
-        # Normalize Time/Date
-        time_val = event.get('time')
-        date_val = event.get('date')
+        date_iso = event.get('date') or event.get('time')
+        short_date = format_short_date(date_iso)
+        weekday = self._get_weekday_zh(date_iso) if date_iso else ""
         
-        # Use specific time if valid, otherwise fallback to date
-        if not time_val or time_val == "Unknown":
-            time_str = date_val or "時間待定"
-        else:
-            time_str = time_val
-            
-        # Always parse weekday from date for reliability
-        weekday = self._get_weekday_zh(date_val) if date_val else ""
-
-        # 熱門活動標籤
-        hot_prefix = "🔥 [熱門盛事] " if event.get('is_hot') else ""
+        prefix = "• "
+        if event.get('is_hot'): prefix = "🔥 "
+        elif event.get('is_discovery'): prefix = "✨ "
         
-        # 新血/發現標籤
-        discovery_prefix = "✨ [樂壇新血] " if event.get('is_discovery') else ""
-        
-        # Final prefix
-        prefix = hot_prefix or discovery_prefix or "• " # Normal dot instead of emoji to be less AI-like
-        
-        # Clean Name & Date
-        clean_name = clean_event_title(name)
-        short_date = format_short_date(date_val or time_val)
-        
-        base_line = f"\n{prefix}[{city}] {clean_name}\n {short_date} ({weekday}) @ {venue}"
-        
-        # Format performers and profiles
-        profiles = event.get('performer_profiles', {})
-        performers = event.get('performers', [])
-        
-        performer_lines = []
-        if performers:
-            display_names = []
-            desc_lines = []
-            
-            for p in performers:
-                prof = profiles.get(p.lower(), {})
-                handle = prof.get('ig_handle', '')
-                desc = prof.get('description', '')
-                
-                # Use handle if available, otherwise just name
-                if handle:
-                    # Clean handle just in case it starts with @
-                    handle = handle.lstrip('@')
-                    display_names.append(f"@{handle}")
-                else:
-                    display_names.append(p)
-                    
-                # Add description if this is a new artist and has a description
-                if desc and p in event.get('new_artists', []):
-                    desc_lines.append(f"💡 {p}：{desc}")
-                    
-            if display_names and display_names != [name]: # Avoid repeating if name is the same as performer
-                performer_lines.append(f"🎤 演出：{'、'.join(display_names)}")
-                
-            for d in desc_lines:
-                performer_lines.append(d)
-                
-        if performer_lines:
-            return base_line + "\n" + "\n".join(performer_lines) + "\n"
-        
-        return base_line + "\n"
+        return f"{prefix}{short_date}({weekday}) {name} @ {venue}\n"
 
     def _extract_city(self, location: str) -> str:
         # 簡單城市提取
@@ -290,4 +244,22 @@ class DigestBuilder:
         for post in posts:
             if len(post['images']) > MAX_IMAGES_PER_POST:
                 post['images'] = post['images'][:MAX_IMAGES_PER_POST]
+
+    def _classify_genre(self, event: Dict) -> str:
+        """Classify event genre based on keywords in name or caption."""
+        content = (str(event.get('name', '')) + " " + str(event.get('caption', ''))).lower()
+        
+        genre_map = {
+            'Hip-Hop / Rap': ['hip hop', 'hip-hop', '饒舌', 'rap', '嘻哈', '陷阱'],
+            'Electronic / Dance': ['電子', 'edm', 'techno', 'house', 'dance', 'dj', '派對', 'party', '銳舞', 'rave'],
+            'Rock / Indie': ['搖滾', 'rock', '獨立', 'indie', '樂團', 'band', '後搖', 'post rock', '瞪鞋', 'shoegaze'],
+            'Jazz / Soul': ['爵士', 'jazz', '靈魂', 'soul', 'funk', '放克', '節奏藍調', 'r&b'],
+            'Pop / Chill': ['流行', 'pop', '民謠', 'folk', '不插電', 'acoustic', '抒情', 'chill'],
+            'C-Pop / J-Pop / K-Pop': ['華語', '日系', 'k-pop', 'j-pop', '偶像', 'idol', '動漫']
+        }
+        
+        for genre, keywords in genre_map.items():
+            if any(k in content for k in keywords):
+                return genre
+        return "Other"
 

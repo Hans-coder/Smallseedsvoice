@@ -60,9 +60,24 @@ const MCY = (MTY+MBY)/2; // 540
 const proj = d3.geoMercator()
   .center([120.95, 23.45])
   .scale(11500)
-  .translate([MCX, MCY + 0]);
+  .translate([MCX, MCY + 80]);
 const gPath = d3.geoPath().projection(proj);
 const ll = (lon,lat) => proj([lon,lat]);
+
+// ════════════════════════════════════════════════════════════════
+//  DATA PAYLOADS
+// ════════════════════════════════════════════════════════════════
+const FOOTER_DATA = [
+  '巨獸搖滾 (最後2018)',
+  '春天吶喊 (最後2019)',
+  '覺醒音樂祭 (最後2019)',
+  '愛愛搖滾帳篷 (最後2018)',
+  '搖滾辦桌 (最後2015)',
+  '山海屯 (最後2019)',
+  '風和日麗連連看 (最後2017)',
+  '遊牧影展怪奇音樂祭 (停辦中)',
+  '貴人散步 LUCfest (暫停)'
+];
 
 // ════════════════════════════════════════════════════════════════
 //  CITY DEFINITIONS
@@ -92,22 +107,27 @@ const CITIES = {
 // cityKey = which city's dot Y to anchor from
 const LEFT_GROUPS = [
   {
-    cityKeys:['taipei', 'xinbei'], label:'台北・新北', col:'#7A2E1E',
+    cityKeys:['taipei'], label:'台北', col:'#7A2E1E',
     events:[
-      ['台北 03/07',   '雨山祭 YUSHAN FEST'],
-      ['台北 04/18',   '獨書祭'],
-      ['台北 04/26',   '野人祭 SAVAGE FEST'],
-      ['新北 06/01',   '河海音樂季'],
-      ['台北 06/06',   'ID.音樂節'],
-      ['新北 07/25',   '貢寮海洋音樂祭 HOHAIYAN'],
-      ['台北 08/23',   '叭叭嘉年華'],
-      ['台北 08月',    'JJA亞洲音樂節'],
-      ['台北 10/10',   '秋OUT音樂節 AUTUMN OUT'],
-      ['新北 11/01',   '呼叫音樂節 THE CALLING'],
-      ['台北 11/21',   '艋舺青山祭'],
-      ['台北 11/29',   '簡單生活節 SIMPLE LIFE'],
-      ['台北 12月中',   '困難生活節'],
-      ['新北 2025',    '樂團潮 ASIA ROLLING'],
+      ['03/07', '雨山祭 YUSHAN FEST'],
+      ['04/18', '獨書祭'],
+      ['04/26', '野人祭 SAVAGE FEST'],
+      ['06/06', 'ID.音樂節'],
+      ['08/23', '叭叭嘉年華'],
+      ['08月',  'JJA亞洲音樂節'],
+      ['10/10', '秋OUT音樂節 AUTUMN OUT'],
+      ['11/21', '艋舺青山祭'],
+      ['11/29', '簡單生活節 SIMPLE LIFE'],
+      ['12月中', '困難生活節'],
+    ]
+  },
+  {
+    cityKeys:['xinbei'], label:'新北', col:'#7A2E1E',
+    events:[
+      ['06/01', '河海音樂季'],
+      ['07/25', '貢寮海洋音樂祭 HOHAIYAN'],
+      ['11/01', '呼叫音樂節 THE CALLING'],
+      ['2025',  '樂團潮 ASIA ROLLING'],
     ]
   },
   {
@@ -222,36 +242,48 @@ const lineG = svg.append('g').attr('id','leaders').attr('fill','none');
 const dotG  = svg.append('g').attr('id','dots');
 
 // ════════════════════════════════════════════════════════════════
-//  CORNER DECORATIONS
+//  CORNER DECORATIONS (High-end Festival Culture Vectors)
 // ════════════════════════════════════════════════════════════════
 ;(()=>{
-  const g=svg.append('g').attr('opacity',0.08).attr('transform','translate(10,8)');
-  g.append('ellipse').attr('cx',44).attr('cy',92).attr('rx',30).attr('ry',24).attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',2.8);
-  g.append('rect').attr('x',31).attr('y',6).attr('width',26).attr('height',18).attr('rx',3).attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',2.8);
-  g.append('line').attr('x1',44).attr('y1',68).attr('x2',44).attr('y2',24).attr('stroke','#4A3020').attr('stroke-width',2.8);
-  g.append('circle').attr('cx',44).attr('cy',92).attr('r',7).attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',2.2);
-  [34,44,56].forEach((x,i)=>{g.append('line').attr('x1',x).attr('y1',68).attr('x2',[37,44,51][i]).attr('y2',6).attr('stroke','#4A3020').attr('stroke-width',1);});
+  // Top Left: Camping Tent (Outdoor Indie)
+  const g=svg.append('g').attr('opacity',0.06).attr('transform','translate(20,20)');
+  g.append('polygon').attr('points','50,10 20,60 80,60').attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',3);
+  g.append('line').attr('x1',50).attr('y1',10).attr('x2',50).attr('y2',60).attr('stroke','#4A3020').attr('stroke-width',2); // tent opening
+  g.append('polygon').attr('points','50,30 35,60 65,60').attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',2);
+  g.append('path').attr('d','M 50,10 C 70,0 90,15 110,5').attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',1.5);
+  g.append('polygon').attr('points','60,8 65,15 70,5').attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',1.5);
 })();
 ;(()=>{
-  const g=svg.append('g').attr('opacity',0.08).attr('transform','translate(912,8)');
-  g.append('rect').attr('x',4).attr('y',14).attr('width',156).attr('height',58).attr('rx',5).attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',2.4);
-  g.append('line').attr('x1',4).attr('y1',42).attr('x2',160).attr('y2',42).attr('stroke','#4A3020').attr('stroke-width',2.4);
-  [27,49,71,93,115,137].forEach(x=>{g.append('line').attr('x1',x).attr('y1',14).attr('x2',x).attr('y2',42).attr('stroke','#4A3020').attr('stroke-width',2);});
-  [[17,13],[39,13],[82,13],[104,13],[126,13]].forEach(([x,w])=>{g.append('rect').attr('x',x).attr('y',14).attr('width',w).attr('height',19).attr('rx',1.5).attr('fill','#4A3020');});
+  // Top Right: Festival Banners
+  const g=svg.append('g').attr('opacity',0.06).attr('transform','translate(930,20)');
+  g.append('path').attr('d','M 0,20 C 40,40 80,40 120,0').attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',2.5);
+  g.append('polygon').attr('points','20,28 30,50 40,32').attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',2);
+  g.append('polygon').attr('points','50,34 60,56 70,35').attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',2);
+  g.append('polygon').attr('points','80,32 90,54 100,26').attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',2);
 })();
 ;(()=>{
-  const g=svg.append('g').attr('opacity',0.08).attr('transform','translate(10,940)');
-  g.append('ellipse').attr('cx',44).attr('cy',82).attr('rx',27).attr('ry',22).attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',2.5);
-  g.append('rect').attr('x',34).attr('y',8).attr('width',20).attr('height',14).attr('rx',2.5).attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',2.5);
-  g.append('line').attr('x1',44).attr('y1',60).attr('x2',44).attr('y2',22).attr('stroke','#4A3020').attr('stroke-width',2.5);
+  // Bottom Left: Live Amp Stack & Mic (Stage Energy)
+  const g=svg.append('g').attr('opacity',0.06).attr('transform','translate(20,865)');
+  g.append('rect').attr('x',0).attr('y',0).attr('width',64).attr('height',24).attr('rx',3).attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',2.2);
+  g.append('rect').attr('x',0).attr('y',28).attr('width',64).attr('height',60).attr('rx',3).attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',2.2);
+  [12,22,32,42,52].forEach(x=> g.append('circle').attr('cx',x).attr('cy',12).attr('r',2.5).attr('fill','#4A3020'));
+  g.append('circle').attr('cx',32).attr('cy',58).attr('r',20).attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',1.5);
+  g.append('circle').attr('cx',32).attr('cy',58).attr('r',16).attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',1);
+  g.append('circle').attr('cx',32).attr('cy',58).attr('r',4).attr('fill','#4A3020');
+  g.append('line').attr('x1',80).attr('y1',88).attr('x2',80).attr('y2',15).attr('stroke','#4A3020').attr('stroke-width',2.5);
+  g.append('line').attr('x1',70).attr('y1',88).attr('x2',90).attr('y2',88).attr('stroke','#4A3020').attr('stroke-width',3);
+  g.append('ellipse').attr('cx',80).attr('cy',10).attr('rx',6).attr('ry',4).attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',2);
 })();
 ;(()=>{
-  const g=svg.append('g').attr('opacity',0.08).attr('transform','translate(948,938)');
-  g.append('ellipse').attr('cx',60).attr('cy',44).attr('rx',42).attr('ry',17).attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',2.4);
-  g.append('ellipse').attr('cx',60).attr('cy',66).attr('rx',42).attr('ry',17).attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',2.4);
-  g.append('line').attr('x1',18).attr('y1',44).attr('x2',18).attr('y2',66).attr('stroke','#4A3020').attr('stroke-width',2.4);
-  g.append('line').attr('x1',102).attr('y1',44).attr('x2',102).attr('y2',66).attr('stroke','#4A3020').attr('stroke-width',2.4);
-  [[40,12,62,44],[78,12,58,44]].forEach(([x1,y1,x2,y2])=>{g.append('line').attr('x1',x1).attr('y1',y1).attr('x2',x2).attr('y2',y2).attr('stroke','#4A3020').attr('stroke-width',3);});
+  // Bottom Right: Craft Beers Cheers (Festival Vibes)
+  const g=svg.append('g').attr('opacity',0.06).attr('transform','translate(940,860)');
+  g.append('path').attr('d','M 20,60 C 20,80 50,80 50,60 L 50,20 L 20,20 Z').attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',2.5).attr('transform','translate(0,20) rotate(-15 35 50)');
+  g.append('path').attr('d','M 60,60 C 60,80 90,80 90,60 L 90,20 L 60,20 Z').attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',2.5).attr('transform','translate(0,20) rotate(15 75 50)');
+  g.append('path').attr('d','M 12,50 C -5,50 -5,75 14,70').attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',2.5);
+  g.append('path').attr('d','M 98,50 C 115,50 115,75 96,70').attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',2.5);
+  g.append('circle').attr('cx',55).attr('cy',25).attr('r',4).attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',2);
+  g.append('circle').attr('cx',45).attr('cy',18).attr('r',2.5).attr('fill','#4A3020');
+  g.append('circle').attr('cx',62).attr('cy',15).attr('r',3).attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',2);
 })();
 
 // ════════════════════════════════════════════════════════════════
@@ -328,8 +360,8 @@ d3.json('https://cdn.jsdelivr.net/npm/taiwan-atlas/counties-10t.json').then(tw =
 // ════════════════════════════════════════════════════════════════
 const FS   = 12.5;   // event text size
 const FSL  = 14.5;   // city label size
-const RH   = 14.2;   // row height (tighter)
-const GAP  = 7;      // gap between groups
+const RH   = 13.6;   // row height (tighter)
+const GAP  = 6;      // gap between groups
 const LX   = 12;     // left col left x
 const RXE  = W-12;   // right col right x (anchor end)
 
@@ -351,8 +383,8 @@ function renderSide(groups, side) {
     // Total height: label + events
     const totalH = FSL + grp.events.length * RH;
 
-    // Center block at avgDotY, but never go above previous group
-    let top = avgDotY - totalH / 2;
+    // Center block at avgDotY, uncoupling the downward motion by 25px
+    let top = avgDotY - totalH / 2 - 25;
     top = Math.max(top, prevBottom + GAP);
 
     // Group anchor coords (dot next to text)
@@ -376,9 +408,10 @@ function renderSide(groups, side) {
     dotG.append('circle').attr('cx', anchorX).attr('cy', anchorY).attr('r', 3)
       .attr('fill', '#F3ECE0').attr('stroke', grp.col).attr('stroke-width', 2);
 
-    // ── City label ──
-    const lx     = isLeft ? LX : RXE;
-    const anchor  = isLeft ? 'start' : 'end';
+    // ── City label & Alignment Hugging ──
+    // Text blocks are aligned directly against the anchor nodes
+    const lx      = isLeft ? anchorX - 14 : anchorX + 14;
+    const anchor  = isLeft ? 'end' : 'start';
     const labelY  = top + FSL;
 
     svg.append('text').attr('x', lx).attr('y', labelY)
@@ -392,11 +425,11 @@ function renderSide(groups, side) {
       const row = svg.append('text').attr('x', lx).attr('y', y)
         .attr('font-size', FS).attr('text-anchor', anchor);
       if (isLeft) {
-        row.append('tspan').attr('fill','#9A8060').attr('font-size', 10.5).text(date + '  ');
-        row.append('tspan').attr('fill','#1A1410').text(name);
-      } else {
         row.append('tspan').attr('fill','#1A1410').text(name + '  ');
         row.append('tspan').attr('fill','#9A8060').attr('font-size', 10.5).text(date);
+      } else {
+        row.append('tspan').attr('fill','#9A8060').attr('font-size', 10.5).text(date + '  ');
+        row.append('tspan').attr('fill','#1A1410').text(name);
       }
       y += RH;
     });
