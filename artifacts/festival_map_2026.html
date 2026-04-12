@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<title>台灣音樂節全攻略地圖 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  background:#B8B2A5;
+  font-family:'Noto Sans TC', sans-serif;
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+  padding:24px;
+  min-height:100vh;
+}
+#wrap {
+  background:#F3ECE0;
+  border:2px solid #BAA888;
+  box-shadow:0 14px 64px rgba(0,0,0,.32);
+  position:relative;
+  overflow:hidden;
+}
+</style>
+</head>
+<body>
+<div id="wrap">
+  <svg id="main" xmlns="http://www.w3.org/2000/svg"
+       style="display:block;font-family:'Noto Sans TC',sans-serif;">
+  </svg>
+</div>
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script src="https://unpkg.com/topojson-client@3/dist/topojson-client.min.js"></script>
+<script>
+// ════════════════════════════════════════════════════════════════
+//  CANVAS — 1:1 square, 1080×1080
+// ════════════════════════════════════════════════════════════════
+const W = 1080, H = 1080;
+const svg = d3.select('#main').attr('width',W).attr('height',H);
+d3.select('#wrap').style('width',W+'px').style('height',H+'px');
+svg.append('rect').attr('width',W).attr('height',H).attr('fill','#F3ECE0');
+
+// ════════════════════════════════════════════════════════════════
+//  LAYOUT — text columns tight against map
+//  Left col:  x  0 ~ ML   (290px)
+//  Map zone:  ML ~ MR     (500px)
+//  Right col: MR ~ W      (290px)
+// ════════════════════════════════════════════════════════════════
+const ML  = 295;   // map left boundary
+const MR  = 785;   // map right boundary
+const MCX = 540;   // 540
+const MTY = 100;   // map top (below title)
+const MBY = 930;   // map bottom
+const MCY = (MTY+MBY)/2; // 540
+
+// ════════════════════════════════════════════════════════════════
+//  PROJECTION  — pull map up, scale 11800 to fill empty space
+// ════════════════════════════════════════════════════════════════
+const proj = d3.geoMercator()
+  .center([120.95, 23.45])
+  .scale(11500)
+  .translate([MCX, MCY + 0]);
+const gPath = d3.geoPath().projection(proj);
+const ll = (lon,lat) => proj([lon,lat]);
+
+// ════════════════════════════════════════════════════════════════
+//  CITY DEFINITIONS
+// ════════════════════════════════════════════════════════════════
+const CITIES = {
+  taipei:     { lon:121.53, lat:25.05, r:9,   col:'#7A2E1E', side:'L' },
+  xinbei:     { lon:121.47, lat:24.98, r:5,   col:'#8A3020', side:'L' },
+  keelung:    { lon:121.74, lat:25.13, r:5,   col:'#7A2E1E', side:'R' },
+  taoyuan:    { lon:121.30, lat:24.99, r:5.5, col:'#8A3820', side:'L' },
+  hsinchu:    { lon:120.96, lat:24.80, r:5,   col:'#7A4020', side:'L' },
+  yilan:      { lon:121.75, lat:24.70, r:5.5, col:'#1A5C3A', side:'R' },
+  taichung:   { lon:120.68, lat:24.15, r:9,   col:'#1E3D6A', side:'L' },
+  changhua:   { lon:120.54, lat:24.08, r:4.5, col:'#1E3D6A', side:'L' },
+  nantou:     { lon:120.69, lat:23.96, r:4.5, col:'#1E3D6A', side:'L' },
+  hualien:    { lon:121.60, lat:23.97, r:5.5, col:'#1A5C3A', side:'R' },
+  chiayi:     { lon:120.45, lat:23.48, r:5,   col:'#2E5A10', side:'L' },
+  tainan:     { lon:120.21, lat:23.00, r:6,   col:'#6A3D0E', side:'L' },
+  kaohsiung:  { lon:120.30, lat:22.62, r:9,   col:'#7A4D18', side:'L' },
+  taitung:    { lon:121.15, lat:22.76, r:5.5, col:'#1A5C3A', side:'R' },
+  pingtung:   { lon:120.49, lat:22.67, r:5,   col:'#7A3A1E', side:'R' },
+  kenting:    { lon:120.75, lat:22.00, r:4.5, col:'#8A4A2A', side:'R' },
+};
+
+// ════════════════════════════════════════════════════════════════
+//  EVENT DATA
+// ════════════════════════════════════════════════════════════════
+// cityKey = which city's dot Y to anchor from
+const LEFT_GROUPS = [
+  {
+    cityKeys:['taipei', 'xinbei'], label:'台北・新北', col:'#7A2E1E',
+    events:[
+      ['台北 03/07',   '雨山祭 YUSHAN FEST'],
+      ['台北 04/18',   '獨書祭'],
+      ['台北 04/26',   '野人祭 SAVAGE FEST'],
+      ['新北 06/01',   '河海音樂季'],
+      ['台北 06/06',   'ID.音樂節'],
+      ['新北 07/25',   '貢寮海洋音樂祭 HOHAIYAN'],
+      ['台北 08/23',   '叭叭嘉年華'],
+      ['台北 08月',    'JJA亞洲音樂節'],
+      ['台北 10/10',   '秋OUT音樂節 AUTUMN OUT'],
+      ['新北 11/01',   '呼叫音樂節 THE CALLING'],
+      ['台北 11/21',   '艋舺青山祭'],
+      ['台北 11/29',   '簡單生活節 SIMPLE LIFE'],
+      ['台北 12月中',   '困難生活節'],
+      ['新北 2025',    '樂團潮 ASIA ROLLING'],
+    ]
+  },
+  {
+    cityKeys:['taoyuan'], label:'桃園', col:'#8A3820',
+    events:[
+      ['03/14','卡卡音樂祭 KAKA FEST'],
+      ['05/16','上岸音樂節'],
+      ['11/22','火球祭 FIREBALL FEST'],
+    ]
+  },
+  {
+    cityKeys:['hsinchu'], label:'新竹', col:'#8A3820',
+    events:[
+      ['04/12','破風祭 PROWIND'],
+      ['06/27','風神音樂祭 WIND GOD'],
+    ]
+  },
+  {
+    cityKeys:['taichung'], label:'台中', col:'#1E3D6A',
+    events:[
+      ['02/28','浮現祭 EMERGE FEST'],
+      ['05/30','赤聲躁動 CARNIVAL FEVER'],
+      ['06/26','春浪音樂節 SPRING WAVE'],
+      ['07/12','台秋祭 TAICHILL CITY'],
+      ['10月', '搖滾台中 ROCK IN TAICHUNG'],
+      ['10/17','台中爵士音樂節'],
+      ['11/15','南北二路音樂節'],
+      ['12/12','漂遊者森林音樂祭'],
+    ]
+  },
+  {
+    cityKeys:['changhua'], label:'彰化', col:'#1E3D6A',
+    events:[
+      ['07月','回歸音樂祭 RETURN FESTIVAL'],
+    ]
+  },
+  {
+    cityKeys:['nantou'], label:'南投', col:'#1E3D6A',
+    events:[
+      ['11月','無限自由音樂藝術節'],
+      ['12月','黑熊部落 KUMA TRIBE'],
+    ]
+  },
+  {
+    cityKeys:['chiayi'], label:'嘉義', col:'#6A3D0E',
+    events:[
+      ['10/11','諸羅搖滾 CHIAYI ROCK'],
+    ]
+  },
+  {
+    cityKeys:['tainan'], label:'台南', col:'#6A3D0E',
+    events:[
+      ['09月', '將軍吼音樂節'],
+      ['10月', '浪人祭 VAGABOND FEST'],
+      ['10月', '南吼音樂季'],
+    ]
+  },
+  {
+    cityKeys:['kaohsiung'], label:'高雄', col:'#6A3D0E',
+    events:[
+      ['03/28','大港開唱 MEGAPORT'],
+      ['10/10','TAKAO ROCK'],
+    ]
+  },
+];
+
+const RIGHT_GROUPS = [
+  {
+    cityKeys:['keelung'], label:'基隆', col:'#7A2E1E',
+    events:[
+      ['05/23','愛嶼摇滾 AI YU ROCK'],
+      ['06/13','吾夜生活節 WOOYEH'],
+    ]
+  },
+  {
+    cityKeys:['yilan'], label:'宜蘭', col:'#1A5C3A',
+    events:[
+      ['04/18','吉姆Hen醉 JIM HEN ZUI'],
+    ]
+  },
+  {
+    cityKeys:['hualien'], label:'花蓮', col:'#1A5C3A',
+    events:[
+      ['04月','有機派對 ORGANIC PARTY'],
+      ['07月','夏戀嘉年華 SUMMER ROCK'],
+    ]
+  },
+  {
+    cityKeys:['taitung'], label:'台東', col:'#1A5C3A',
+    events:[
+      ['05/16','東浪嘉年華 EAST WAVE'],
+      ['06～09月','月光・海音樂會'],
+      ['11月','PASIWALI 音樂節'],
+      ['11月','阿米斯音樂節'],
+    ]
+  },
+  {
+    cityKeys:['pingtung'], label:'屏東', col:'#7A3A1E',
+    events:[
+      ['04/03','台灣祭 TAIWAN FEST'],
+      ['04/10','屏東三大日'],
+      ['04/10','南國國際生活節'],
+    ]
+  },
+];
+
+// ════════════════════════════════════════════════════════════════
+//  LAYER GROUPS
+// ════════════════════════════════════════════════════════════════
+const mapG  = svg.append('g').attr('id','map');
+const lineG = svg.append('g').attr('id','leaders').attr('fill','none');
+const dotG  = svg.append('g').attr('id','dots');
+
+// ════════════════════════════════════════════════════════════════
+//  CORNER DECORATIONS
+// ════════════════════════════════════════════════════════════════
+;(()=>{
+  const g=svg.append('g').attr('opacity',0.08).attr('transform','translate(10,8)');
+  g.append('ellipse').attr('cx',44).attr('cy',92).attr('rx',30).attr('ry',24).attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',2.8);
+  g.append('rect').attr('x',31).attr('y',6).attr('width',26).attr('height',18).attr('rx',3).attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',2.8);
+  g.append('line').attr('x1',44).attr('y1',68).attr('x2',44).attr('y2',24).attr('stroke','#4A3020').attr('stroke-width',2.8);
+  g.append('circle').attr('cx',44).attr('cy',92).attr('r',7).attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',2.2);
+  [34,44,56].forEach((x,i)=>{g.append('line').attr('x1',x).attr('y1',68).attr('x2',[37,44,51][i]).attr('y2',6).attr('stroke','#4A3020').attr('stroke-width',1);});
+})();
+;(()=>{
+  const g=svg.append('g').attr('opacity',0.08).attr('transform','translate(912,8)');
+  g.append('rect').attr('x',4).attr('y',14).attr('width',156).attr('height',58).attr('rx',5).attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',2.4);
+  g.append('line').attr('x1',4).attr('y1',42).attr('x2',160).attr('y2',42).attr('stroke','#4A3020').attr('stroke-width',2.4);
+  [27,49,71,93,115,137].forEach(x=>{g.append('line').attr('x1',x).attr('y1',14).attr('x2',x).attr('y2',42).attr('stroke','#4A3020').attr('stroke-width',2);});
+  [[17,13],[39,13],[82,13],[104,13],[126,13]].forEach(([x,w])=>{g.append('rect').attr('x',x).attr('y',14).attr('width',w).attr('height',19).attr('rx',1.5).attr('fill','#4A3020');});
+})();
+;(()=>{
+  const g=svg.append('g').attr('opacity',0.08).attr('transform','translate(10,940)');
+  g.append('ellipse').attr('cx',44).attr('cy',82).attr('rx',27).attr('ry',22).attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',2.5);
+  g.append('rect').attr('x',34).attr('y',8).attr('width',20).attr('height',14).attr('rx',2.5).attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',2.5);
+  g.append('line').attr('x1',44).attr('y1',60).attr('x2',44).attr('y2',22).attr('stroke','#4A3020').attr('stroke-width',2.5);
+})();
+;(()=>{
+  const g=svg.append('g').attr('opacity',0.08).attr('transform','translate(948,938)');
+  g.append('ellipse').attr('cx',60).attr('cy',44).attr('rx',42).attr('ry',17).attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',2.4);
+  g.append('ellipse').attr('cx',60).attr('cy',66).attr('rx',42).attr('ry',17).attr('fill','none').attr('stroke','#4A3020').attr('stroke-width',2.4);
+  g.append('line').attr('x1',18).attr('y1',44).attr('x2',18).attr('y2',66).attr('stroke','#4A3020').attr('stroke-width',2.4);
+  g.append('line').attr('x1',102).attr('y1',44).attr('x2',102).attr('y2',66).attr('stroke','#4A3020').attr('stroke-width',2.4);
+  [[40,12,62,44],[78,12,58,44]].forEach(([x1,y1,x2,y2])=>{g.append('line').attr('x1',x1).attr('y1',y1).attr('x2',x2).attr('y2',y2).attr('stroke','#4A3020').attr('stroke-width',3);});
+})();
+
+// ════════════════════════════════════════════════════════════════
+//  TITLE
+// ════════════════════════════════════════════════════════════════
+svg.append('text').attr('x',W/2).attr('y',70).attr('text-anchor','middle')
+  .attr('font-size',48).attr('font-weight',900).attr('fill','#1C1410').attr('letter-spacing',4)
+  .text('台灣音樂祭地圖');
+svg.append('line').attr('x1',300).attr('y1',78).attr('x2',480).attr('y2',78).attr('stroke','#8B5020').attr('stroke-width',1.4);
+svg.append('line').attr('x1',600).attr('y1',78).attr('x2',780).attr('y2',78).attr('stroke','#8B5020').attr('stroke-width',1.4);
+svg.append('text').attr('x',W/2).attr('y',92).attr('text-anchor','middle')
+  .attr('font-size',9).attr('fill','#BBB').attr('letter-spacing',2.5)
+  .text('TAIWAN MUSIC FESTIVAL MAP  2026  |  smallseedsvoice');
+
+// ════════════════════════════════════════════════════════════════
+//  LOAD TOPOJSON
+// ════════════════════════════════════════════════════════════════
+d3.json('https://cdn.jsdelivr.net/npm/taiwan-atlas/counties-10t.json').then(tw => {
+  // Entirely remove Kinmen and Lienchiang from data to hide them completely
+  tw.objects.counties.geometries = tw.objects.counties.geometries.filter(
+    d => d.properties.COUNTYNAME !== '金門縣' && d.properties.COUNTYNAME !== '連江縣'
+  );
+
+  const counties  = topojson.feature(tw, tw.objects.counties);
+  const borders   = topojson.mesh(tw, tw.objects.counties, (a,b) => a !== b);
+  const coastline = topojson.mesh(tw, tw.objects.counties, (a,b) => a === b);
+
+  const cFill = {
+    '台北市':'#DDD5C2','新北市':'#D9D0BC','基隆市':'#DED6C4','桃園市':'#D8CFBE',
+    '新竹市':'#D5CCBA','新竹縣':'#D3CAB8','苗栗縣':'#D1C8B6','台中市':'#CFCAB4',
+    '彰化縣':'#CEC4B2','南投縣':'#CCBFAF','雲林縣':'#CAC0AD','嘉義市':'#C8BCAA',
+    '嘉義縣':'#C6BAA8','台南市':'#C4B8A7','高雄市':'#C3B6A5','屏東縣':'#C1B3A3',
+    '宜蘭縣':'#D5CCBA','花蓮縣':'#D3CAB8','台東縣':'#D1C8B6',
+    '澎湖縣':'#CFBFAC',
+  };
+
+  mapG.selectAll('path.county').data(counties.features).enter().append('path')
+    .attr('class','county').attr('d', gPath)
+    .attr('fill', d => cFill[d.properties.COUNTYNAME] || '#D0C8B6').attr('stroke','none');
+
+  mapG.append('path').datum(borders).attr('d', gPath)
+    .attr('fill','none').attr('stroke','#A09280').attr('stroke-width',0.75).attr('stroke-linejoin','round');
+
+  mapG.append('path').datum(coastline).attr('d', gPath)
+    .attr('fill','none').attr('stroke','#5A3E28').attr('stroke-width',2.2).attr('stroke-linejoin','round');
+
+  // Offshore labels
+  const [phx,phy]=ll(119.56,23.57);
+  svg.append('text').attr('x',phx).attr('y',phy+4).attr('font-size',9).attr('fill','#9A8878').attr('text-anchor','middle').text('澎湖');
+  const [gx,gy]=ll(121.47,22.67);
+  svg.append('text').attr('x',gx+15).attr('y',gy+4).attr('font-size',8.5).attr('fill','#9A8878').text('綠島');
+  const [ox,oy]=ll(121.53,22.04);
+  svg.append('text').attr('x',ox+15).attr('y',oy+4).attr('font-size',8.5).attr('fill','#9A8878').text('蘭嶼');
+
+  // ── Compute pixel positions for all cities ──
+  Object.entries(CITIES).forEach(([k,c]) => { c.px = ll(c.lon, c.lat); });
+
+  // ── City dots ──
+  Object.values(CITIES).forEach(c => {
+    const [cx,cy] = c.px;
+    dotG.append('circle').attr('cx',cx).attr('cy',cy).attr('r',c.r)
+      .attr('fill',c.col).attr('stroke','#F3ECE0').attr('stroke-width',2.8);
+  });
+
+  // ── Render text + precise leader lines ──
+  renderGroups();
+});
+
+// ════════════════════════════════════════════════════════════════
+//  TEXT + LEADER LINES
+//  Design: for each group, text is vertically centered at dot Y.
+//  A vertical bracket runs along the map edge at the group's span.
+//  A horizontal tick at dot Y shows which dot the group connects to.
+// ════════════════════════════════════════════════════════════════
+const FS   = 12.5;   // event text size
+const FSL  = 14.5;   // city label size
+const RH   = 14.2;   // row height (tighter)
+const GAP  = 7;      // gap between groups
+const LX   = 12;     // left col left x
+const RXE  = W-12;   // right col right x (anchor end)
+
+function renderGroups() {
+  renderSide(LEFT_GROUPS,  'L');
+  renderSide(RIGHT_GROUPS, 'R');
+}
+
+function renderSide(groups, side) {
+  const isLeft = side === 'L';
+  let prevBottom = MTY + 2;
+
+  groups.forEach(grp => {
+    // calculate average dot Y for block centering
+    let sumY = 0;
+    grp.cityKeys.forEach(k => sumY += CITIES[k].px[1]);
+    const avgDotY = sumY / grp.cityKeys.length;
+
+    // Total height: label + events
+    const totalH = FSL + grp.events.length * RH;
+
+    // Center block at avgDotY, but never go above previous group
+    let top = avgDotY - totalH / 2;
+    top = Math.max(top, prevBottom + GAP);
+
+    // Group anchor coords (dot next to text)
+    const anchorX = isLeft ? ML - 16 : MR + 16;
+    const anchorY = top + totalH / 2;
+
+    // Draw lines to all actual city dots in this group
+    grp.cityKeys.forEach(k => {
+      const px = CITIES[k].px;
+      const r = CITIES[k].r;
+      const startX = isLeft ? anchorX + 3 : anchorX - 3;
+      const endX   = isLeft ? px[0] - r - 2 : px[0] + r + 2;
+
+      // Draw beautiful S-bezier curve
+      lineG.append('path')
+        .attr('d', `M ${startX},${anchorY} C ${isLeft? startX+50 : startX-50},${anchorY} ${isLeft? endX-50 : endX+50},${px[1]} ${endX},${px[1]}`)
+        .attr('fill', 'none').attr('stroke', grp.col).attr('stroke-width', 1.4).attr('stroke-linecap', 'round').attr('opacity', 0.55);
+    });
+
+    // Draw the anchor dot
+    dotG.append('circle').attr('cx', anchorX).attr('cy', anchorY).attr('r', 3)
+      .attr('fill', '#F3ECE0').attr('stroke', grp.col).attr('stroke-width', 2);
+
+    // ── City label ──
+    const lx     = isLeft ? LX : RXE;
+    const anchor  = isLeft ? 'start' : 'end';
+    const labelY  = top + FSL;
+
+    svg.append('text').attr('x', lx).attr('y', labelY)
+      .attr('font-size', FSL).attr('font-weight', 700)
+      .attr('fill', grp.col).attr('text-anchor', anchor)
+      .text(grp.label);
+
+    // ── Event rows ──
+    let y = labelY + RH;
+    grp.events.forEach(([date, name]) => {
+      const row = svg.append('text').attr('x', lx).attr('y', y)
+        .attr('font-size', FS).attr('text-anchor', anchor);
+      if (isLeft) {
+        row.append('tspan').attr('fill','#9A8060').attr('font-size', 10.5).text(date + '  ');
+        row.append('tspan').attr('fill','#1A1410').text(name);
+      } else {
+        row.append('tspan').attr('fill','#1A1410').text(name + '  ');
+        row.append('tspan').attr('fill','#9A8060').attr('font-size', 10.5).text(date);
+      }
+      y += RH;
+    });
+
+    prevBottom = y + 2;
+  });
+}
+
+// ════════════════════════════════════════════════════════════════
+//  BOTTOM BAR — DISCONTINUED
+// ════════════════════════════════════════════════════════════════
+const discY = H - 90;
+svg.append('line').attr('x1',12).attr('y1',discY-8).attr('x2',W-12).attr('y2',discY-8)
+  .attr('stroke','#C4B49A').attr('stroke-width', 1.5).attr('stroke-dasharray','5,5');
+svg.append('rect').attr('x',12).attr('y',discY).attr('width',W-24).attr('height',82)
+  .attr('fill','#EBE3D3').attr('stroke','#C4AE9A').attr('stroke-width',1).attr('rx',4);
+svg.append('text').attr('x',24).attr('y',discY+26)
+  .attr('font-size',15).attr('font-weight',900).attr('fill','#C0391E').text('⚠ 已停辦  (THE DISCONTINUED ERA)');
+svg.append('text').attr('x',24).attr('y',discY+48).attr('font-size',11.5).attr('font-weight',500).attr('fill','#8A7A6A')
+  .text('巨獸搖滾 最後2018　·　春天吶喊 最後2019　·　覺醒音樂祭 最後2019　·　愛愛搖滾帳篷 最後2018　·　搖滾辦桌 最後2015');
+svg.append('text').attr('x',24).attr('y',discY+68).attr('font-size',11.5).attr('font-weight',500).attr('fill','#8A7A6A')
+  .text('山海屯 最後2019　·　風和日麗連連看 最後2017　·　遊牧影展怪奇音樂祭 停辦中　·　貴人散步 LUCfest 暫停');
+svg.append('text').attr('x',W-14).attr('y',H-9).attr('text-anchor','end')
+  .attr('font-size',9).attr('fill','#C0B09A').attr('letter-spacing',2).text('smallseedsvoice');
+</script>
+</body>
+</html>
