@@ -217,16 +217,7 @@ class DigestBuilder:
         if event.get('is_hot'): prefix = "🔥 "
         elif event.get('is_discovery'): prefix = "✨ "
         
-        line = f"{prefix}{short_date}({weekday}) {name} @ {venue}\n"
-        
-        # Add Spotlight information for new/small bands
-        if event.get('is_discovery') and event.get('performer_profiles'):
-            for artist, profile in event['performer_profiles'].items():
-                if profile.get('description'):
-                    ig = f" (@{profile['ig_handle']})" if profile.get('ig_handle') else ""
-                    line += f"  ↳ 🎸 介紹 {artist}{ig}：{profile['description']}\n"
-                    
-        return line
+        return f"{prefix}{short_date}({weekday}) {name} @ {venue}\n"
 
     def _extract_city(self, location: str) -> str:
         # 簡單城市提取
