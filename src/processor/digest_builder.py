@@ -45,6 +45,8 @@ class DigestBuilder:
         from src.utils.performer_tracker import PerformerTracker
         tracker = PerformerTracker()
         
+        all_performers_this_week = set()
+        
         for event in sorted_events:
             performers = event.get('performers', [])
             if not performers:

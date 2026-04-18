@@ -1,9 +1,6 @@
 name: Radar Events Pipeline
 
 on:
-  schedule:
-    # 每週二、四、六 早上 9:00 (UTC+8 = UTC+0 01:00)
-    # - cron: '0 1 * * 2,4,6' # Disabled standalone spotlight/radar version
   workflow_dispatch:  # 允許手動觸發
 
 jobs:
