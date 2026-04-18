@@ -231,8 +231,10 @@ def generate_html(official, radar, digest):
 
     html += "</body></html>"
     
-    with open("preview.html", "w", encoding="utf-8") as f:
-        f.write(html)
+    with open("preview.html", "w", encoding="utf-8", errors="replace") as f:
+        # Resolve surrogate escapes to avoid UnicodeEncodeError
+        safe_html = html.encode('utf-16', 'surrogatepass').decode('utf-16', 'replace')
+        f.write(safe_html)
     
     return os.path.abspath("preview.html")
 
@@ -244,15 +246,15 @@ def main():
     digest = []
     
     if os.path.exists(OFFICIAL_FILE):
-        with open(OFFICIAL_FILE, 'r') as f:
+        with open(OFFICIAL_FILE, 'r', encoding='utf-8', errors='replace') as f:
             official = json.load(f)
             
     if os.path.exists(RADAR_FILE):
-        with open(RADAR_FILE, 'r') as f:
+        with open(RADAR_FILE, 'r', encoding='utf-8', errors='replace') as f:
             radar = json.load(f)
 
     if os.path.exists(DIGEST_FILE):
-        with open(DIGEST_FILE, 'r') as f:
+        with open(DIGEST_FILE, 'r', encoding='utf-8', errors='replace') as f:
             digest = json.load(f)
             
     logger.info(f"Generating guide for {len(digest)} digest posts, {len(official)} official events, and {len(radar)} radar events...")
