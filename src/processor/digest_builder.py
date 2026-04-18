@@ -45,7 +45,6 @@ class DigestBuilder:
         from src.utils.performer_tracker import PerformerTracker
         tracker = PerformerTracker()
         
-        all_performers_this_week = set()
         for event in sorted_events:
             performers = event.get('performers', [])
             if not performers:
@@ -54,6 +53,10 @@ class DigestBuilder:
             
         # Register them first so update_profile works
         tracker.update_history(list(all_performers_this_week))
+        
+        # --- GLOBAL AI CAP TO AVOID TOKEN BURN ---
+        max_ai_calls = 5
+        ai_calls_made = 0
         
         for event in sorted_events:
             performers = event.get('performers', [])
@@ -68,10 +71,12 @@ class DigestBuilder:
             
             # Enrich New Blood via AI
             for artist in new_blood:
-                if self.enricher and self.enricher.model:
+                if self.enricher and self.enricher.model and ai_calls_made < max_ai_calls:
                     import time
-                    time.sleep(1) # Rate limit protection
+                    time.sleep(4.5) # Rate limit protection (Free tier 15 RPM)
                     profile_data = self.enricher.get_performer_profile(artist)
+                    ai_calls_made += 1
+                    
                     if profile_data:
                         desc = profile_data.get('description', '')
                         handle = profile_data.get('ig_handle', '')
@@ -190,7 +195,7 @@ class DigestBuilder:
         # Simplified and removed emoji/redundant words
         return (
             f"音樂活動懶人包 ({date_str})\n\n"
-            f"本週精選了 {count} 場演出！\n"
+            f"接下來半週為您整理了 {count} 場演出！\n"
             "詳細資訊請看下方整理 👇"
         )
 
@@ -210,7 +215,16 @@ class DigestBuilder:
         if event.get('is_hot'): prefix = "🔥 "
         elif event.get('is_discovery'): prefix = "✨ "
         
-        return f"{prefix}{short_date}({weekday}) {name} @ {venue}\n"
+        line = f"{prefix}{short_date}({weekday}) {name} @ {venue}\n"
+        
+        # Add Spotlight information for new/small bands
+        if event.get('is_discovery') and event.get('performer_profiles'):
+            for artist, profile in event['performer_profiles'].items():
+                if profile.get('description'):
+                    ig = f" (@{profile['ig_handle']})" if profile.get('ig_handle') else ""
+                    line += f"  ↳ 🎸 介紹 {artist}{ig}：{profile['description']}\n"
+                    
+        return line
 
     def _extract_city(self, location: str) -> str:
         # 簡單城市提取

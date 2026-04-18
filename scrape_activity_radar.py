@@ -177,6 +177,18 @@ def main():
             artist = clean_artist_name(name)
             profile = tracker.get_profile(artist)
             
+            if not profile.get('description') and enricher.model:
+                try:
+                    import time
+                    time.sleep(4.5) # Limit rate to 15 RPM
+                    ai_prof = enricher.get_performer_profile(artist)
+                    if ai_prof:
+                        profile['description'] = ai_prof.get('description', '')
+                        profile['ig_handle'] = ai_prof.get('ig_handle', '')
+                        tracker.update_profile(artist, description=profile['description'], ig_handle=profile['ig_handle'])
+                except Exception as e:
+                    logger.warning(f"AI enrichment failed for {artist}: {e}")
+
             if profile.get('description'):
                 # Fetch details if needed (Indievox image/venue)
                 if e.get('ticket_platform') == 'Indievox':

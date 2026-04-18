@@ -1,0 +1,12 @@
+# Taiwan Music Events - AI Assistant Rules
+
+Welcome! If you are an AI assistant helping the developer with this project, you MUST read the `ARCHITECTURE_AND_SPEC.md` file FIRST before suggesting or making any code changes.
+
+## Core Rules:
+1. **Zero Dashboard Policy**: We do not maintain or generate any web dashboards. Dashboard features should not be introduced.
+2. **Semi-Weekly Pipeline**: Time intervals for the Weekly Digest are strictly "Mon-Wed" (Monday cron) and "Thu-Sun" (Thursday cron).
+3. **AI Promotion of Small Bands**: Our AI enrichment logic (`ai_enricher.py`) is exclusively tailored to write authentic, indie-fan, subjective commentary for unknown artists. DO NOT use emojis. DO NOT use generic robotic phrases ("這是一個...").
+4. **Auto-Posting Disabled**: Threads posting via GitHub Actions is manually disabled via `#` comments to allow human review. Do not uncomment it without explicit user instruction.
+5. **Aesthetics**: When generating event cards or images, strictly use the retro Japanese Wabi-Sabi styling defined in `scripts/create_social_cards.py` or `artifacts/festival_map_2026.html`. Avoid neon or generic bootstrap styling.
+
+When analyzing bugs, please look inside `data/scraping_errors.json` and trace back to `src/scraper/`.

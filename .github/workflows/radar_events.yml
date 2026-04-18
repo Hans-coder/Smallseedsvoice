@@ -3,7 +3,7 @@ name: Radar Events Pipeline
 on:
   schedule:
     # 每週二、四、六 早上 9:00 (UTC+8 = UTC+0 01:00)
-    - cron: '0 1 * * 2,4,6'
+    # - cron: '0 1 * * 2,4,6' # Disabled standalone spotlight/radar version
   workflow_dispatch:  # 允許手動觸發
 
 jobs:
@@ -52,11 +52,7 @@ jobs:
 #        run: |
 #          python post_radar_to_threads.py --auto
 
-      - name: Generate Performance Dashboard
-        if: always()
-        run: python scripts/generate_dashboard.py
-
-      - name: Upload Radar Guide Artifact & Dashboard
+      - name: Upload Radar Guide Artifact
         uses: actions/upload-artifact@v4
         with:
           name: radar-manual-guide
@@ -65,7 +61,7 @@ jobs:
             data/radar_events.json
             data/preview_cache/
             data/scraping_errors.json
-            data/dashboard.html
+            artifacts/social_cards.html
 
       - name: Notify Discord
         env:
@@ -74,4 +70,4 @@ jobs:
       
       - name: Cleanup
         run: |
-          rm -rf data/preview_cache/ preview.html data/dashboard.html
+          rm -rf data/preview_cache/ preview.html

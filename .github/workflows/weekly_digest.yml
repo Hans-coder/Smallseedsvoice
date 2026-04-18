@@ -2,8 +2,8 @@ name: Weekly Digest
 
 on:
   schedule:
-    # Sunday 20:00 Taiwan (UTC+8) -> 12:00 UTC
-    - cron: '0 2 * * 0'
+    # 第一階段 (每週一 10:00 發送, UTC: 02:00) / 第二階段 (每週四 10:00 發送, UTC: 02:00)
+    - cron: '0 2 * * 1,4'
   workflow_dispatch:
 
 jobs:
@@ -54,12 +54,11 @@ jobs:
 
       - name: Generate Manual Guide
         run: python preview_generator.py
+        
+      - name: Generate Social Media Cards
+        run: python scripts/create_social_cards.py --source digest
 
-      - name: Generate Performance Dashboard
-        if: always()
-        run: python scripts/generate_dashboard.py
-
-      - name: Archive Digest Data & Dashboard
+      - name: Archive Digest Data & Guide
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -70,9 +69,9 @@ jobs:
              data/digest_raw.json
              data/digest_posts.json
              data/scraping_errors.json
-             data/dashboard.html
+             artifacts/social_cards.html
           retention-days: 7
 
       - name: Cleanup
         if: always()
-        run: rm -rf data/preview_cache/ preview.html data/dashboard.html
+        run: rm -rf data/preview_cache/ preview.html
