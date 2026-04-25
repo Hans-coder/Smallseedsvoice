@@ -174,6 +174,12 @@ def main():
             with open("data/sale_posts.json", "w", encoding="utf-8") as f:
                 json.dump(posts_data, f, indent=4, ensure_ascii=False)
             logger.info("Saved sale posts data to data/sale_posts.json")
+            
+            # Save raw events for card generation
+            events_to_save = urgent_events + upcoming_events
+            with open("data/sale_events.json", "w", encoding="utf-8") as f:
+                json.dump(events_to_save, f, indent=4, ensure_ascii=False)
+            logger.info(f"Saved {len(events_to_save)} raw sale events to data/sale_events.json")
         except Exception as e:
             logger.warning(f"Failed to save sale posts JSON: {e}")
 

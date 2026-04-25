@@ -5,11 +5,12 @@ from pathlib import Path
 
 def main():
     parser = argparse.ArgumentParser(description="Generate Social Media Cards for Events")
-    parser.add_argument('--source', type=str, choices=['radar', 'digest'], default='digest', help='Source data to use')
+    parser.add_argument('--source', type=str, choices=['radar', 'digest', 'sale'], default='digest', help='Source data to use')
+    parser.add_argument('--render', action='store_true', help='Render HTML to JPG using Playwright')
     args = parser.parse_args()
 
     # Load Data
-    data_file = f"data/radar_events.json" if args.source == 'radar' else f"data/digest_raw.json"
+    data_file = f"data/radar_events.json" if args.source == 'radar' else (f"data/sale_events.json" if args.source == 'sale' else f"data/digest_raw.json")
     if not os.path.exists(data_file):
         print(f"File not found: {data_file}")
         return
@@ -64,6 +65,8 @@ def main():
         """
         html_cards += card
 
+    zoom_level = "1.0" if args.render else "0.4"
+    
     html_template = f"""
     <!DOCTYPE html>
     <html lang="zh-TW">
@@ -91,7 +94,7 @@ def main():
             box-sizing: border-box;
             border: 2px solid #C4B9A7;
             transform-origin: top left;
-            zoom: 0.4; /* Scale for browser viewing */
+            zoom: {zoom_level}; /* Scale for browser viewing or full for rendering */
             box-shadow: 0 20px 40px rgba(0,0,0,0.4);
             display: flex;
             flex-direction: column;
@@ -197,9 +200,34 @@ def main():
     os.makedirs("artifacts", exist_ok=True)
     with open(out_path, "w", encoding="utf-8") as f:
         f.write(html_template)
-    
     print(f"✅ Generated {len(events)} fixed-design event cards.")
     print(f"👉 Open {out_path} in your browser and screenshot them for 1080x1350 (4:5) Instagram/Threads posts!")
+    
+    if args.render:
+        try:
+            from playwright.sync_api import sync_playwright
+            import urllib.parse
+            print("📸 Rendering images with Playwright...")
+            with sync_playwright() as p:
+                browser = p.chromium.launch()
+                page = browser.new_page(device_scale_factor=1)
+                
+                abs_path = os.path.abspath(out_path)
+                file_url = 'file://' + urllib.parse.quote(abs_path)
+                
+                page.goto(file_url, wait_until='networkidle')
+                # Add a tiny wait for image loads and animations
+                page.wait_for_timeout(1000)
+                
+                cards = page.locator('.card').all()
+                for i, card in enumerate(cards, 1):
+                    img_path = f"artifacts/card_{i}.jpg"
+                    card.screenshot(path=img_path, type="jpeg", quality=95)
+                    print(f"   -> Saved {img_path}")
+                browser.close()
+                print(f"✅ Rendered {len(cards)} JPG images.")
+        except ImportError:
+            print("❌ Playwright not installed. Could not render images.")
 
 if __name__ == "__main__":
     main()

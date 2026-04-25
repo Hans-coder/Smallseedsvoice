@@ -193,9 +193,17 @@ def main():
         notifier.send_standard_post(
             title=display_title,
             text=post.get('text', ''),
-            images=post.get('images', [])
+            images=post.get('images', []) if not os.path.exists("artifacts/card_1.jpg") else []  # omit raw embeds if we have hi-res cards
         )
         logger.info(f"✅ {args.type} notification {i} sent.")
+
+    # Send Rendered Image Attachments
+    import glob
+    rendered_cards = sorted(glob.glob("artifacts/card_*.jpg"))
+    if rendered_cards:
+        logger.info(f"📸 Sending {len(rendered_cards)} rendered image cards to Discord...")
+        for c in rendered_cards:
+            notifier.send_file(c)
 
     logger.info(f"✅ {args.type} notifications complete.")
 
