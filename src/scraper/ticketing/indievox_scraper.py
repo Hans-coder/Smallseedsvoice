@@ -59,9 +59,9 @@ class IndievoxScraper(BaseScraper):
     def _fetch_detail(self, url: str) -> Dict:
         """Fetch detail page for high-res image."""
         try:
-            # Detail pages are usually less protected than list pages.
-            # Using fetch_page (requests) is much faster for a large number of events.
-            soup = self.fetch_page(url)
+            # Detail pages are usually less protected than list pages, but fetch_page might still get 403.
+            # Using fetch_with_selenium ensures we get the image.
+            soup = self.fetch_with_selenium(url, wait_time=1)
             if not soup: return {}
             
             # Extract high-res image from og:image
