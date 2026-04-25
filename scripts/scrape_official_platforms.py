@@ -94,10 +94,17 @@ def main():
         
         final_list = list(unique_events.values())
         
-        # Date Filter: Only drop if we are SURE it's in the past. Keep if 'date' is missing/null.
+        # Date Filter & Negative Keyword Filter
         valid_list = []
         today = datetime.now().strftime("%Y-%m-%d")
+        
+        ignore_keywords = ['音樂劇', '兒童', '合唱', '交響', '室內樂', '古典', '大師班', '獨奏', '管樂', '弦樂', '國樂', '親子', '芭蕾', '舞劇', '講座', '音樂會', '讀劇', '相聲', '脫口秀']
+        
         for e in final_list:
+            name_check = str(e.get('name', '')).lower() + " " + str(e.get('activity_name', '')).lower()
+            if any(k in name_check for k in ignore_keywords) and not 'live' in name_check and not '樂團' in name_check:
+                continue # Skip non-band events
+                
             if not e.get('date'):
                 # Missing date, keep it for Sale Alarm to check ticket_sale_date
                 valid_list.append(e)
@@ -225,7 +232,13 @@ def main():
         
         valid_list = []
         today = datetime.now().strftime("%Y-%m-%d")
+        ignore_keywords = ['音樂劇', '兒童', '合唱', '交響', '室內樂', '古典', '大師班', '獨奏', '管樂', '弦樂', '國樂', '親子', '芭蕾', '舞劇', '講座', '音樂會', '讀劇', '相聲', '脫口秀']
+        
         for e in final_list:
+            name_check = str(e.get('name', '')).lower() + " " + str(e.get('activity_name', '')).lower()
+            if any(k in name_check for k in ignore_keywords) and not 'live' in name_check and not '樂團' in name_check:
+                continue
+                
             if not e.get('date'):
                 valid_list.append(e)
             elif e.get('date') >= today:

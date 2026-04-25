@@ -38,6 +38,11 @@ def main():
             desc = e['spotlight'].get('description', '')
             if desc:
                 ai_desc = f'<div class="ai-desc">💬 "{desc}"</div>'
+                
+        # Performers handling
+        performers = e.get('performers', [])
+        performers_str = ", ".join(performers) if isinstance(performers, list) else str(performers)
+        performers_html = f'<div class="performers">🎤 {performers_str}</div>' if performers_str else ""
         
         # Image handling
         bg_image = e.get('image_url')
@@ -54,6 +59,7 @@ def main():
                 <div class="content">
                     <div class="date-badge">{date}</div>
                     <div class="title">{name}</div>
+                    {performers_html}
                     <div class="venue">📍 {venue}</div>
                     {ai_desc}
                 </div>
@@ -119,7 +125,6 @@ def main():
             width: 100%;
             height: 100%;
             object-fit: cover;
-            filter: grayscale(20%) contrast(1.1);
         }}
         .no-img {{
             display: flex;
@@ -168,6 +173,12 @@ def main():
             color: #1B4F8B; /* Ruri Blue */
             margin-bottom: 40px;
         }}
+        .performers {{
+            font-size: 34px;
+            font-weight: 700;
+            color: #7A5B44; /* Muted brown */
+            margin-bottom: 24px;
+        }}
         .ai-desc {{
             background: #EBE4D5;
             border-left: 8px solid #D68516; /* Yamabuki */
@@ -210,7 +221,7 @@ def main():
             print("📸 Rendering images with Playwright...")
             with sync_playwright() as p:
                 browser = p.chromium.launch()
-                page = browser.new_page(device_scale_factor=1)
+                page = browser.new_page(device_scale_factor=2)
                 
                 abs_path = os.path.abspath(out_path)
                 file_url = 'file://' + urllib.parse.quote(abs_path)
