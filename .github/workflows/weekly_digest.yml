@@ -2,8 +2,8 @@ name: Weekly Digest
 
 on:
   schedule:
-    # 第一階段 (每週一 10:00 發送, UTC: 02:00) / 第二階段 (每週四 10:00 發送, UTC: 02:00)
-    - cron: '0 2 * * 1,4'
+    # 第一階段 (每週四 10:00 發送, UTC: 02:00) / 第二階段 (每週六 10:00 發送, UTC: 02:00)
+    - cron: '0 2 * * 4,6'
   workflow_dispatch:
 
 jobs:

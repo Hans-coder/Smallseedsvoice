@@ -21,8 +21,8 @@ def main():
         print("No events found to generate cards.")
         return
 
-    # Take Top 6 Events for Cards
-    events = events[:6]
+    # Generate cards for all events
+    # events = events[:6]
 
     # Generate HTML
     html_cards = ""
@@ -82,16 +82,16 @@ def main():
             font-family: 'Noto Sans TC', sans-serif;
             justify-content: center;
         }}
-        /* IG Post Frame (1080x1080 scaled down for preview) */
+        /* IG Post Frame (1080x1350 scaled down for preview, 4:5 ratio) */
         .card {{
             width: 1080px;
-            height: 1080px;
+            height: 1350px;
             background: #F8F5F0; /* Japanese Paper Base */
             position: relative;
             box-sizing: border-box;
             border: 2px solid #C4B9A7;
             transform-origin: top left;
-            zoom: 0.5; /* Scale for browser viewing */
+            zoom: 0.4; /* Scale for browser viewing */
             box-shadow: 0 20px 40px rgba(0,0,0,0.4);
             display: flex;
             flex-direction: column;
@@ -107,7 +107,7 @@ def main():
         }}
         .img-wrapper {{
             width: 100%;
-            height: 550px;
+            height: 700px;
             overflow: hidden;
             border-bottom: 4px solid #1B4F8B;
             background: #E4DDD0;
@@ -199,7 +199,7 @@ def main():
         f.write(html_template)
     
     print(f"✅ Generated {len(events)} fixed-design event cards.")
-    print(f"👉 Open {out_path} in your browser and screenshot them for 1080x1080 Instagram/Threads posts!")
+    print(f"👉 Open {out_path} in your browser and screenshot them for 1080x1350 (4:5) Instagram/Threads posts!")
 
 if __name__ == "__main__":
     main()

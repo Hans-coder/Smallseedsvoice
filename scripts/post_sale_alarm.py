@@ -69,11 +69,11 @@ def main():
     now_taiwan = datetime.now(tz_taiwan)
     today_taiwan = now_taiwan.date()
     tomorrow_taiwan = today_taiwan + timedelta(days=1)
-    three_days_taiwan = today_taiwan + timedelta(days=3)
+    seven_days_taiwan = today_taiwan + timedelta(days=7)
     
     tomorrow_str = tomorrow_taiwan.strftime("%Y-%m-%d")
     
-    logger.info(f"Checking for sales between {tomorrow_str} and {three_days_taiwan}")
+    logger.info(f"Checking for sales between {tomorrow_str} and {seven_days_taiwan}")
 
     urgent_events = []
     upcoming_events = []
@@ -91,11 +91,11 @@ def main():
         
         if sale_date_obj == tomorrow_taiwan:
             urgent_events.append(event)
-        elif tomorrow_taiwan < sale_date_obj <= three_days_taiwan:
+        elif tomorrow_taiwan < sale_date_obj <= seven_days_taiwan:
             upcoming_events.append(event)
 
     if not urgent_events and not upcoming_events:
-        logger.info("No events found going on sale in the next 3 days.")
+        logger.info("No events found going on sale in the next 7 days.")
         return
 
     logger.info(f"Found {len(urgent_events)} urgent and {len(upcoming_events)} upcoming events.")
@@ -111,7 +111,7 @@ def main():
 
     # Header
     total_count = len(urgent_events) + len(upcoming_events)
-    header = f"⏰ 搶票鬧鐘：未來 3 天有 {total_count} 場活動開賣！\n"
+    header = f"⏰ 搶票鬧鐘：未來 7 天有 {total_count} 場活動開賣！\n"
     lines.append(header)
 
     if urgent_events:
@@ -132,10 +132,11 @@ def main():
     if upcoming_events:
         if urgent_events:
             lines.append("\n-------------------\n")
-        lines.append(f"📅 **近期預告 (後天 ~ 3天後)：**")
+        lines.append(f"📅 **近期預告 (後天 ~ 7天後)：**")
         for i, event in enumerate(upcoming_events, 1):
             date_short = event['ticket_sale_date'].split(' ')[0]
-            line = f"• {date_short}: {event['activity_name']}"
+            name = event.get('name') or event.get('activity_name', 'Unknown')
+            line = f"• {date_short}: {name}"
             lines.append(line)
             
             # Images (Only if space)
@@ -147,6 +148,7 @@ def main():
     post_text = "\n".join(lines)
     post_text += "\n\n💪 設好鬧鐘，祝大家搶票順利！"
 
+    post_id = None
     if dry_run:
         print(f"📝 [Dry Run] Alarm Post:\n{post_text}")
         print(f"🖼️ Images: {len(image_urls)}")

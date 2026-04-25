@@ -94,11 +94,14 @@ def main():
         
         final_list = list(unique_events.values())
         
-        # Date Filter
+        # Date Filter: Only drop if we are SURE it's in the past. Keep if 'date' is missing/null.
         valid_list = []
         today = datetime.now().strftime("%Y-%m-%d")
         for e in final_list:
-            if e.get('date') and e['date'] >= today:
+            if not e.get('date'):
+                # Missing date, keep it for Sale Alarm to check ticket_sale_date
+                valid_list.append(e)
+            elif e.get('date') >= today:
                 valid_list.append(e)
                 
         # Save Final Output
@@ -223,7 +226,9 @@ def main():
         valid_list = []
         today = datetime.now().strftime("%Y-%m-%d")
         for e in final_list:
-            if e.get('date') and e['date'] >= today:
+            if not e.get('date'):
+                valid_list.append(e)
+            elif e.get('date') >= today:
                 valid_list.append(e)
 
         with open("data/official_events.json", "w", encoding="utf-8") as f:
