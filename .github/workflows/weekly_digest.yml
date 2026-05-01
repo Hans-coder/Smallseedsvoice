@@ -71,6 +71,7 @@ jobs:
              data/digest_posts.json
              data/scraping_errors.json
              artifacts/social_cards.html
+             artifacts/card_*.jpg
           retention-days: 7
 
       - name: Cleanup
