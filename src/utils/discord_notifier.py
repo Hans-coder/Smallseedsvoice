@@ -78,61 +78,42 @@ class DiscordNotifier:
 
         return self.send_message(content=formatted_text, embeds=embeds)
 
-    def send_files(self, file_paths: list, content: str = None):
+    def send_file(self, file_path: str, content: str = None):
         """
-        Upload multiple files to Discord (up to 10 per request).
+        Upload a single file to Discord.
         """
         import os
         if not self.webhook_url:
             logger.warning("Discord Webhook URL not configured.")
             return False
 
-        if not file_paths:
-            return True
+        if not os.path.exists(file_path):
+            return False
+
+        payload = {}
+        if content:
+            payload["payload_json"] = json.dumps({"content": content})
 
         try:
-            # Prepare files list for requests
-            files = []
-            open_files = []
-            attachments = []
-            for i, file_path in enumerate(file_paths[:10]):
-                if os.path.exists(file_path):
-                    f = open(file_path, 'rb')
-                    open_files.append(f)
-                    files.append((f'file[{i}]', (os.path.basename(file_path), f)))
-                    attachments.append({"id": i, "filename": os.path.basename(file_path)})
-
-            if not files:
-                return False
-
-            payload_dict = {}
-            if content:
-                payload_dict["content"] = content
-            if attachments:
-                payload_dict["attachments"] = attachments
-                
-            payload = {"payload_json": json.dumps(payload_dict)}
-
-            response = requests.post(
-                self.webhook_url,
-                data=payload,
-                files=files,
-                timeout=30
-            )
-            
-            # Close all opened files
-            for f in open_files:
-                f.close()
-                
+            with open(file_path, 'rb') as f:
+                files = {
+                    'file': (os.path.basename(file_path), f)
+                }
+                response = requests.post(
+                    self.webhook_url,
+                    data=payload,
+                    files=files,
+                    timeout=30
+                )
             response.raise_for_status()
             return True
         except Exception as e:
-            logger.error(f"Failed to upload files to Discord: {e}")
+            logger.error(f"Failed to upload file to Discord: {e}")
             try:
                 # Try to notify discord about the error so the user sees it
                 if hasattr(response, 'text'):
-                    self.send_message(f"❌ Failed to upload images to Discord! Error: {e}\nDiscord API Response: {response.text}")
+                    self.send_message(f"❌ Failed to upload image `{os.path.basename(file_path)}` to Discord! Error: {e}\nDiscord API Response: {response.text}")
                 else:
-                    self.send_message(f"❌ Failed to upload images to Discord! Error: {e}")
+                    self.send_message(f"❌ Failed to upload image `{os.path.basename(file_path)}` to Discord! Error: {e}")
             except: pass
             return False
