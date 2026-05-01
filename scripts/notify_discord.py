@@ -202,10 +202,12 @@ def main():
     import time
     rendered_cards = sorted(glob.glob("artifacts/card_*.jpg"))
     if rendered_cards:
-        logger.info(f"📸 Sending {len(rendered_cards)} rendered image cards to Discord...")
-        for c in rendered_cards:
-            notifier.send_file(c)
-            time.sleep(1)
+        logger.info(f"📸 Sending {len(rendered_cards)} rendered image cards to Discord in batches of 10...")
+        # Chunk into groups of 10
+        for i in range(0, len(rendered_cards), 10):
+            batch = rendered_cards[i:i+10]
+            notifier.send_files(batch)
+            time.sleep(2)
 
     logger.info(f"✅ {args.type} notifications complete.")
 
