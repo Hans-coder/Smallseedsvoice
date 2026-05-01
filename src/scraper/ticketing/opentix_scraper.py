@@ -48,7 +48,88 @@ class OpentixScraper(BaseScraper):
             soup = self.fetch_with_selenium(url, wait_time=2)
             if not soup: return {}
             
-            detail = {}
+            detail = {
+                "performers": [],
+                "start_time": None,
+                "venue_name": None
+            }
+            
+            # OPENTIX JSON-LD provides highly structured data
+            import json
+            json_ld_tags = soup.find_all('script', type='application/ld+json')
+            for tag in json_ld_tags:
+                try:
+                    data = json.loads(tag.string)
+                    # Sometime it's a single object, sometimes it's a list. Find the Event object.
+                    if isinstance(data, dict) and data.get('@type') == 'Event':
+                        # Start time and Date
+                        start_date_str = data.get('startDate')
+                        if start_date_str and 'T' in start_date_str:
+                            detail["date"] = start_date_str.split('T')[0]
+                            detail["start_time"] = start_date_str.split('T')[1][:5]
+                            
+                        # Venue
+                        location = data.get('location', {})
+                        if isinstance(location, dict) and location.get('name'):
+                            detail["venue_name"] = location.get('name').replace("：", "").strip()
+                            
+                        # Performers (often embedded in description)
+                        desc_text = data.get('description', '')
+                        if desc_text:
+                            import re
+                            # Common prefix for performers in OPENTIX description
+                            match = re.search(r'(?:演出人員|演出團隊|演出者|卡司|Lineup|Cast|演出陣容)[:：\s]+(.*?)(?:【|$)', desc_text, re.IGNORECASE | re.DOTALL)
+                            if match:
+                                raw_perf = match.group(1).strip()
+                                # Split by common separators and clean up
+                                import re
+                                items = re.split(r'[、｜|,|\n]', raw_perf)
+                                detail["performers"] = [p.strip() for p in items if p.strip() and len(p.strip()) < 30]
+                        
+                        break # Found Event schema, no need to check other json-ld tags
+                except Exception as e:
+                    logger.debug(f"Error parsing JSON-LD: {e}")
+
+            # Fallback for performers if JSON-LD parsing didn't catch them
+            if not detail["performers"]:
+                info_elements = soup.find_all(string=lambda t: t and any(k in t for k in ["演出團隊", "團隊", "演出者"]))
+                for el in info_elements:
+                    parent = el.find_parent('div') or el.find_parent('li')
+                    if parent:
+                        text = parent.get_text(" ", strip=True)
+                        cleaned_perf = text.replace("演出團隊", "").replace("團隊", "").replace("演出者", "").replace("：", "").strip()
+                        if cleaned_perf:
+                            raw_performers = cleaned_perf.replace('、', ',').replace('｜', ',').replace('|', ',').split(',')
+                            detail["performers"] = [p.strip() for p in raw_performers if p.strip() and len(p.strip()) < 30]
+                            break
+
+            # Fallback for start_time / venue from DOM if JSON-LD missing
+            if not detail["start_time"] or not detail["venue_name"]:
+                info_elements = soup.find_all(string=lambda t: t and any(k in t for k in ["演出時間", "時間", "地點", "場地"]))
+                for el in info_elements:
+                    parent = el.find_parent('div') or el.find_parent('li')
+                    if parent:
+                        text = parent.get_text(" ", strip=True)
+                        if "時間" in el and detail["start_time"] is None:
+                            import re
+                            time_match = re.search(r'(\d{2}:\d{2})', text)
+                            if time_match:
+                                detail["start_time"] = time_match.group(1)
+                        elif ("地點" in el or "場地" in el) and detail["venue_name"] is None:
+                            cleaned_venue = text.replace("演出地點", "").replace("地點", "").replace("：", "").strip()
+                            if cleaned_venue:
+                                 detail["venue_name"] = cleaned_venue.split(" ")[0]
+
+            # Also check the description content for performers if STILL not found
+            if not detail["performers"]:
+                description_div = soup.select_one('.content-wrapper') or soup.find('div', class_='content')
+                if description_div:
+                    desc_text = description_div.get_text(separator='\n')
+                    import re
+                    match = re.search(r'(?:演出團隊|演出者|卡司|Lineup|Cast|演出陣容|共演)[:：\s]+([^\n]+)', desc_text, re.IGNORECASE)
+                    if match:
+                        raw_performers = match.group(1).replace('、', ',').replace('｜', ',').replace('|', ',').split(',')
+                        detail["performers"] = [p.strip() for p in raw_performers if p.strip()]
             
             # Sale Date
             # OPENTIX: "啟售時間" or similar
@@ -135,16 +216,16 @@ class OpentixScraper(BaseScraper):
                 "activity_id": activity_id,
                 "name": name,
                 "activity_type": "concert",
-                "performers": [],
+                "performers": [], # Will be updated by detail
                 "date": date_iso,
-                "start_time": None,
+                "start_time": None, # Will be updated by detail
                 "location": venue,
                 "city": city,
                 "price": None,
                 "ticket_platform": "OPENTIX",
                 "ticket_url": event_url,
                 "image_url": image_url,
-                "ticket_sale_date": None  # TODO: Implement detail scrape for sale date
+                "ticket_sale_date": None  # Will be updated by detail
             }
         except Exception as e:
             logger.error(f"Error parsing OPENTIX item: {e}")

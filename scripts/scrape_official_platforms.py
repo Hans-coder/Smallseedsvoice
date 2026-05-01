@@ -27,7 +27,7 @@ def main():
     import argparse
     
     parser = argparse.ArgumentParser(description='Official Ticketing Platforms Scraper')
-    parser.add_argument('--platform', type=str, choices=['kktix', 'opentix', 'tixcraft', 'indievox', 'ticketplus', 'all'], help='Target platform to scrape')
+    parser.add_argument('--platform', type=str, choices=['kktix', 'tixcraft', 'indievox', 'ticketplus', 'all'], help='Target platform to scrape')
     parser.add_argument('--merge', action='store_true', help='Merge all platform json files into one')
     args = parser.parse_args()
     
@@ -40,7 +40,7 @@ def main():
     config = {
         "request_delay": 2,
         "retry_count": 3,
-        "max_pages": 30
+        "max_pages": 1
     }
     
     # Ensure data directory exists
@@ -138,23 +138,16 @@ def main():
                 
         except Exception as e:
             logger.error(f"KKTIX failed: {e}")
-
-    # 2. OPENTIX
-    if platform in ['opentix', 'all']:
-        try:
-            logger.info("Scraping OPENTIX...")
-            scraper = OpentixScraper(config)
-            opentix_events = scraper.scrape_events()
             
-            if platform == 'opentix':
-                with open("data/events_opentix.json", "w", encoding="utf-8") as f:
-                    json.dump(opentix_events, f, indent=4, ensure_ascii=False)
-                logger.info(f"Saved {len(opentix_events)} OPENTIX events")
-            else:
-                events.extend(opentix_events)
-                
-        except Exception as e:
-            logger.error(f"OPENTIX failed: {e}")
+    # Platform stats tracking
+    platform_stats = {
+        'KKTIX': {'scraped': len(kktix_events) if 'kktix_events' in locals() else 0, 'survived': 0},
+        'Indievox': {'scraped': 0, 'survived': 0},
+        'tixCraft': {'scraped': 0, 'survived': 0},
+        'Ticket Plus': {'scraped': 0, 'survived': 0}
+    }
+
+
 
     # 3. Indievox
     if platform in ['indievox', 'all']:
@@ -170,6 +163,7 @@ def main():
                 logger.info(f"Saved {len(indievox_events)} Indievox events")
             else:
                 events.extend(indievox_events)
+                platform_stats['Indievox']['scraped'] = len(indievox_events)
                 
         except Exception as e:
             logger.error(f"Indievox failed: {e}")
@@ -187,6 +181,7 @@ def main():
                 logger.info(f"Saved {len(tixcraft_events)} tixCraft events")
             else:
                 events.extend(tixcraft_events)
+                platform_stats['tixCraft']['scraped'] = len(tixcraft_events)
                 
         except Exception as e:
             logger.error(f"tixCraft failed: {e}")
@@ -204,6 +199,7 @@ def main():
                 logger.info(f"Saved {len(tp_events)} Ticket Plus events")
             else:
                 events.extend(tp_events)
+                platform_stats['Ticket Plus']['scraped'] = len(tp_events)
                 
         except Exception as e:
             logger.error(f"Ticket Plus failed: {e}")
@@ -232,21 +228,45 @@ def main():
         
         valid_list = []
         today = datetime.now().strftime("%Y-%m-%d")
-        ignore_keywords = ['音樂劇', '兒童', '合唱', '交響', '室內樂', '古典', '大師班', '獨奏', '管樂', '弦樂', '國樂', '親子', '芭蕾', '舞劇', '講座', '音樂會', '讀劇', '相聲', '脫口秀']
+        ignore_keywords = ['音樂劇', '兒童', '合唱', '交響', '室內樂', '古典', '大師班', '獨奏', '管樂', '弦樂', '國樂', '親子', '芭蕾', '舞劇', '講座', '音樂會', '讀劇', '相聲', '脫口秀', '愛樂', '音樂家', '協奏曲']
         
         for e in final_list:
             name_check = str(e.get('name', '')).lower() + " " + str(e.get('activity_name', '')).lower()
+            
+            # Strict classical check (even if it has '樂團', we filter these out)
+            strict_classical_keywords = ['交響', '管樂', '弦樂', '國樂', '愛樂', '協奏曲', '獨奏', '古典']
+            is_strict_classical = any(k in name_check for k in strict_classical_keywords)
+            
+            if is_strict_classical:
+                continue
+                
+            # Normal skip logic for non-band events
             if any(k in name_check for k in ignore_keywords) and not 'live' in name_check and not '樂團' in name_check:
                 continue
                 
             if not e.get('date'):
                 valid_list.append(e)
+                # Count survival
+                p_name = e.get('ticket_platform')
+                if p_name in platform_stats: platform_stats[p_name]['survived'] += 1
             elif e.get('date') >= today:
                 valid_list.append(e)
+                # Count survival
+                p_name = e.get('ticket_platform')
+                if p_name in platform_stats: platform_stats[p_name]['survived'] += 1
 
         with open("data/official_events.json", "w", encoding="utf-8") as f:
             json.dump(valid_list, f, indent=4, ensure_ascii=False)
-        logger.info(f"Done. Saved {len(valid_list)} events to data/official_events.json")
+        
+        # Log Summary
+        logger.info("\n--- SCRAPE SUMMARY (after date & keyword filtering) ---")
+        for p, stats in platform_stats.items():
+            if stats['scraped'] > 0 or stats['survived'] > 0:
+                logger.info(f"[{p}] Scraped: {stats['scraped']} -> Survived Filter: {stats['survived']}")
+            elif platform == 'all':
+                logger.info(f"[{p}] No events scraped or scraper failed.")
+        
+        logger.info(f"\nDone. Saved a total of {len(valid_list)} events to data/official_events.json")
 
 if __name__ == "__main__":
     main()

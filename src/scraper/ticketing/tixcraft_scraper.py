@@ -1,7 +1,7 @@
 """tixCraft Scraper"""
 from typing import Dict, List, Optional
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 from src.scraper.base_scraper import BaseScraper
 from src.utils.logger import setup_logger
 from src.utils.date_parser import parse_taiwan_date
@@ -16,9 +16,7 @@ class TixCraftScraper(BaseScraper):
         Scrape tixCraft events.
         """
         if not url:
-            # Main list
-            # Main list - force table view for venue info
-            url = "https://tixcraft.com/activity/list/26_27#display-table"
+            url = "https://tixcraft.com/activity"
             
         logger.info(f"Fetching tixCraft events...")
         # tixCraft is heavy on anti-bot, so we use Selenium with gentle settings
@@ -41,11 +39,26 @@ class TixCraftScraper(BaseScraper):
         # In table view: <div class="table-responsive">...
         # But actually, simpler: use generic selector that catches the items.
         
-        event_items = soup.select('.thumbnails .col-md-3') or soup.find_all('div', class_='activity-info-box') or soup.select('.activity .col-md-3')
+        event_items = soup.select('.row.align-items-center')
         
         for item in event_items:
             event_data = self.parse_event(item)
             if event_data:
+                # Early Date & Keyword Filter
+                today_dt = datetime.now()
+                today = today_dt.strftime("%Y-%m-%d")
+                max_date = (today_dt + timedelta(days=14)).strftime("%Y-%m-%d")
+                if event_data.get('date'):
+                    if event_data['date'] < today or event_data['date'] > max_date:
+                        continue
+                    
+                name_check = str(event_data.get('name', '')).lower()
+                is_strict_classical = any(k in name_check for k in ['交響', '管樂', '弦樂', '國樂', '愛樂', '協奏曲', '獨奏', '古典'])
+                if is_strict_classical: continue
+                ignore_keywords = ['音樂劇', '兒童', '合唱', '室內樂', '大師班', '親子', '芭蕾', '舞劇', '講座', '音樂會', '讀劇', '相聲', '脫口秀', '音樂家']
+                if any(k in name_check for k in ignore_keywords) and not 'live' in name_check and not '樂團' in name_check:
+                    continue
+                    
                 # Detail fetch
                 if event_data.get('ticket_url'):
                     detail = self._fetch_detail(event_data['ticket_url'])
@@ -67,10 +80,15 @@ class TixCraftScraper(BaseScraper):
             # Sale Date: <span>售票時間</span> ...
             # Price: <span>票價</span> ...
             
-            detail = {}
+            detail = {
+                "performers": [],
+                "start_time": None,
+                "venue_name": None
+            }
             
-            # Try to find by label text
-            for label in ["售票時間", "票價"]:
+            # Extract from table/list in tixCraft detail page
+            # Labels: 演出時間, 演出地點, 售票時間, 票價
+            for label in ["售票時間", "票價", "演出時間", "演出地點", "場地"]:
                 target_tag = soup.find(string=lambda t: t and label in t)
                 if target_tag:
                     # Look for value in parent's sibling or next element?
@@ -87,6 +105,23 @@ class TixCraftScraper(BaseScraper):
                             detail["ticket_sale_date"] = value
                         elif label == "票價":
                             detail["price"] = value
+                        elif label == "演出時間":
+                            import re
+                            time_match = re.search(r'(\d{2}:\d{2})', value)
+                            if time_match:
+                                detail["start_time"] = time_match.group(1)
+                        elif label in ["演出地點", "場地"] and not detail["venue_name"]:
+                            detail["venue_name"] = value.split('(')[0].strip() # Clean up basic venue string
+
+            # Extract performers from intro or description
+            intro_div = soup.select_one('.activity-intro') or soup.find('div', class_='intro')
+            if intro_div:
+                desc_text = intro_div.get_text(separator='\n')
+                import re
+                match = re.search(r'(?:演出團隊|演出者|卡司|Lineup|Cast|演出陣容|共演)[:：\s]+([^\n]+)', desc_text, re.IGNORECASE)
+                if match:
+                    raw_performers = match.group(1).replace('、', ',').replace('｜', ',').replace('|', ',').split(',')
+                    detail["performers"] = [p.strip() for p in raw_performers if p.strip()]
 
             # Extract high-res image from og:image
             og_img = soup.find('meta', property='og:image')
@@ -100,7 +135,7 @@ class TixCraftScraper(BaseScraper):
 
     def parse_event(self, element) -> Optional[Dict]:
         try:
-            link_tag = element.find('a')
+            link_tag = element.select_one('.text-bold a')
             if not link_tag: return None
             
             event_url = link_tag.get('href')
@@ -108,42 +143,31 @@ class TixCraftScraper(BaseScraper):
                 event_url = f"https://tixcraft.com{event_url}"
                 
             # Title
-            title_div = element.find(class_='multi_ellipsis')
-            name = title_div.get_text(strip=True) if title_div else "Unknown"
+            name = link_tag.get_text(strip=True)
             
             # Date
-            date_div = element.find(class_='date')
+            date_div = element.select_one('.date')
             raw_time = date_div.get_text(strip=True) if date_div else ""
             date_iso = parse_taiwan_date(raw_time)
             
             # Image
-            # <div class="thumbnails ..."><img src="..."></div>
             img_tag = element.find('img')
             image_url = img_tag.get('src') if img_tag else None
             
             activity_id = f"tixcraft_{name}_{date_iso}"
             
-            # Venue - Try to find in text for table view
-            venue = "Unknown"
-            full_text = element.get_text(" | ", strip=True)
-            parts = full_text.split('|')
-            if len(parts) >= 3:
-                # Naive guess: last part or part that looks like venue
-                potential_venue = parts[-1].strip()
-                if len(potential_venue) > 2 and not potential_venue[0].isdigit():
-                     venue = potential_venue
-            
-            if venue == "Unknown": 
-                 venue = "See Details"
+            # Venue
+            venue_div = element.select_one('.text-med-light')
+            venue = venue_div.get_text(strip=True) if venue_div else "See Details"
 
             return {
                 "activity_id": activity_id,
                 "name": name,
                 "activity_type": "concert",
-                "performers": [],
+                "performers": [], # Will be updated by detail
                 "date": date_iso,
-                "start_time": None,
-                "venue_name": venue,
+                "start_time": None, # Will be updated by detail
+                "venue_name": venue, # Will be updated by detail if better one found
                 "city": "Unknown",
                 "price": None,
                 "ticket_platform": "tixCraft",

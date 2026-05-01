@@ -5,7 +5,6 @@ import yaml
 from pathlib import Path
 from src.scraper.instagram_scraper import InstagramScraper
 from src.scraper.ticketing.kktix_scraper import KktixScraper
-from src.scraper.ticketing.opentix_scraper import OpentixScraper
 from src.processor.digest_builder import DigestBuilder
 from src.threads.threads_poster import ThreadsPoster
 from src.utils.logger import setup_logger
@@ -156,26 +155,7 @@ def main():
             logger.error(f"KKTIX scrape failed: {e}")
             log_scraping_error("KKTIX", e)
 
-        # 3. OPENTIX Scraper
-        try:
-            logger.info("Scraping OPENTIX (Music)...")
-            opentix_scraper = OpentixScraper(config.get("scraper", {}))
-            opentix_events = opentix_scraper.scrape_events()
-            
-            # 過濾條件：免費 OR 大型熱門活動
-            relevant_opentix = []
-            skipped_count = 0
-            for e in opentix_events:
-                e['is_hot'] = is_hot_event(e)
-                # Take all events as requested
-                relevant_opentix.append(e)
-            
-            events.extend(relevant_opentix)
-            logger.info(f"OPENTIX: Found {len(relevant_opentix)} relevant events.")
-        except Exception as e:
-            logger.error(f"OPENTIX scrape failed: {e}")
-            log_scraping_error("OPENTIX", e)
-            
+
         # 4. Indievox Scraper
         try:
             logger.info("Scraping Indievox (Table View)...")

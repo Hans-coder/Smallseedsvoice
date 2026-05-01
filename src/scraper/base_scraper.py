@@ -120,17 +120,29 @@ class BaseScraper(ABC):
         Fetch page using Selenium Headless Chrome with optional scrolling.
         """
         try:
-            from selenium import webdriver
-            from selenium.webdriver.chrome.options import Options
+            try:
+                import undetected_chromedriver as uc
+            except ImportError:
+                uc = None
+
             from bs4 import BeautifulSoup
 
-            chrome_options = Options()
-            chrome_options.add_argument("--headless=new")
-            chrome_options.add_argument("--no-sandbox")
-            chrome_options.add_argument("--disable-dev-shm-usage")
-            chrome_options.add_argument(f"user-agent={self.headers['User-Agent']}")
+            if uc:
+                options = uc.ChromeOptions()
+                options.add_argument('--headless')
+                options.add_argument('--disable-dev-shm-usage')
+                driver = uc.Chrome(options=options)
+            else:
+                from selenium import webdriver
+                from selenium.webdriver.chrome.options import Options
+                options = Options()
+                options.add_argument("--headless=new")
+                options.add_argument("--no-sandbox")
+                options.add_argument("--disable-dev-shm-usage")
+                options.add_argument(f"user-agent={self.headers['User-Agent']}")
+                driver = webdriver.Chrome(options=options)
 
-            driver = webdriver.Chrome(options=chrome_options)
+            driver.set_page_load_timeout(30)
             driver.get(url)
 
             # Wait for initial load

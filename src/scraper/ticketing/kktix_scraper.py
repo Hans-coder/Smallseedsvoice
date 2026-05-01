@@ -16,15 +16,20 @@ class KktixScraper(BaseScraper):
         """
         Scrape KKTIX music events.
         """
-        # Strict Music only (tag 13)
-        # Strict Music only (tag 13)
         if not url:
-            # Default behavior: Scrape Homepage AND Music Tag
+            from datetime import timedelta
+            today_dt = datetime.now()
+            today_str = today_dt.strftime("%Y/%m/%d")
+            max_date_str = (today_dt + timedelta(days=14)).strftime("%Y/%m/%d")
+            import urllib.parse
+            # URL encode the dates
+            start_at = urllib.parse.quote(today_str)
+            end_at = urllib.parse.quote(max_date_str)
+            
+            # Default behavior: Search for Concerts within next 14 days
+            target_url = f"https://kktix.com/events?utf8=%E2%9C%93&search=https%3A%2F%2Fkktix.com%2F&max_price=&min_price=&start_at={start_at}&end_at={end_at}&event_tag_ids_in=1"
             urls_to_scrape = [
-                ("https://kktix.com", False), # Homepage, no pagination
-                ("https://kktix.com/events?event_tag_ids_in=13", True), # Music Tag, with pagination
-                ("https://kktix.com/events?q=音樂節", True), # Keyword Search
-                ("https://kktix.com/events?q=祭", True) # Keyword Search
+                (target_url, True)
             ]
         else:
             urls_to_scrape = [(url, True)]
@@ -48,7 +53,7 @@ class KktixScraper(BaseScraper):
                 
                 logger.info(f"Fetching KKTIX page {page}: {page_url}...")
                 
-                soup = self.fetch_with_selenium(page_url, wait_time=2)
+                soup = self.fetch_with_selenium(page_url, wait_time=3)
                 if not soup: break
                 
                 # Homepage might use different tabs, but checks confirmed ul.events > li works
@@ -61,6 +66,22 @@ class KktixScraper(BaseScraper):
                 for item in event_items:
                     event_data = self.parse_event(item)
                     if event_data:
+                        # Early Date & Keyword Filter
+                        from datetime import timedelta
+                        today_dt = datetime.now()
+                        today = today_dt.strftime("%Y-%m-%d")
+                        max_date = (today_dt + timedelta(days=14)).strftime("%Y-%m-%d")
+                        if event_data.get('date'):
+                            if event_data['date'] < today or event_data['date'] > max_date:
+                                continue
+                            
+                        name_check = str(event_data.get('name', '')).lower()
+                        is_strict_classical = any(k in name_check for k in ['交響', '管樂', '弦樂', '國樂', '愛樂', '協奏曲', '獨奏', '古典'])
+                        if is_strict_classical: continue
+                        ignore_keywords = ['音樂劇', '兒童', '合唱', '室內樂', '大師班', '親子', '芭蕾', '舞劇', '講座', '音樂會', '讀劇', '相聲', '脫口秀', '音樂家']
+                        if any(k in name_check for k in ignore_keywords) and not 'live' in name_check and not '樂團' in name_check:
+                            continue
+
                         # Dedup within this run
                         if event_data['ticket_url'] in seen_urls:
                             continue
@@ -93,19 +114,27 @@ class KktixScraper(BaseScraper):
             venue = "Unknown"
             sale_date = None
             price = None
+            start_time = None
+            performers = []
             
-            # 1. Venue Extraction
-            # Table row with "地點"
-            venue_tag = soup.find(string=lambda t: t and "地點" in t)
-            if venue_tag:
-                row = venue_tag.find_parent('tr')
-                if row:
-                    tds = row.find_all('td')
-                    if tds:
-                        venue = tds[0].get_text(strip=True).split(maxsplit=1)[0]
-            
-            # 2. Ticket Sale Date Extraction
-            # Strategy: Iterate all tables to look for "販售時間" column
+            # 1. Venue and Start Time Extraction
+            # Table row with "地點" and "時間"
+            table_info = soup.find(class_='info')
+            if table_info:
+                # Loop through all rows to find venue and time
+                for row in table_info.find_all('tr'):
+                    th = row.find('th')
+                    td = row.find('td')
+                    if th and td:
+                        th_text = th.get_text(strip=True)
+                        if "地點" in th_text:
+                            venue = td.get_text(strip=True).split(maxsplit=1)[0]
+                        elif "時間" in th_text:
+                            time_text = td.get_text(strip=True)
+                            import re
+                            time_match = re.search(r'(\d{2}:\d{2})', time_text)
+                            if time_match:
+                                start_time = time_match.group(1)
             tables = soup.find_all('table')
             for table in tables:
                 headers = [th.get_text(strip=True) for th in table.find_all('th')]
@@ -182,7 +211,25 @@ class KktixScraper(BaseScraper):
             og_img = soup.find('meta', property='og:image')
             detail_image = refine_image_url(og_img.get('content')) if og_img else None
 
-            return {"venue_name": venue, "ticket_sale_date": sale_date, "price": price, "image_url": detail_image}
+            # 4. Performers Extraction from Description
+            description_div = soup.find('div', class_='description')
+            if description_div:
+                desc_text = description_div.get_text(separator='\n')
+                import re
+                # Look for common performer keywords
+                match = re.search(r'(?:演出者|卡司|Lineup|Cast|演出陣容|共演)[:：\s]+([^\n]+)', desc_text, re.IGNORECASE)
+                if match:
+                    raw_performers = match.group(1).replace('、', ',').replace('｜', ',').replace('|', ',').split(',')
+                    performers = [p.strip() for p in raw_performers if p.strip()]
+
+            return {
+                "venue_name": venue, 
+                "ticket_sale_date": sale_date, 
+                "price": price, 
+                "image_url": detail_image,
+                "start_time": start_time,
+                "performers": performers
+            }
         except Exception as e:
             logger.warning(f"Failed to fetch detail for {url}: {e}")
             return {}
@@ -231,7 +278,7 @@ class KktixScraper(BaseScraper):
                 "activity_id": activity_id,
                 "name": name,
                 "activity_type": "concert", # Default for music tag
-                "performers": [], # Hard to extract from list
+                "performers": [], # Will be updated by detail fetch
                 "date": date_iso,
                 "start_time": start_time,
                 "location": location,
@@ -240,7 +287,7 @@ class KktixScraper(BaseScraper):
                 "ticket_platform": "KKTIX",
                 "ticket_url": event_url,
                 "image_url": image_url,
-                "ticket_sale_date": None  # TODO: Implement detail scrape for sale date
+                "ticket_sale_date": None  # Will be updated by detail fetch
             }
         except Exception as e:
             logger.error(f"Error parsing KKTIX item: {e}")
