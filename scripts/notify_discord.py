@@ -199,11 +199,13 @@ def main():
 
     # Send Rendered Image Attachments
     import glob
+    import time
     rendered_cards = sorted(glob.glob("artifacts/card_*.jpg"))
     if rendered_cards:
         logger.info(f"📸 Sending {len(rendered_cards)} rendered image cards to Discord...")
         for c in rendered_cards:
             notifier.send_file(c)
+            time.sleep(1)
 
     logger.info(f"✅ {args.type} notifications complete.")
 
