@@ -90,22 +90,28 @@ class DiscordNotifier:
         if not file_paths:
             return True
 
-        payload = {}
-        if content:
-            payload["payload_json"] = json.dumps({"content": content})
-
         try:
             # Prepare files list for requests
             files = []
             open_files = []
+            attachments = []
             for i, file_path in enumerate(file_paths[:10]):
                 if os.path.exists(file_path):
                     f = open(file_path, 'rb')
                     open_files.append(f)
                     files.append((f'file[{i}]', (os.path.basename(file_path), f)))
+                    attachments.append({"id": i, "filename": os.path.basename(file_path)})
 
             if not files:
                 return False
+
+            payload_dict = {}
+            if content:
+                payload_dict["content"] = content
+            if attachments:
+                payload_dict["attachments"] = attachments
+                
+            payload = {"payload_json": json.dumps(payload_dict)}
 
             response = requests.post(
                 self.webhook_url,
@@ -122,4 +128,11 @@ class DiscordNotifier:
             return True
         except Exception as e:
             logger.error(f"Failed to upload files to Discord: {e}")
+            try:
+                # Try to notify discord about the error so the user sees it
+                if hasattr(response, 'text'):
+                    self.send_message(f"❌ Failed to upload images to Discord! Error: {e}\nDiscord API Response: {response.text}")
+                else:
+                    self.send_message(f"❌ Failed to upload images to Discord! Error: {e}")
+            except: pass
             return False
