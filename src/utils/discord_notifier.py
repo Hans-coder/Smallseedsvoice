@@ -84,20 +84,22 @@ class DiscordNotifier:
         """
         import os
         if not self.webhook_url:
-            logger.warning("Discord Webhook URL not configured.")
             return False
 
         if not os.path.exists(file_path):
             return False
 
-        payload = {}
+        # Discord sometimes drops files if payload_json is completely empty or missing
+        payload_dict = {}
         if content:
-            payload["payload_json"] = json.dumps({"content": content})
+            payload_dict["content"] = content
+        payload = {"payload_json": json.dumps(payload_dict)}
 
         try:
             with open(file_path, 'rb') as f:
+                # Explicitly set MIME type to image/jpeg
                 files = {
-                    'file': (os.path.basename(file_path), f)
+                    'file': (os.path.basename(file_path), f, 'image/jpeg')
                 }
                 response = requests.post(
                     self.webhook_url,
@@ -110,9 +112,8 @@ class DiscordNotifier:
         except Exception as e:
             logger.error(f"Failed to upload file to Discord: {e}")
             try:
-                # Try to notify discord about the error so the user sees it
                 if hasattr(response, 'text'):
-                    self.send_message(f"❌ Failed to upload image `{os.path.basename(file_path)}` to Discord! Error: {e}\nDiscord API Response: {response.text}")
+                    self.send_message(f"❌ Failed to upload image `{os.path.basename(file_path)}` to Discord! Error: {e}\nResponse: {response.text}")
                 else:
                     self.send_message(f"❌ Failed to upload image `{os.path.basename(file_path)}` to Discord! Error: {e}")
             except: pass
