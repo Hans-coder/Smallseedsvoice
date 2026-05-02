@@ -89,10 +89,17 @@ class DiscordNotifier:
         if not os.path.exists(file_path):
             return False
 
-        # Discord drops files if payload_json is invalid. If we have no text, omit payload_json entirely.
-        payload = {}
+        # Use the official embed attachment method which is much less likely to trigger spam filters
+        payload_dict = {
+            "embeds": [{
+                "color": 15258703, # Optional aesthetic color
+                "image": {"url": f"attachment://{os.path.basename(file_path)}"}
+            }]
+        }
         if content:
-            payload = {"payload_json": json.dumps({"content": content})}
+            payload_dict["content"] = content
+            
+        payload = {"payload_json": json.dumps(payload_dict)}
 
         try:
             with open(file_path, 'rb') as f:
