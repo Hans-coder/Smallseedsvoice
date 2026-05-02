@@ -13,7 +13,7 @@ class AIEnricher:
         self.api_key = api_key or os.getenv("GEMINI_API_KEY")
         if self.api_key:
             self.client = genai.Client(api_key=self.api_key)
-            self.model = 'gemini-2.0-flash-lite'
+            self.model = 'gemini-flash-latest'
         else:
             self.client = None
             self.model = None
@@ -169,17 +169,18 @@ class AIEnricher:
         }}
         """
         try:
-            response = self.client.models.generate_content(model=self.model, contents=prompt)
-        except Exception as e:
-            if "429" in str(e) or "RESOURCE_EXHAUSTED" in str(e):
-                logger.warning("AI Rate limit hit, sleeping for 40 seconds before retry...")
-                import time
-                time.sleep(40)
+            try:
                 response = self.client.models.generate_content(model=self.model, contents=prompt)
-            else:
-                raise e
-                
-        if hasattr(response, 'usage_metadata'):
+            except Exception as e:
+                if "429" in str(e) or "RESOURCE_EXHAUSTED" in str(e):
+                    logger.warning("AI Rate limit hit, sleeping for 40 seconds before retry...")
+                    import time
+                    time.sleep(40)
+                    response = self.client.models.generate_content(model=self.model, contents=prompt)
+                else:
+                    raise e
+                    
+            if hasattr(response, 'usage_metadata'):
                 logger.info(f"AI Batch Extract Token Usage: {response.usage_metadata.prompt_token_count} prompt, {response.usage_metadata.candidates_token_count} candidates")
             
             text = response.text.strip()
