@@ -143,29 +143,28 @@ class AIEnricher:
             logger.error(f"Failed to get batch profiles: {e}")
             return {}
 
-    def extract_performers_batch(self, events: list) -> dict:
+    def extract_details_batch(self, events: list) -> dict:
         """
-        批次從混亂的活動標題與介紹中萃取真正的演出者名稱。
+        批次從混亂的活動標題與介紹中萃取真正的演出者名稱與演出場地。
         """
         if not self.model or not events:
             return {}
             
         prompt = f"""
-        你是一位精準的資料萃取助理。請幫我從以下 {len(events)} 個活動資訊中，精準提取出「真正的表演者/樂團/歌手/DJ」名稱。
+        你是一位精準的資料萃取助理。請幫我從以下 {len(events)} 個活動資訊中，精準提取出「真正的表演者/樂團/歌手/DJ」名稱，以及「活動舉辦的場地/地點」。
         
         活動名單（包含活動 ID、標題、內文片段）：
         {json.dumps(events, ensure_ascii=False)}
         
         要求：
-        1. 只要回傳「真正的表演者名稱」陣列（例如 ["deca joins", "傷心欲絕"]）。
-        2. 不要包含「主辦單位」、「贊助商」、「售票平台」等無關實體。
-        3. 如果從文字中完全看不出誰是表演者，請回傳空陣列 []。
-        4. 你的回傳格式必須是嚴格的 JSON Object，Key 是 activity_id，Value 是 performers 陣列。
+        1. performers: 只要回傳「真正的表演者名稱」陣列（例如 ["deca joins", "傷心欲絕"]）。不要包含主辦單位。如果看不出來請回傳空陣列 []。
+        2. venue: 提取真正的「演出場地」（例如 "Legacy Taipei", "女巫店", "Zepp New Taipei"）。如果完全看不出地點，請回傳 null。
+        3. 你的回傳格式必須是嚴格的 JSON Object，Key 是 activity_id，Value 是一個包含 performers 和 venue 的 Object。
         
         回傳範例：
         {{
-            "kktix_event_1": ["血肉果汁機", "滅火器"],
-            "kktix_event_2": []
+            "kktix_event_1": {{ "performers": ["血肉果汁機", "滅火器"], "venue": "Legacy Taipei" }},
+            "kktix_event_2": {{ "performers": [], "venue": null }}
         }}
         """
         try:

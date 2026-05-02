@@ -41,30 +41,39 @@ class DigestBuilder:
         # 1. Filter & Sort Events
         sorted_events = self._sort_and_filter_events(events, start_date, end_date)
         
-        # 1.1 AI Batch Extraction for missing performers
-        events_needing_performers = []
+        # 1.1 AI Batch Extraction for missing details (performers or venue)
+        events_needing_extraction = []
         for e in sorted_events:
-            if not e.get('performers') and e.get('ticket_platform') == 'KKTIX':
+            needs_perf = not e.get('performers')
+            needs_venue = not e.get('venue_name') or e.get('venue_name') == "Unknown"
+            
+            if (needs_perf or needs_venue) and e.get('ticket_platform') == 'KKTIX':
                 desc = str(e.get('price', ''))[:300] if e.get('price') else ""
-                events_needing_performers.append({
+                events_needing_extraction.append({
                     "activity_id": e.get('activity_id'),
                     "title": e.get('name') or e.get('activity_name', ''),
                     "description": desc
                 })
         
-        if events_needing_performers and self.enricher:
+        if events_needing_extraction and self.enricher:
             import time
             batch_size = 20
-            for i in range(0, len(events_needing_performers), batch_size):
-                batch = events_needing_performers[i:i+batch_size]
-                extracted = self.enricher.extract_performers_batch(batch)
+            for i in range(0, len(events_needing_extraction), batch_size):
+                batch = events_needing_extraction[i:i+batch_size]
+                extracted = self.enricher.extract_details_batch(batch)
                 if extracted:
                     for e in sorted_events:
                         if e.get('activity_id') in extracted:
-                            perfs = extracted[e.get('activity_id')]
-                            if perfs and isinstance(perfs, list):
-                                e['performers'] = perfs
-                if i + batch_size < len(events_needing_performers):
+                            res = extracted[e.get('activity_id')]
+                            if isinstance(res, dict):
+                                perfs = res.get('performers')
+                                venue = res.get('venue')
+                                if perfs and isinstance(perfs, list) and not e.get('performers'):
+                                    e['performers'] = perfs
+                                if venue and (not e.get('venue_name') or e.get('venue_name') == "Unknown"):
+                                    e['venue_name'] = venue
+                                    e['location'] = venue
+                if i + batch_size < len(events_needing_extraction):
                     time.sleep(4.5)
         
         # 1.5 New Blood Detection & Performer Profiles
