@@ -13,7 +13,7 @@ class AIEnricher:
         self.api_key = api_key or os.getenv("GEMINI_API_KEY")
         if self.api_key:
             self.client = genai.Client(api_key=self.api_key)
-            self.model = 'gemini-2.0-flash-lite' # Lighter model with separate/better quota
+            self.model = 'gemini-2.0-flash-lite'
         else:
             self.client = None
             self.model = None
@@ -140,7 +140,58 @@ class AIEnricher:
                 return data
             return {}
         except Exception as e:
-            logger.error(f"Batch AI enrichment failed: {e}")
+            logger.error(f"Failed to get batch profiles: {e}")
+            return {}
+
+    def extract_performers_batch(self, events: list) -> dict:
+        """
+        批次從混亂的活動標題與介紹中萃取真正的演出者名稱。
+        """
+        if not self.model or not events:
+            return {}
+            
+        prompt = f"""
+        你是一位精準的資料萃取助理。請幫我從以下 {len(events)} 個活動資訊中，精準提取出「真正的表演者/樂團/歌手/DJ」名稱。
+        
+        活動名單（包含活動 ID、標題、內文片段）：
+        {json.dumps(events, ensure_ascii=False)}
+        
+        要求：
+        1. 只要回傳「真正的表演者名稱」陣列（例如 ["deca joins", "傷心欲絕"]）。
+        2. 不要包含「主辦單位」、「贊助商」、「售票平台」等無關實體。
+        3. 如果從文字中完全看不出誰是表演者，請回傳空陣列 []。
+        4. 你的回傳格式必須是嚴格的 JSON Object，Key 是 activity_id，Value 是 performers 陣列。
+        
+        回傳範例：
+        {{
+            "kktix_event_1": ["血肉果汁機", "滅火器"],
+            "kktix_event_2": []
+        }}
+        """
+        try:
+            response = self.client.models.generate_content(model=self.model, contents=prompt)
+        except Exception as e:
+            if "429" in str(e) or "RESOURCE_EXHAUSTED" in str(e):
+                logger.warning("AI Rate limit hit, sleeping for 40 seconds before retry...")
+                import time
+                time.sleep(40)
+                response = self.client.models.generate_content(model=self.model, contents=prompt)
+            else:
+                raise e
+                
+        if hasattr(response, 'usage_metadata'):
+                logger.info(f"AI Batch Extract Token Usage: {response.usage_metadata.prompt_token_count} prompt, {response.usage_metadata.candidates_token_count} candidates")
+            
+            text = response.text.strip()
+            # 尋找 JSON 區塊
+            match = re.search(r'\{.*\}', text, re.DOTALL)
+            if match:
+                data = json.loads(match.group(0))
+                logger.info(f"Successfully extracted performers for {len(data)} events.")
+                return data
+            return {}
+        except Exception as e:
+            logger.error(f"Failed to batch extract performers: {e}")
             return {}
 
     def generate_community_prompt(self, events: list, post_type: str = "digest") -> str:

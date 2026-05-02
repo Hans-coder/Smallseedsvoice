@@ -41,6 +41,32 @@ class DigestBuilder:
         # 1. Filter & Sort Events
         sorted_events = self._sort_and_filter_events(events, start_date, end_date)
         
+        # 1.1 AI Batch Extraction for missing performers
+        events_needing_performers = []
+        for e in sorted_events:
+            if not e.get('performers') and e.get('ticket_platform') == 'KKTIX':
+                desc = str(e.get('price', ''))[:300] if e.get('price') else ""
+                events_needing_performers.append({
+                    "activity_id": e.get('activity_id'),
+                    "title": e.get('name') or e.get('activity_name', ''),
+                    "description": desc
+                })
+        
+        if events_needing_performers and self.enricher:
+            import time
+            batch_size = 20
+            for i in range(0, len(events_needing_performers), batch_size):
+                batch = events_needing_performers[i:i+batch_size]
+                extracted = self.enricher.extract_performers_batch(batch)
+                if extracted:
+                    for e in sorted_events:
+                        if e.get('activity_id') in extracted:
+                            perfs = extracted[e.get('activity_id')]
+                            if perfs and isinstance(perfs, list):
+                                e['performers'] = perfs
+                if i + batch_size < len(events_needing_performers):
+                    time.sleep(4.5)
+        
         # 1.5 New Blood Detection & Performer Profiles
         from src.utils.performer_tracker import PerformerTracker
         tracker = PerformerTracker()

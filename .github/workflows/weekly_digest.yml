@@ -35,7 +35,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-performer-history-
 
-      - name: Scrape All Sources (KKTIX, OPENTIX, Indievox, StreetVoice)
+      - name: Scrape All Sources (KKTIX, Indievox, StreetVoice)
         run: python run_weekly_digest.py --step scrape
         
       - name: Process & Generate Content

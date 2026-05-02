@@ -29,8 +29,15 @@ def main():
     html_cards = ""
     for e in events:
         name = e.get('name') or e.get('activity_name', "Unknown Event")
-        date = e.get('date') or e.get('time', "TBA")
-        venue = e.get('venue_name') or e.get('venue') or e.get('location', "場地未定")
+        date = e.get('date')
+        if not date or date == "Unknown":
+            date = e.get('time')
+        if not date or date == "Unknown":
+            date = "TBA"
+
+        venue = e.get('venue_name') or e.get('venue') or e.get('location')
+        if not venue or venue == "Unknown":
+            venue = "場地詳見活動頁"
         
         # Spotlight Description if available
         ai_desc = ""
@@ -52,7 +59,9 @@ def main():
         
         # Time handling
         exact_time = e.get('time', '')
-        time_html = f" ｜ ⏰ {exact_time}" if exact_time and exact_time != "Unknown" else ""
+        if exact_time == "Unknown" or exact_time is None:
+            exact_time = ""
+        time_html = f" ｜ ⏰ {exact_time}" if exact_time else ""
 
         # Image handling
         bg_image = e.get('image_url')

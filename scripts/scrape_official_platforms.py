@@ -15,7 +15,6 @@ from datetime import datetime
 from pathlib import Path
 from src.utils.logger import setup_logger
 from src.scraper.ticketing.kktix_scraper import KktixScraper
-from src.scraper.ticketing.opentix_scraper import OpentixScraper
 from src.scraper.ticketing.tixcraft_scraper import TixCraftScraper
 from src.scraper.ticketing.ticketplus_scraper import TicketPlusScraper
 from src.utils.text_cleaners import get_event_hash, refine_image_url

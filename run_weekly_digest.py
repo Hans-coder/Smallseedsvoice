@@ -277,6 +277,10 @@ def main():
 
         logger.info(f"Generated {len(posts)} threads posts.")
         
+        # Save updated raw events back (now containing AI-extracted performers)
+        with open("data/digest_raw.json", "w", encoding="utf-8") as f:
+            json.dump(events, f, indent=4, ensure_ascii=False)
+        
         # Save processed posts
         with open("data/digest_posts.json", "w", encoding="utf-8") as f:
             json.dump(posts, f, indent=4, ensure_ascii=False)
