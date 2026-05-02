@@ -20,6 +20,8 @@ class DiscordNotifier:
 
         payload = {}
         if content:
+            if len(content) > 1990:
+                content = content[:1990] + "..."
             payload["content"] = content
         if embeds:
             payload["embeds"] = embeds
