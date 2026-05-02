@@ -203,11 +203,12 @@ def main():
     rendered_cards = sorted(glob.glob("artifacts/card_*.jpg"))
     if rendered_cards:
         logger.info(f"📸 Sending {len(rendered_cards)} rendered image cards to Discord (one by one with 3s safe delay)...")
-        for c in rendered_cards:
-            success = notifier.send_file(c)
+        for i, c in enumerate(rendered_cards, 1):
+            card_filename = os.path.basename(c)
+            # Providing some text content prevents Discord from treating it as a suspicious empty message
+            success = notifier.send_file(c, content=f"📸 展演圖卡 ({i}/{len(rendered_cards)})")
             if not success:
                 logger.error(f"Skipping rest of images due to Discord rejection or rate limit.")
-                # We stop sending if one fails to prevent massive spam of error messages
                 break
             time.sleep(3) # Very safe delay to completely bypass Discord Rate Limits
 
