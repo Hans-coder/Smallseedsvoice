@@ -208,8 +208,8 @@ def main():
             # Providing some text content prevents Discord from treating it as a suspicious empty message
             success = notifier.send_file(c, content=f"📸 展演圖卡 ({i}/{len(rendered_cards)})")
             if not success:
-                logger.error(f"Skipping rest of images due to Discord rejection or rate limit.")
-                break
+                logger.error(f"❌ Skipping rest of images due to Discord rejection or rate limit.")
+                sys.exit(1)
             time.sleep(3) # Very safe delay to completely bypass Discord Rate Limits
 
     logger.info(f"✅ {args.type} notifications complete.")
