@@ -178,7 +178,8 @@ class AIEnricher:
                     time.sleep(40)
                     response = self.client.models.generate_content(model=self.model, contents=prompt)
                 else:
-                    raise e
+                    logger.error(f"AI Batch Extract failed with: {e}")
+                    return {}
                     
             if hasattr(response, 'usage_metadata'):
                 logger.info(f"AI Batch Extract Token Usage: {response.usage_metadata.prompt_token_count} prompt, {response.usage_metadata.candidates_token_count} candidates")
