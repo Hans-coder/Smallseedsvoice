@@ -117,24 +117,43 @@ class KktixScraper(BaseScraper):
             start_time = None
             performers = []
             
-            # 1. Venue and Start Time Extraction
-            # Table row with "地點" and "時間"
-            table_info = soup.find(class_='info')
-            if table_info:
-                # Loop through all rows to find venue and time
-                for row in table_info.find_all('tr'):
-                    th = row.find('th')
-                    td = row.find('td')
-                    if th and td:
-                        th_text = th.get_text(strip=True)
-                        if "地點" in th_text:
-                            venue = td.get_text(strip=True).split(maxsplit=1)[0]
-                        elif "時間" in th_text:
-                            time_text = td.get_text(strip=True)
+            # 1. Best effort: Extract from JSON-LD structured data first!
+            import json
+            for script in soup.find_all('script', type='application/ld+json'):
+                try:
+                    ld_data = json.loads(script.string)
+                    if isinstance(ld_data, list):
+                        ld_data = ld_data[0]
+                    if ld_data.get('@type') == 'Event':
+                        if 'location' in ld_data and 'name' in ld_data['location']:
+                            venue = ld_data['location']['name']
+                        if 'startDate' in ld_data:
+                            # Format is "2026-05-09T18:00:00.000+08:00"
+                            start_time_str = ld_data['startDate']
                             import re
-                            time_match = re.search(r'(\d{2}:\d{2})', time_text)
-                            if time_match:
-                                start_time = time_match.group(1)
+                            t_match = re.search(r'T(\d{2}:\d{2})', start_time_str)
+                            if t_match:
+                                start_time = t_match.group(1)
+                except:
+                    pass
+
+            # Fallback 1: Venue and Start Time Extraction via Table
+            if venue == "Unknown" or not start_time:
+                table_info = soup.find(class_='info')
+                if table_info:
+                    for row in table_info.find_all('tr'):
+                        th = row.find('th')
+                        td = row.find('td')
+                        if th and td:
+                            th_text = th.get_text(strip=True)
+                            if "地點" in th_text and venue == "Unknown":
+                                venue = td.get_text(strip=True).split(maxsplit=1)[0]
+                            elif "時間" in th_text and not start_time:
+                                time_text = td.get_text(strip=True)
+                                import re
+                                time_match = re.search(r'(\d{2}:\d{2})', time_text)
+                                if time_match:
+                                    start_time = time_match.group(1)
             tables = soup.find_all('table')
             for table in tables:
                 headers = [th.get_text(strip=True) for th in table.find_all('th')]
