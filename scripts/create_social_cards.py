@@ -38,12 +38,22 @@ def main():
             desc = e['spotlight'].get('description', '')
             if desc:
                 ai_desc = f'<div class="ai-desc">💬 "{desc}"</div>'
-                
+        
         # Performers handling
         performers = e.get('performers', [])
         performers_str = ", ".join(performers) if isinstance(performers, list) else str(performers)
-        performers_html = f'<div class="performers">🎤 {performers_str}</div>' if performers_str else ""
+        # Fallback: if no performers, maybe the first part of the name before a dash is the performer
+        if not performers_str and "-" in name:
+            performers_str = name.split("-")[0].strip()
+        elif not performers_str and "｜" in name:
+            performers_str = name.split("｜")[0].strip()
+            
+        performers_html = f'<div class="performers">🎤 演出：{performers_str}</div>' if performers_str else '<div class="performers">🎤 演出：詳見活動頁面</div>'
         
+        # Time handling
+        exact_time = e.get('time', '')
+        time_html = f" ｜ ⏰ {exact_time}" if exact_time and exact_time != "Unknown" else ""
+
         # Image handling
         bg_image = e.get('image_url')
         img_html = ""
@@ -60,7 +70,7 @@ def main():
                     <div class="date-badge">{date}</div>
                     <div class="title">{name}</div>
                     {performers_html}
-                    <div class="venue">📍 {venue}</div>
+                    <div class="venue">📍 {venue}{time_html}</div>
                     {ai_desc}
                 </div>
                 <div class="footer">

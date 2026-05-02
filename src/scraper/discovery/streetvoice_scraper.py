@@ -110,10 +110,16 @@ class StreetVoiceScraper(BaseScraper):
             city = "Unknown"
             
             if "・" in info_text:
-                parts = info_text.split("・")
-                if len(parts) >= 1: time_val = parts[0].strip()
-                if len(parts) >= 2: city = parts[1].strip()
-                if len(parts) >= 3: venue = parts[2].strip()
+                parts = [p.strip() for p in info_text.split("・")]
+                if len(parts) == 1:
+                    time_val = parts[0]
+                elif len(parts) == 2:
+                    time_val = parts[0]
+                    venue = parts[1]
+                elif len(parts) >= 3:
+                    time_val = parts[0]
+                    city = parts[1]
+                    venue = parts[2]
 
             # Performers
             performers = [a.get_text(strip=True) for a in element.select('.btn-artist')]

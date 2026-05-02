@@ -89,11 +89,10 @@ class DiscordNotifier:
         if not os.path.exists(file_path):
             return False
 
-        # Discord sometimes drops files if payload_json is completely empty or missing
-        payload_dict = {}
+        # Discord drops files if payload_json is invalid. If we have no text, omit payload_json entirely.
+        payload = {}
         if content:
-            payload_dict["content"] = content
-        payload = {"payload_json": json.dumps(payload_dict)}
+            payload = {"payload_json": json.dumps({"content": content})}
 
         try:
             with open(file_path, 'rb') as f:
