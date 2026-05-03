@@ -1,0 +1,80 @@
+name: Digest - Indievox
+
+on:
+  schedule:
+    # 每週一、週四 10:00 發送 (UTC: 02:00)
+    - cron: '0 2 * * 1,4'
+  workflow_dispatch:
+
+jobs:
+  digest-indievox:
+    runs-on: macos-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          playwright install chromium
+          playwright install-deps
+      
+      - name: Cache Performer History
+        uses: actions/cache@v4
+        with:
+          path: data/events.db
+          key: ${{ runner.os }}-performer-history-indievox-${{ github.run_id }}
+          restore-keys: |
+            ${{ runner.os }}-performer-history-indievox-
+            ${{ runner.os }}-performer-history-
+
+      - name: Scrape Indievox
+        run: python run_weekly_digest.py --step scrape --source indievox
+        
+      - name: Process & Generate Content
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python run_weekly_digest.py --step process
+        
+      - name: Generate Manual Guide
+        run: python preview_generator.py
+        
+      - name: Generate Social Media Cards
+        run: python scripts/create_social_cards.py --source digest --render
+
+      - name: Notify Discord
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: python scripts/notify_discord.py --type digest --name "每週精選 (Indievox)"
+
+#      - name: Post to Threads
+#        env:
+#          THREADS_ACCESS_TOKEN: ${{ secrets.THREADS_ACCESS_TOKEN }}
+#        run: python run_weekly_digest.py --step post --source indievox
+
+      - name: Archive Digest Data & Guide
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: weekly-digest-manual-guide-indievox
+          path: |
+             preview.html
+             data/preview_cache/
+             data/digest_raw.json
+             data/digest_posts.json
+             data/scraping_errors.json
+             artifacts/social_cards.html
+             artifacts/card_*.jpg
+          retention-days: 7
+
+      - name: Cleanup
+        if: always()
+        run: rm -rf data/preview_cache/ preview.html

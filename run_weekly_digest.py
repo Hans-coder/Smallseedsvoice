@@ -85,9 +85,10 @@ def main():
     
     parser = argparse.ArgumentParser(description='Weekly Digest Pipeline')
     parser.add_argument('--step', type=str, choices=['scrape', 'process', 'post', 'all'], default='all', help='Pipeline step to execute')
+    parser.add_argument('--source', type=str, choices=['instagram', 'kktix', 'indievox', 'streetvoice', 'all'], default='all', help='Specific source to scrape')
     args = parser.parse_args()
     
-    logger.info(f"Starting Weekly Digest Pipeline (Step: {args.step})...")
+    logger.info(f"Starting Weekly Digest Pipeline (Step: {args.step}, Source: {args.source})...")
     
     # Ensure data directory exists
     Path("data").mkdir(exist_ok=True)
@@ -108,9 +109,10 @@ def main():
         events = []
         
         # 1. Instagram Scraper
-        try:
-            ig_config = config.get("pipelines", {}).get("weekly_digest", {}).get("sources", {}).get("instagram", {})
-            if ig_config.get("enabled", True):
+        if args.source in ['instagram', 'all']:
+            try:
+                ig_config = config.get("pipelines", {}).get("weekly_digest", {}).get("sources", {}).get("instagram", {})
+                if ig_config.get("enabled", True):
                 usernames = ig_config.get("usernames", ["livetws"])
                 max_posts = ig_config.get("max_posts", 20)
                 
@@ -130,15 +132,16 @@ def main():
                 
                 events.extend(ig_events)
                 logger.info(f"Found {len(ig_events)} events from Instagram.")
-        except Exception as e:
-            logger.error(f"Instagram scrape failed: {e}")
-            log_scraping_error("Instagram", e)
+            except Exception as e:
+                logger.error(f"Instagram scrape failed: {e}")
+                log_scraping_error("Instagram", e)
 
         # 2. KKTIX Scraper (Music Tag + Keywords)
-        try:
-            logger.info("Scraping KKTIX (Music & Keywords) using Playwright...")
-            kktix_scraper = KktixScraper(config.get("scraper", {}))
-            kktix_events = kktix_scraper.scrape_events()
+        if args.source in ['kktix', 'all']:
+            try:
+                logger.info("Scraping KKTIX (Music & Keywords) using Playwright...")
+                kktix_scraper = KktixScraper(config.get("scraper", {}))
+                kktix_events = kktix_scraper.scrape_events()
             
             relevant_kktix = []
             skipped_count = 0
@@ -148,17 +151,18 @@ def main():
             
             events.extend(relevant_kktix)
             logger.info(f"KKTIX: Found {len(relevant_kktix)} relevant events.")
-        except Exception as e:
-            logger.error(f"KKTIX scrape failed: {e}")
-            log_scraping_error("KKTIX", e)
+            except Exception as e:
+                logger.error(f"KKTIX scrape failed: {e}")
+                log_scraping_error("KKTIX", e)
 
 
         # 4. Indievox Scraper
-        try:
-            logger.info("Scraping Indievox (Table View)...")
-            from src.scraper.ticketing.indievox_scraper import IndievoxScraper
-            indievox_scraper = IndievoxScraper(config.get("scraper", {}))
-            indievox_events = indievox_scraper.scrape_events()
+        if args.source in ['indievox', 'all']:
+            try:
+                logger.info("Scraping Indievox (Table View)...")
+                from src.scraper.ticketing.indievox_scraper import IndievoxScraper
+                indievox_scraper = IndievoxScraper(config.get("scraper", {}))
+                indievox_events = indievox_scraper.scrape_events()
             
             relevant_indievox = []
             skipped_count = 0
@@ -169,23 +173,24 @@ def main():
             
             events.extend(relevant_indievox)
             logger.info(f"Indievox: Found {len(relevant_indievox)} relevant events.")
-        except Exception as e:
-            logger.error(f"Indievox scrape failed: {e}")
-            log_scraping_error("Indievox", e)
+            except Exception as e:
+                logger.error(f"Indievox scrape failed: {e}")
+                log_scraping_error("Indievox", e)
             
         # 5. StreetVoice Scraper (Discovery)
-        try:
-            logger.info("Scraping StreetVoice (Discovery)...")
-            from src.scraper.discovery.streetvoice_scraper import StreetVoiceScraper
-            sv_scraper = StreetVoiceScraper(config.get("scraper", {}))
-            sv_events = sv_scraper.scrape_events()
+        if args.source in ['streetvoice', 'all']:
+            try:
+                logger.info("Scraping StreetVoice (Discovery)...")
+                from src.scraper.discovery.streetvoice_scraper import StreetVoiceScraper
+                sv_scraper = StreetVoiceScraper(config.get("scraper", {}))
+                sv_events = sv_scraper.scrape_events()
             
             # For StreetVoice, we take everything for now as it's targeted discovery
             events.extend(sv_events)
             logger.info(f"StreetVoice: Added {len(sv_events)} discovery events.")
-        except Exception as e:
-            logger.error(f"StreetVoice scrape failed: {e}")
-            log_scraping_error("StreetVoice", e)
+            except Exception as e:
+                logger.error(f"StreetVoice scrape failed: {e}")
+                log_scraping_error("StreetVoice", e)
 
         if not events:
             logger.warning(f"No events found from any source. Writing empty list to prevent stale data usage.")
