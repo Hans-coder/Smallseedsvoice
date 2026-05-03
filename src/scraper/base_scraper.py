@@ -115,51 +115,37 @@ class BaseScraper(ABC):
             活動字典或None
         """
         pass
+
     def fetch_with_selenium(self, url: str, wait_time: int = 5, scroll: bool = False, scroll_count: int = 3) -> Optional[BeautifulSoup]:
         """
-        Fetch page using Selenium Headless Chrome with optional scrolling.
+        Fetch page using Playwright Headless Chromium with optional scrolling.
+        (Kept method name fetch_with_selenium for backward compatibility)
         """
         try:
-            try:
-                import undetected_chromedriver as uc
-            except ImportError:
-                uc = None
-
+            from playwright.sync_api import sync_playwright
             from bs4 import BeautifulSoup
 
-            if uc:
-                options = uc.ChromeOptions()
-                options.add_argument('--headless')
-                options.add_argument('--disable-dev-shm-usage')
-                driver = uc.Chrome(options=options)
-            else:
-                from selenium import webdriver
-                from selenium.webdriver.chrome.options import Options
-                options = Options()
-                options.add_argument("--headless=new")
-                options.add_argument("--no-sandbox")
-                options.add_argument("--disable-dev-shm-usage")
-                options.add_argument(f"user-agent={self.headers['User-Agent']}")
-                driver = webdriver.Chrome(options=options)
-
-            driver.set_page_load_timeout(30)
-            driver.get(url)
-
-            # Wait for initial load
-            time.sleep(wait_time)
-
-            if scroll:
-                for _ in range(scroll_count):
-                    driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-                    time.sleep(2)
-
-            html = driver.page_source
-            driver.quit()
-
+            with sync_playwright() as p:
+                browser = p.chromium.launch(headless=True)
+                context = browser.new_context(
+                    user_agent=self.headers.get("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36")
+                )
+                page = context.new_page()
+                page.set_default_timeout(30000)
+                
+                page.goto(url, wait_until="networkidle")
+                import time
+                time.sleep(wait_time)
+                
+                if scroll:
+                    for _ in range(scroll_count):
+                        page.evaluate("window.scrollTo(0, document.body.scrollHeight);")
+                        time.sleep(2)
+                        
+                html = page.content()
+                browser.close()
+                
             return BeautifulSoup(html, 'lxml')
         except Exception as e:
-            logger.error(f"Selenium fetch failed for {url}: {e}")
-            raise e
-
-
-
+            logger.error(f"Failed to fetch {url} using Playwright: {e}")
+            return None

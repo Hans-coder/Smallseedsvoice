@@ -136,19 +136,18 @@ def main():
 
         # 2. KKTIX Scraper (Music Tag + Keywords)
         try:
-            logger.info("Skipping KKTIX scraping temporarily due to Cloudflare blocks...")
-            # kktix_scraper = KktixScraper(config.get("scraper", {}))
-            # kktix_events = kktix_scraper.scrape_events()
-            # 
-            # relevant_kktix = []
-            # skipped_count = 0
-            # for e in kktix_events:
-            #     e['is_hot'] = is_hot_event(e)
-            #     relevant_kktix.append(e)
-            # 
-            # events.extend(relevant_kktix)
-            # logger.info(f"KKTIX: Found {len(relevant_kktix)} relevant events.")
-            pass
+            logger.info("Scraping KKTIX (Music & Keywords) using Playwright...")
+            kktix_scraper = KktixScraper(config.get("scraper", {}))
+            kktix_events = kktix_scraper.scrape_events()
+            
+            relevant_kktix = []
+            skipped_count = 0
+            for e in kktix_events:
+                e['is_hot'] = is_hot_event(e)
+                relevant_kktix.append(e)
+            
+            events.extend(relevant_kktix)
+            logger.info(f"KKTIX: Found {len(relevant_kktix)} relevant events.")
         except Exception as e:
             logger.error(f"KKTIX scrape failed: {e}")
             log_scraping_error("KKTIX", e)
