@@ -131,6 +131,13 @@ class BaseScraper(ABC):
                     user_agent=self.headers.get("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36")
                 )
                 page = context.new_page()
+                
+                try:
+                    from playwright_stealth import stealth_sync
+                    stealth_sync(page)
+                except ImportError:
+                    pass
+                
                 page.set_default_timeout(30000)
                 
                 page.goto(url, wait_until="networkidle")

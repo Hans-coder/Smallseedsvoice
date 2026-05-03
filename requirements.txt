@@ -27,3 +27,4 @@ selenium>=4.15.0
 sqlalchemy>=2.0.0
 playwright>=1.40.0
 undetected-chromedriver
+playwright-stealth>=1.0.6
