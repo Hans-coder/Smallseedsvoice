@@ -113,25 +113,25 @@ def main():
             try:
                 ig_config = config.get("pipelines", {}).get("weekly_digest", {}).get("sources", {}).get("instagram", {})
                 if ig_config.get("enabled", True):
-                usernames = ig_config.get("usernames", ["livetws"])
-                max_posts = ig_config.get("max_posts", 20)
-                
-                logger.info(f"Scraping Instagram accounts: {usernames}")
-                
-                # Merge global scraper config with IG config
-                scraper_config = config.get("scraper", {})
-                scraper_config.update(ig_config)
-                
-                ig_scraper = InstagramScraper(scraper_config)
-                # 使用新開發的批量抓取方法
-                ig_events = ig_scraper.scrape_multiple_accounts(usernames, max_posts=max_posts)
-                
-                # 標註熱門活動
-                for e in ig_events:
-                    e['is_hot'] = is_hot_event(e)
-                
-                events.extend(ig_events)
-                logger.info(f"Found {len(ig_events)} events from Instagram.")
+                    usernames = ig_config.get("usernames", ["livetws"])
+                    max_posts = ig_config.get("max_posts", 20)
+                    
+                    logger.info(f"Scraping Instagram accounts: {usernames}")
+                    
+                    # Merge global scraper config with IG config
+                    scraper_config = config.get("scraper", {})
+                    scraper_config.update(ig_config)
+                    
+                    ig_scraper = InstagramScraper(scraper_config)
+                    # 使用新開發的批量抓取方法
+                    ig_events = ig_scraper.scrape_multiple_accounts(usernames, max_posts=max_posts)
+                    
+                    # 標註熱門活動
+                    for e in ig_events:
+                        e['is_hot'] = is_hot_event(e)
+                    
+                    events.extend(ig_events)
+                    logger.info(f"Found {len(ig_events)} events from Instagram.")
             except Exception as e:
                 logger.error(f"Instagram scrape failed: {e}")
                 log_scraping_error("Instagram", e)
@@ -142,15 +142,15 @@ def main():
                 logger.info("Scraping KKTIX (Music & Keywords) using Playwright...")
                 kktix_scraper = KktixScraper(config.get("scraper", {}))
                 kktix_events = kktix_scraper.scrape_events()
-            
-            relevant_kktix = []
-            skipped_count = 0
-            for e in kktix_events:
-                e['is_hot'] = is_hot_event(e)
-                relevant_kktix.append(e)
-            
-            events.extend(relevant_kktix)
-            logger.info(f"KKTIX: Found {len(relevant_kktix)} relevant events.")
+                
+                relevant_kktix = []
+                skipped_count = 0
+                for e in kktix_events:
+                    e['is_hot'] = is_hot_event(e)
+                    relevant_kktix.append(e)
+                
+                events.extend(relevant_kktix)
+                logger.info(f"KKTIX: Found {len(relevant_kktix)} relevant events.")
             except Exception as e:
                 logger.error(f"KKTIX scrape failed: {e}")
                 log_scraping_error("KKTIX", e)
@@ -163,16 +163,16 @@ def main():
                 from src.scraper.ticketing.indievox_scraper import IndievoxScraper
                 indievox_scraper = IndievoxScraper(config.get("scraper", {}))
                 indievox_events = indievox_scraper.scrape_events()
-            
-            relevant_indievox = []
-            skipped_count = 0
-            for e in indievox_events:
-                e['is_hot'] = is_hot_event(e)
-                # Take all events as requested
-                relevant_indievox.append(e)
-            
-            events.extend(relevant_indievox)
-            logger.info(f"Indievox: Found {len(relevant_indievox)} relevant events.")
+                
+                relevant_indievox = []
+                skipped_count = 0
+                for e in indievox_events:
+                    e['is_hot'] = is_hot_event(e)
+                    # Take all events as requested
+                    relevant_indievox.append(e)
+                
+                events.extend(relevant_indievox)
+                logger.info(f"Indievox: Found {len(relevant_indievox)} relevant events.")
             except Exception as e:
                 logger.error(f"Indievox scrape failed: {e}")
                 log_scraping_error("Indievox", e)
@@ -184,10 +184,10 @@ def main():
                 from src.scraper.discovery.streetvoice_scraper import StreetVoiceScraper
                 sv_scraper = StreetVoiceScraper(config.get("scraper", {}))
                 sv_events = sv_scraper.scrape_events()
-            
-            # For StreetVoice, we take everything for now as it's targeted discovery
-            events.extend(sv_events)
-            logger.info(f"StreetVoice: Added {len(sv_events)} discovery events.")
+                
+                # For StreetVoice, we take everything for now as it's targeted discovery
+                events.extend(sv_events)
+                logger.info(f"StreetVoice: Added {len(sv_events)} discovery events.")
             except Exception as e:
                 logger.error(f"StreetVoice scrape failed: {e}")
                 log_scraping_error("StreetVoice", e)
