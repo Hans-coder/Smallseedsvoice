@@ -43,7 +43,7 @@ class IndievoxScraper(BaseScraper):
                     # Early Date & Keyword Filter
                     today_dt = datetime.now()
                     today = today_dt.strftime("%Y-%m-%d")
-                    max_date = (today_dt + timedelta(days=4)).strftime("%Y-%m-%d")
+                    max_date = (today_dt + timedelta(days=5)).strftime("%Y-%m-%d")
                     if event_data.get('date'):
                         if event_data['date'] < today or event_data['date'] > max_date:
                             continue

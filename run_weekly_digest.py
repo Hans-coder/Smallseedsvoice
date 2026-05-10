@@ -248,19 +248,11 @@ def main():
             return
 
         # Process & Build Digest
-        start_date = datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
-        today_wd = start_date.weekday()
+        # Start from tomorrow as per user request
+        start_date = (datetime.datetime.now() + datetime.timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
         
-        # Semi-weekly logic: 
-        # Monday (0) covers Mon, Tue, Wed (3 days limit)
-        # Thursday (3) covers Thu, Fri, Sat, Sun (4 days limit)
-        if today_wd == 0:
-            end_date = start_date + datetime.timedelta(days=2, hours=23, minutes=59, seconds=59)
-        elif today_wd == 3:
-            end_date = start_date + datetime.timedelta(days=3, hours=23, minutes=59, seconds=59)
-        else:
-            # Default to half week if run on other days
-            end_date = start_date + datetime.timedelta(days=3, hours=23, minutes=59, seconds=59)
+        # Fixed 4-day window from tomorrow
+        end_date = start_date + datetime.timedelta(days=3, hours=23, minutes=59, seconds=59)
         
         
         # Initialize Builder with AI enrichment enabled
