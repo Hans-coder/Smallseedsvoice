@@ -31,7 +31,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: data/events.db
-          key: ${{ runner.os }}-performer-history-indievox-${{ github.run_id }}
+          key: ${{ runner.os }}-performer-history-indievox-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-performer-history-indievox-
             ${{ runner.os }}-performer-history-
