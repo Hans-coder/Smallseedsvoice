@@ -1,7 +1,7 @@
 """StreetVoice Discovery Scraper"""
 import re
 from typing import Dict, List, Optional
-from datetime import datetime
+from datetime import datetime, timedelta
 from src.scraper.base_scraper import BaseScraper
 from src.utils.logger import setup_logger
 
@@ -61,7 +61,7 @@ class StreetVoiceScraper(BaseScraper):
                     # Date Filter: Only next 4 days (half-week)
                     if event_data.get('date'):
                         today = datetime.now().strftime("%Y-%m-%d")
-                        max_date = (datetime.now() + datetime.timedelta(days=4)).strftime("%Y-%m-%d")
+                        max_date = (datetime.now() + timedelta(days=4)).strftime("%Y-%m-%d")
                         if event_data['date'] < today or event_data['date'] > max_date:
                             continue
 
