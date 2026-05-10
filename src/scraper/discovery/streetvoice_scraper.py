@@ -58,6 +58,13 @@ class StreetVoiceScraper(BaseScraper):
             for item in items:
                 event_data = self.parse_event(item, current_date_str)
                 if event_data:
+                    # Date Filter: Only next 4 days (half-week)
+                    if event_data.get('date'):
+                        today = datetime.now().strftime("%Y-%m-%d")
+                        max_date = (datetime.now() + datetime.timedelta(days=4)).strftime("%Y-%m-%d")
+                        if event_data['date'] < today or event_data['date'] > max_date:
+                            continue
+
                     # Fetch high-res image from detail page only if requested
                     if with_details and event_data.get('source_url'):
                         detail = self._fetch_detail(event_data['source_url'])

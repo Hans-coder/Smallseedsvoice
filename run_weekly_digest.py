@@ -259,7 +259,8 @@ def main():
         elif today_wd == 3:
             end_date = start_date + datetime.timedelta(days=3, hours=23, minutes=59, seconds=59)
         else:
-            end_date = start_date + datetime.timedelta(days=6, hours=23, minutes=59, seconds=59)
+            # Default to half week if run on other days
+            end_date = start_date + datetime.timedelta(days=3, hours=23, minutes=59, seconds=59)
         
         
         # Initialize Builder with AI enrichment enabled
