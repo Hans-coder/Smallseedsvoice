@@ -57,18 +57,11 @@ def main():
             
         performers_html = f'<div class="performers">🎤 演出：{performers_str}</div>' if performers_str else '<div class="performers">🎤 演出：詳見活動頁面</div>'
         
-        # Platform handling
-        platform = str(e.get('platform', e.get('ticket_platform', 'Other'))).upper()
-        # Common platform cleanup
-        if 'KKTIX' in platform: platform = 'KKTIX'
-        elif 'INDIEVOX' in platform: platform = 'iNDIEVOX'
-        elif 'ACCUPASS' in platform: platform = 'ACCUPASS'
+        # Platform handling (Removed as per user request)
+        platform_html = ''
         
-        platform_html = f'<div class="platform-tag">PLATFORM: {platform}</div>'
-        
-        # Detail link handling
-        source_url = e.get('source_url', '')
-        detail_html = f'<div class="detail-link">→ Link in Bio / 掃描查看詳情</div>' if source_url else ''
+        # Detail link handling (Removed as per user request)
+        detail_html = ''
 
         # Time handling
         exact_time = e.get('time', '')
@@ -195,14 +188,7 @@ def main():
             font-weight: 900;
             padding: 10px 24px;
         }}
-        .platform-badge {{
-            font-size: 28px;
-            font-weight: 900;
-            color: #9A8B78;
-            border: 2px solid #9A8B78;
-            padding: 6px 16px;
-            letter-spacing: 2px;
-        }}
+        .platform-badge {{ display: none; }}
         .title {{
             font-size: 64px;
             font-weight: 900;
@@ -248,24 +234,8 @@ def main():
             letter-spacing: 4px;
             opacity: 0.7;
         }}
-        .platform-tag {{
-            position: absolute;
-            bottom: 60px;
-            left: 40px;
-            font-size: 22px;
-            font-weight: 900;
-            color: #1B4F8B;
-            letter-spacing: 2px;
-        }}
-        .detail-link {{
-            position: absolute;
-            bottom: 30px;
-            right: 40px;
-            font-size: 22px;
-            font-weight: 700;
-            color: #C83220;
-            letter-spacing: 1px;
-        }}
+        .platform-tag {{ display: none; }}
+        .detail-link {{ display: none; }}
     </style>
     </head>
     <body>

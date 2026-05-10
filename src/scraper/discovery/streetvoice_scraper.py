@@ -99,9 +99,7 @@ class StreetVoiceScraper(BaseScraper):
             link = "https://streetvoice.com" + title_tag.get('href', '')
             
             # Info string format: "00:00・臺北市・Pipe Live Music"
-            info_tag = element.select_one('.info-block p')
-            if not info_tag:
-                info_tag = element.select_one('p.text-muted') # Fallback
+            info_tag = element.select_one('h4') or element.select_one('.info-block p') or element.select_one('p.text-muted')
             
             info_text = info_tag.get_text(strip=True) if info_tag else ""
             
@@ -109,8 +107,8 @@ class StreetVoiceScraper(BaseScraper):
             venue = "Unknown"
             city = "Unknown"
             
-            if "・" in info_text:
-                parts = [p.strip() for p in info_text.split("・")]
+            if "・" in info_text or "．" in info_text:
+                parts = [p.strip() for p in re.split(r'[・．.]', info_text)]
                 if len(parts) == 1:
                     time_val = parts[0]
                 elif len(parts) == 2:
