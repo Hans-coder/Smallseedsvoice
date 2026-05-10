@@ -152,7 +152,13 @@ class BaseScraper(ABC):
                 html = page.content()
                 browser.close()
                 
+                if "Checking your browser" in html or "Attention Required!" in html or "Cloudflare" in html:
+                    raise RuntimeError(f"Scraper blocked by Cloudflare or anti-bot: {url}")
+                    
+                if not html or len(html) < 1000:
+                     raise RuntimeError(f"Received empty or too small response from {url}")
+
             return BeautifulSoup(html, 'lxml')
         except Exception as e:
             logger.error(f"Failed to fetch {url} using Playwright: {e}")
-            return None
+            raise # Re-raise so log_scraping_error in the runner can catch it

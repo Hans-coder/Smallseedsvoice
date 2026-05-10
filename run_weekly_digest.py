@@ -85,7 +85,7 @@ def main():
     
     parser = argparse.ArgumentParser(description='Weekly Digest Pipeline')
     parser.add_argument('--step', type=str, choices=['scrape', 'process', 'post', 'all'], default='all', help='Pipeline step to execute')
-    parser.add_argument('--source', type=str, choices=['instagram', 'kktix', 'indievox', 'streetvoice', 'all'], default='all', help='Specific source to scrape')
+    parser.add_argument('--source', type=str, choices=['instagram', 'kktix', 'indievox', 'ticketplus', 'tixcraft', 'streetvoice', 'all'], default='all', help='Specific source to scrape')
     args = parser.parse_args()
     
     logger.info(f"Starting Weekly Digest Pipeline (Step: {args.step}, Source: {args.source})...")
@@ -176,6 +176,32 @@ def main():
             except Exception as e:
                 logger.error(f"Indievox scrape failed: {e}")
                 log_scraping_error("Indievox", e)
+
+        # 4.1 tixCraft Scraper
+        if args.source in ['tixcraft', 'all']:
+            try:
+                logger.info("Scraping tixCraft...")
+                from src.scraper.ticketing.tixcraft_scraper import TixCraftScraper
+                scraper = TixCraftScraper(config.get("scraper", {}))
+                tix_events = scraper.scrape_events()
+                events.extend(tix_events)
+                logger.info(f"tixCraft: Found {len(tix_events)} events.")
+            except Exception as e:
+                logger.error(f"tixCraft scrape failed: {e}")
+                log_scraping_error("tixCraft", e)
+
+        # 4.2 Ticket Plus Scraper
+        if args.source in ['ticketplus', 'all']:
+            try:
+                logger.info("Scraping Ticket Plus...")
+                from src.scraper.ticketing.ticketplus_scraper import TicketPlusScraper
+                scraper = TicketPlusScraper(config.get("scraper", {}))
+                tp_events = scraper.scrape_events()
+                events.extend(tp_events)
+                logger.info(f"Ticket Plus: Found {len(tp_events)} events.")
+            except Exception as e:
+                logger.error(f"Ticket Plus scrape failed: {e}")
+                log_scraping_error("Ticket Plus", e)
             
         # 5. StreetVoice Scraper (Discovery)
         if args.source in ['streetvoice', 'all']:
