@@ -129,7 +129,11 @@ class DigestBuilder:
             event['genre'] = self._classify_genre(event)
         
         if not sorted_events:
-            return []
+            date_str = f"{start_date.strftime('%m/%d')} - {end_date.strftime('%m/%d')}"
+            return [{
+                'text': f"音樂活動懶人包 ({date_str})\n\n這兩週暫無推薦活動，大家可以先休息一下，或是去看看之前存下來的場次！",
+                'images': []
+            }]
 
         # 2. Group by City/Region
         grouped_sections = self._group_events_by_city(sorted_events)
