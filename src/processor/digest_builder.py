@@ -47,10 +47,11 @@ class DigestBuilder:
             needs_perf = not e.get('performers')
             needs_venue = not e.get('venue_name') or e.get('venue_name') == "Unknown"
             
-            if (needs_perf or needs_venue) and e.get('ticket_platform') == 'KKTIX':
-                desc = str(e.get('price', ''))[:300] if e.get('price') else ""
+            if (needs_perf or needs_venue):
+                # Use description or price field for context
+                desc = str(e.get('description', e.get('price', '')))[:300]
                 events_needing_extraction.append({
-                    "activity_id": e.get('activity_id'),
+                    "activity_id": e.get('activity_id', e.get('source_url', e.get('name'))),
                     "title": e.get('name') or e.get('activity_name', ''),
                     "description": desc
                 })
@@ -63,14 +64,15 @@ class DigestBuilder:
                 extracted = self.enricher.extract_details_batch(batch)
                 if extracted:
                     for e in sorted_events:
-                        if e.get('activity_id') in extracted:
-                            res = extracted[e.get('activity_id')]
+                        eid = e.get('activity_id', e.get('source_url', e.get('name')))
+                        if eid in extracted:
+                            res = extracted[eid]
                             if isinstance(res, dict):
                                 perfs = res.get('performers')
                                 venue = res.get('venue')
                                 if perfs and isinstance(perfs, list) and not e.get('performers'):
                                     e['performers'] = perfs
-                                if venue and (not e.get('venue_name') or e.get('venue_name') == "Unknown"):
+                                if venue and (not e.get('venue_name') or e.get('venue_name') in ["Unknown", "See Details", "未提供"]):
                                     e['venue_name'] = venue
                                     e['location'] = venue
                 if i + batch_size < len(events_needing_extraction):

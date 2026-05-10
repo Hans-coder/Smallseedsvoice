@@ -36,8 +36,8 @@ def main():
             date = "TBA"
 
         venue = e.get('venue_name') or e.get('venue') or e.get('location')
-        if not venue or venue == "Unknown":
-            venue = "場地詳見活動頁"
+        if not venue or venue in ["Unknown", "未提供", "See Details", "場地詳見活動頁"]:
+            venue = "場地資訊請見官網"
         
         # Spotlight Description if available
         ai_desc = ""
@@ -57,6 +57,19 @@ def main():
             
         performers_html = f'<div class="performers">🎤 演出：{performers_str}</div>' if performers_str else '<div class="performers">🎤 演出：詳見活動頁面</div>'
         
+        # Platform handling
+        platform = str(e.get('platform', e.get('ticket_platform', 'Other'))).upper()
+        # Common platform cleanup
+        if 'KKTIX' in platform: platform = 'KKTIX'
+        elif 'INDIEVOX' in platform: platform = 'iNDIEVOX'
+        elif 'ACCUPASS' in platform: platform = 'ACCUPASS'
+        
+        platform_html = f'<div class="platform-tag">PLATFORM: {platform}</div>'
+        
+        # Detail link handling
+        source_url = e.get('source_url', '')
+        detail_html = f'<div class="detail-link">→ Link in Bio / 掃描查看詳情</div>' if source_url else ''
+
         # Time handling
         exact_time = e.get('time', '')
         if exact_time == "Unknown" or exact_time is None:
@@ -76,7 +89,10 @@ def main():
             <div class="card-inner">
                 {img_html}
                 <div class="content">
-                    <div class="date-badge">{date}</div>
+                    <div class="meta-row">
+                        <div class="date-badge">{date}</div>
+                        {platform_html}
+                    </div>
                     <div class="title">{name}</div>
                     {performers_html}
                     <div class="venue">📍 {venue}{time_html}</div>
@@ -85,6 +101,7 @@ def main():
                 <div class="footer">
                     TAIWAN MUSIC RADAR // smallseedsvoice 
                 </div>
+                {detail_html}
             </div>
         </div>
         """
@@ -164,6 +181,12 @@ def main():
             flex-direction: column;
             flex-grow: 1;
         }}
+        .meta-row {{
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 30px;
+        }}
         .date-badge {{
             display: inline-block;
             background: #C83220; /* Kurenai Red */
@@ -171,8 +194,14 @@ def main():
             font-size: 36px;
             font-weight: 900;
             padding: 10px 24px;
-            align-self: flex-start;
-            margin-bottom: 30px;
+        }}
+        .platform-badge {{
+            font-size: 28px;
+            font-weight: 900;
+            color: #9A8B78;
+            border: 2px solid #9A8B78;
+            padding: 6px 16px;
+            letter-spacing: 2px;
         }}
         .title {{
             font-size: 64px;
@@ -212,11 +241,30 @@ def main():
         .footer {{
             position: absolute;
             bottom: 30px;
-            right: 40px;
-            font-size: 24px;
+            left: 40px;
+            font-size: 20px;
             font-weight: 900;
             color: #9A8B78;
             letter-spacing: 4px;
+            opacity: 0.7;
+        }}
+        .platform-tag {{
+            position: absolute;
+            bottom: 60px;
+            left: 40px;
+            font-size: 22px;
+            font-weight: 900;
+            color: #1B4F8B;
+            letter-spacing: 2px;
+        }}
+        .detail-link {{
+            position: absolute;
+            bottom: 30px;
+            right: 40px;
+            font-size: 22px;
+            font-weight: 700;
+            color: #C83220;
+            letter-spacing: 1px;
         }}
     </style>
     </head>

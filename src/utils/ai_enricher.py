@@ -2,8 +2,9 @@
 import os
 import json
 import re
+import time
 from google import genai
-from typing import Optional
+from typing import Optional, Any
 from src.utils.logger import setup_logger
 
 logger = setup_logger(__name__)
@@ -19,14 +20,35 @@ class AIEnricher:
             self.model = None
             logger.warning("GEMINI_API_KEY not found. AI enrichment will be disabled.")
 
+    def _safe_generate(self, prompt: str, max_retries: int = 3) -> Optional[Any]:
+        """安全呼叫 AI，處理 429 與 503 錯誤"""
+        if not self.model or not self.client:
+            return None
+
+        for i in range(max_retries):
+            try:
+                response = self.client.models.generate_content(model=self.model, contents=prompt)
+                return response
+            except Exception as e:
+                err_msg = str(e)
+                # 處理 429 (Rate Limit) 與 503 (Service Unavailable)
+                if "429" in err_msg or "503" in err_msg or "RESOURCE_EXHAUSTED" in err_msg or "UNAVAILABLE" in err_msg:
+                    wait_time = (i + 1) * 30 # 指數型增加等待時間
+                    logger.warning(f"AI Service Error ({err_msg}). Retrying in {wait_time}s... (Attempt {i+1}/{max_retries})")
+                    time.sleep(wait_time)
+                else:
+                    logger.error(f"AI Unexpected Error: {e}")
+                    break
+        return None
+
     def enrich_post(self, event_name: str, date: str, venue: str, extra_info: str = "") -> str:
         """用 AI 生成吸引人的貼文前言"""
         if not self.model:
             return ""
 
         prompt = f"""
-        你是一位台灣獨立音樂推廣者，也是超級樂迷。
-        請根據以下活動資訊，寫一段「非常簡短、充滿熱情」的開場語（Hook）。
+        你是一位在台灣獨立音樂圈打滾多年的資深樂迷，講話風格酷酷的、很真誠，像是大家的大哥哥/大姊姊。
+        請根據以下活動資訊，寫一段「非常簡短、充滿渲染力」的推薦引言。
         
         活動資訊：
         - 名稱：{event_name}
@@ -35,21 +57,19 @@ class AIEnricher:
         - 特色：{extra_info}
 
         風格要求：
-        1. 語氣要像是在跟好朋友分享好消息，溫暖、親切、自然。
-        2. 不要用任何 Hashtag (#)。
-        3. 字數控制在 30 字以內，越精簡越好。
-        4. **絕對不要使用任何 Emoji**。
-        5. 不要太官方，語氣要真誠。
-        6. 標題不需要重複「台灣」或是日期年份，AI 不需要加上這些贅詞。
-
-        直接輸出內容即可。
+        1. 語氣要像是在 Live House 門口跟朋友說：「這場真的不能錯過」。
+        2. 絕對禁忌：禁止使用「為大家推薦」、「這是一個...」、「活動將於...」等 AI 機器人口吻。
+        3. 絕對禁忌：禁止使用 Hashtag (#) 以及任何 Emoji。
+        4. 字數控制在 25 字以內。
+        5. 不要重複日期年份，聚焦在「為什麼要去」的情緒。
+        6. 直接輸出內容，不要加引號。
         """
         
         try:
-            response = self.client.models.generate_content(model=self.model, contents=prompt)
-            if hasattr(response, 'usage_metadata'):
+            response = self._safe_generate(prompt)
+            if response and hasattr(response, 'usage_metadata'):
                 logger.info(f"AI Enrichment Token Usage: {response.usage_metadata.prompt_token_count} prompt, {response.usage_metadata.candidates_token_count} candidates")
-            return response.text.strip() + "\n\n"
+            return response.text.strip() + "\n\n" if response else ""
         except Exception as e:
             logger.error(f"AI Enrichment failed: {e}")
             return ""
@@ -78,11 +98,13 @@ class AIEnricher:
         }}
         """
         try:
-            response = self.client.models.generate_content(model=self.model, contents=prompt)
-            if hasattr(response, 'usage_metadata'):
+            response = self._safe_generate(prompt)
+            if response and hasattr(response, 'usage_metadata'):
                 logger.debug(f"AI Profile Token Usage ({performer_name}): {response.usage_metadata.prompt_token_count} prompt, {response.usage_metadata.candidates_token_count} candidates")
             
-            # Find JSON block in the response (Model: self.model)
+            if not response: return {}
+            
+            # Find JSON block in the response
             text = response.text.strip()
             match = re.search(r'\{[^{}]*\}', text)
             if match:
@@ -127,9 +149,11 @@ class AIEnricher:
         {{ "團名": {{ "description": "...", "ig_handle": "..." }} }}
         """
         try:
-            response = self.client.models.generate_content(model=self.model, contents=prompt)
-            if hasattr(response, 'usage_metadata'):
+            response = self._safe_generate(prompt)
+            if response and hasattr(response, 'usage_metadata'):
                 logger.info(f"AI Batch Profile Token Usage: {response.usage_metadata.prompt_token_count} prompt, {response.usage_metadata.candidates_token_count} candidates")
+            
+            if not response: return {}
             
             text = response.text.strip()
             # 尋找 JSON 區塊
@@ -168,20 +192,12 @@ class AIEnricher:
         }}
         """
         try:
-            try:
-                response = self.client.models.generate_content(model=self.model, contents=prompt)
-            except Exception as e:
-                if "429" in str(e) or "RESOURCE_EXHAUSTED" in str(e):
-                    logger.warning("AI Rate limit hit, sleeping for 40 seconds before retry...")
-                    import time
-                    time.sleep(40)
-                    response = self.client.models.generate_content(model=self.model, contents=prompt)
-                else:
-                    logger.error(f"AI Batch Extract failed with: {e}")
-                    return {}
+            response = self._safe_generate(prompt)
                     
-            if hasattr(response, 'usage_metadata'):
+            if response and hasattr(response, 'usage_metadata'):
                 logger.info(f"AI Batch Extract Token Usage: {response.usage_metadata.prompt_token_count} prompt, {response.usage_metadata.candidates_token_count} candidates")
+            
+            if not response: return {}
             
             text = response.text.strip()
             # 尋找 JSON 區塊
@@ -228,11 +244,38 @@ class AIEnricher:
         直接輸出那一句話即可。
         """
         try:
-            response = self.client.models.generate_content(model=self.model, contents=prompt)
-            if hasattr(response, 'usage_metadata'):
+            response = self._safe_generate(prompt)
+            if response and hasattr(response, 'usage_metadata'):
                 logger.info(f"AI CTA Token Usage: {response.usage_metadata.prompt_token_count} prompt, {response.usage_metadata.candidates_token_count} candidates")
-            return response.text.strip()
+            return response.text.strip() if response else ""
         except Exception as e:
             logger.error(f"Failed to generate community prompt: {e}")
             return ""
+
+    def recover_missing_venue(self, event_name: str, event_desc: str = "") -> Optional[str]:
+        """
+        嘗試從活動名稱或描述中找出遺失的場地資訊。
+        """
+        if not self.model:
+            return None
+
+        prompt = f"""
+        請根據以下活動標題與描述，判斷該活動舉辦的「演出場地/地點」名稱。
+        只要回傳場地名稱（例如：Legacy Taipei, Zepp New Taipei, 女巫店, Revolver）。
+        如果完全找不到，請回傳 "Unknown"。
+        不要回傳任何其他解釋。
+
+        活動名稱：{event_name}
+        活動描述片段：{event_desc[:500]}
+        """
+        try:
+            response = self._safe_generate(prompt)
+            if not response: return None
+            result = response.text.strip()
+            if result.lower() == "unknown" or len(result) > 50:
+                return None
+            return result
+        except Exception as e:
+            logger.error(f"Failed to recover venue for {event_name}: {e}")
+            return None
 

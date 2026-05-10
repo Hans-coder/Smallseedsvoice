@@ -65,10 +65,17 @@ class AccupassScraper(BaseScraper):
             if not location_tag:
                  location_tag = element.find(class_=lambda x: x and 'event-location-type' in x.lower())
             
-            location = "See Details"
+            location = "場地詳見官網"
             if location_tag:
-                span = location_tag.find('span')
-                location = span.get_text(strip=True) if span else location_tag.get_text(strip=True)
+                # Accupass often has <span>台北市</span><span>Legacy</span>
+                spans = location_tag.find_all('span')
+                if spans:
+                    location = " ".join([s.get_text(strip=True) for s in spans])
+                else:
+                    location = location_tag.get_text(strip=True)
+            
+            if not location or location.strip() == "":
+                location = "場地詳見官網"
 
             # Image
             img_tag = element.find('img', class_=lambda x: x and 'event-photo-img' in x.lower())

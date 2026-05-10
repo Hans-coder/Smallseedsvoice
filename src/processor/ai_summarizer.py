@@ -77,7 +77,26 @@ class AISummarizer:
 """
 
         try:
-            response = self.model.generate_content(prompt)
+            # Retry logic for 503/429
+            response = None
+            max_retries = 3
+            for i in range(max_retries):
+                try:
+                    response = self.model.generate_content(prompt)
+                    break
+                except Exception as e:
+                    err_msg = str(e)
+                    if "503" in err_msg or "429" in err_msg or "UNAVAILABLE" in err_msg or "RESOURCE_EXHAUSTED" in err_msg:
+                        wait_time = (i + 1) * 30
+                        logger.warning(f"AI Summarizer Error ({err_msg}). Retrying in {wait_time}s... ({i+1}/{max_retries})")
+                        import time
+                        time.sleep(wait_time)
+                    else:
+                        raise e
+            
+            if not response:
+                return None
+
             # Find JSON in response (Gemini sometimes adds markdown codes blocks)
             raw_text = response.text
             if "```json" in raw_text:

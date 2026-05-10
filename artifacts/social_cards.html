@@ -25,7 +25,7 @@
             box-sizing: border-box;
             border: 2px solid #C4B9A7;
             transform-origin: top left;
-            zoom: 1.0; /* Scale for browser viewing or full for rendering */
+            zoom: 0.4; /* Scale for browser viewing or full for rendering */
             box-shadow: 0 20px 40px rgba(0,0,0,0.4);
             display: flex;
             flex-direction: column;
@@ -70,6 +70,12 @@
             flex-direction: column;
             flex-grow: 1;
         }
+        .meta-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 30px;
+        }
         .date-badge {
             display: inline-block;
             background: #C83220; /* Kurenai Red */
@@ -77,8 +83,14 @@
             font-size: 36px;
             font-weight: 900;
             padding: 10px 24px;
-            align-self: flex-start;
-            margin-bottom: 30px;
+        }
+        .platform-badge {
+            font-size: 28px;
+            font-weight: 900;
+            color: #9A8B78;
+            border: 2px solid #9A8B78;
+            padding: 6px 16px;
+            letter-spacing: 2px;
         }
         .title {
             font-size: 64px;
@@ -118,11 +130,30 @@
         .footer {
             position: absolute;
             bottom: 30px;
-            right: 40px;
-            font-size: 24px;
+            left: 40px;
+            font-size: 20px;
             font-weight: 900;
             color: #9A8B78;
             letter-spacing: 4px;
+            opacity: 0.7;
+        }
+        .platform-tag {
+            position: absolute;
+            bottom: 60px;
+            left: 40px;
+            font-size: 22px;
+            font-weight: 900;
+            color: #1B4F8B;
+            letter-spacing: 2px;
+        }
+        .detail-link {
+            position: absolute;
+            bottom: 30px;
+            right: 40px;
+            font-size: 22px;
+            font-weight: 700;
+            color: #C83220;
+            letter-spacing: 1px;
         }
     </style>
     </head>
@@ -132,7 +163,10 @@
             <div class="card-inner">
                 <div class="img-wrapper"><img src="https://assets.kktix.io/upload_images/298306/KKTIX_%E6%A9%AB%E5%B9%85_original.png" alt="黑鹿季雪 LIVE"/></div>
                 <div class="content">
-                    <div class="date-badge">2026-05-09</div>
+                    <div class="meta-row">
+                        <div class="date-badge">2026-05-09</div>
+                        <div class="platform-tag">PLATFORM: KKTIX</div>
+                    </div>
                     <div class="title">黑鹿季雪 LIVE</div>
                     <div class="performers">🎤 演出：黑鹿季雪</div>
                     <div class="venue">📍 NUZONE 展演空間</div>
@@ -141,6 +175,7 @@
                 <div class="footer">
                     TAIWAN MUSIC RADAR // smallseedsvoice 
                 </div>
+                
             </div>
         </div>
         
@@ -148,7 +183,10 @@
             <div class="card-inner">
                 <div class="img-wrapper"><img src="https://assets.kktix.io/upload_images/310870/04_original.png" alt="《2am Concert  in Hong Kong》"/></div>
                 <div class="content">
-                    <div class="date-badge">2026-05-10</div>
+                    <div class="meta-row">
+                        <div class="date-badge">2026-05-10</div>
+                        <div class="platform-tag">PLATFORM: KKTIX</div>
+                    </div>
                     <div class="title">《2am Concert  in Hong Kong》</div>
                     <div class="performers">🎤 演出：詳見活動頁面</div>
                     <div class="venue">📍 AXA安盛創夢館</div>
@@ -157,6 +195,7 @@
                 <div class="footer">
                     TAIWAN MUSIC RADAR // smallseedsvoice 
                 </div>
+                
             </div>
         </div>
         
@@ -164,7 +203,10 @@
             <div class="card-inner">
                 <div class="img-wrapper"><img src="https://assets.kktix.io/upload_images/320653/1200x630__2__original.jpg" alt="13:00場"/></div>
                 <div class="content">
-                    <div class="date-badge">2026-05-16</div>
+                    <div class="meta-row">
+                        <div class="date-badge">2026-05-16</div>
+                        <div class="platform-tag">PLATFORM: KKTIX</div>
+                    </div>
                     <div class="title">13:00場</div>
                     <div class="performers">🎤 演出：詳見活動頁面</div>
                     <div class="venue">📍 凝聚力音樂娛樂Cohesion Space</div>
@@ -173,6 +215,7 @@
                 <div class="footer">
                     TAIWAN MUSIC RADAR // smallseedsvoice 
                 </div>
+                
             </div>
         </div>
         
@@ -180,7 +223,10 @@
             <div class="card-inner">
                 <div class="img-wrapper"><img src="https://assets.kktix.io/upload_images/320651/1200x630__2__original.jpg" alt="Unknown Event"/></div>
                 <div class="content">
-                    <div class="date-badge">2026-05-16</div>
+                    <div class="meta-row">
+                        <div class="date-badge">2026-05-16</div>
+                        <div class="platform-tag">PLATFORM: KKTIX</div>
+                    </div>
                     <div class="title">Unknown Event</div>
                     <div class="performers">🎤 演出：詳見活動頁面</div>
                     <div class="venue">📍 凝聚力音樂娛樂Cohesion Space</div>
@@ -189,6 +235,7 @@
                 <div class="footer">
                     TAIWAN MUSIC RADAR // smallseedsvoice 
                 </div>
+                
             </div>
         </div>
         
@@ -196,7 +243,10 @@
             <div class="card-inner">
                 <div class="img-wrapper"><img src="https://assets.kktix.io/upload_images/299966/KKTIX_1200x630_original.jpg" alt="ANISAMA in TAIPEI DOSHA！-"/></div>
                 <div class="content">
-                    <div class="date-badge">2026-05-10</div>
+                    <div class="meta-row">
+                        <div class="date-badge">2026-05-10</div>
+                        <div class="platform-tag">PLATFORM: KKTIX</div>
+                    </div>
                     <div class="title">ANISAMA in TAIPEI DOSHA！-</div>
                     <div class="performers">🎤 演出：ANISAMA in TAIPEI DOSHA！</div>
                     <div class="venue">📍 台北南港展覽館一館四樓</div>
@@ -205,6 +255,7 @@
                 <div class="footer">
                     TAIWAN MUSIC RADAR // smallseedsvoice 
                 </div>
+                
             </div>
         </div>
         
@@ -212,7 +263,10 @@
             <div class="card-inner">
                 <div class="img-wrapper"><img src="https://assets.kktix.io/upload_images/320652/1200x630__2__original.jpg" alt="18:00場"/></div>
                 <div class="content">
-                    <div class="date-badge">2026-05-16</div>
+                    <div class="meta-row">
+                        <div class="date-badge">2026-05-16</div>
+                        <div class="platform-tag">PLATFORM: KKTIX</div>
+                    </div>
                     <div class="title">18:00場</div>
                     <div class="performers">🎤 演出：詳見活動頁面</div>
                     <div class="venue">📍 凝聚力音樂娛樂Cohesion Space</div>
@@ -221,6 +275,7 @@
                 <div class="footer">
                     TAIWAN MUSIC RADAR // smallseedsvoice 
                 </div>
+                
             </div>
         </div>
         
@@ -228,7 +283,10 @@
             <div class="card-inner">
                 <div class="img-wrapper"><img src="https://assets.kktix.io/upload_images/304736/KKTIX_1200_x_630_original.png" alt="陳嫺靜Ｘ雲端司機《夏日高峰會 亞太區》"/></div>
                 <div class="content">
-                    <div class="date-badge">2026-05-05</div>
+                    <div class="meta-row">
+                        <div class="date-badge">2026-05-05</div>
+                        <div class="platform-tag">PLATFORM: KKTIX</div>
+                    </div>
                     <div class="title">陳嫺靜Ｘ雲端司機《夏日高峰會 亞太區》</div>
                     <div class="performers">🎤 演出：陳嫺靜, 雲端司機</div>
                     <div class="venue">📍 Legacy Taipei</div>
@@ -237,6 +295,7 @@
                 <div class="footer">
                     TAIWAN MUSIC RADAR // smallseedsvoice 
                 </div>
+                
             </div>
         </div>
         
@@ -244,7 +303,10 @@
             <div class="card-inner">
                 <div class="img-wrapper"><img src="https://assets.kktix.io/upload_images/299625/1200x630_2_%E5%B7%A5%E4%BD%9C%E5%8D%80%E5%9F%9F_1_original.jpg" alt="陳嫺靜Ｘ雲端司機《夏日高峰會 亞太區》"/></div>
                 <div class="content">
-                    <div class="date-badge">2026-05-05</div>
+                    <div class="meta-row">
+                        <div class="date-badge">2026-05-05</div>
+                        <div class="platform-tag">PLATFORM: KKTIX</div>
+                    </div>
                     <div class="title">陳嫺靜Ｘ雲端司機《夏日高峰會 亞太區》</div>
                     <div class="performers">🎤 演出：陳嫺靜, 雲端司機</div>
                     <div class="venue">📍 Legacy Taipei</div>
@@ -253,6 +315,7 @@
                 <div class="footer">
                     TAIWAN MUSIC RADAR // smallseedsvoice 
                 </div>
+                
             </div>
         </div>
         
@@ -260,7 +323,10 @@
             <div class="card-inner">
                 <div class="img-wrapper"><img src="https://assets.kktix.io/upload_images/304735/KKTIX_1200_x_630_original.png" alt="陳嫺靜Ｘ雲端司機《夏日高峰會 亞太區》"/></div>
                 <div class="content">
-                    <div class="date-badge">2026-05-06</div>
+                    <div class="meta-row">
+                        <div class="date-badge">2026-05-06</div>
+                        <div class="platform-tag">PLATFORM: KKTIX</div>
+                    </div>
                     <div class="title">陳嫺靜Ｘ雲端司機《夏日高峰會 亞太區》</div>
                     <div class="performers">🎤 演出：陳嫺靜, 雲端司機</div>
                     <div class="venue">📍 Legacy Taipei</div>
@@ -269,6 +335,7 @@
                 <div class="footer">
                     TAIWAN MUSIC RADAR // smallseedsvoice 
                 </div>
+                
             </div>
         </div>
         

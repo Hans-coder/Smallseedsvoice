@@ -26,7 +26,7 @@ def main():
     import argparse
     
     parser = argparse.ArgumentParser(description='Official Ticketing Platforms Scraper')
-    parser.add_argument('--platform', type=str, choices=['kktix', 'tixcraft', 'indievox', 'ticketplus', 'all'], help='Target platform to scrape')
+    parser.add_argument('--platform', type=str, choices=['kktix', 'tixcraft', 'indievox', 'ticketplus', 'streetvoice', 'all'], help='Target platform to scrape')
     parser.add_argument('--merge', action='store_true', help='Merge all platform json files into one')
     args = parser.parse_args()
     
@@ -53,7 +53,8 @@ def main():
             "opentix": "data/events_opentix.json",
             "tixcraft": "data/events_tixcraft.json",
             "indievox": "data/events_indievox.json",
-            "ticketplus": "data/events_ticketplus.json"
+            "ticketplus": "data/events_ticketplus.json",
+            "streetvoice": "data/events_streetvoice.json"
         }
         
         for p, fpath in platform_files.items():
@@ -128,11 +129,10 @@ def main():
             scraper = KktixScraper(config)
             kktix_events = scraper.scrape_events()
             
-            if platform == 'kktix':
-                with open("data/events_kktix.json", "w", encoding="utf-8") as f:
-                    json.dump(kktix_events, f, indent=4, ensure_ascii=False)
-                logger.info(f"Saved {len(kktix_events)} KKTIX events")
-            else:
+            with open("data/events_kktix.json", "w", encoding="utf-8") as f:
+                json.dump(kktix_events, f, indent=4, ensure_ascii=False)
+            logger.info(f"Saved {len(kktix_events)} KKTIX events")
+            if platform == 'all':
                 events.extend(kktix_events)
                 
         except Exception as e:
@@ -143,7 +143,8 @@ def main():
         'KKTIX': {'scraped': len(kktix_events) if 'kktix_events' in locals() else 0, 'survived': 0},
         'Indievox': {'scraped': 0, 'survived': 0},
         'tixCraft': {'scraped': 0, 'survived': 0},
-        'Ticket Plus': {'scraped': 0, 'survived': 0}
+        'Ticket Plus': {'scraped': 0, 'survived': 0},
+        'StreetVoice': {'scraped': 0, 'survived': 0}
     }
 
 
@@ -156,11 +157,10 @@ def main():
             scraper = IndievoxScraper(config)
             indievox_events = scraper.scrape_events()
             
-            if platform == 'indievox':
-                with open("data/events_indievox.json", "w", encoding="utf-8") as f:
-                    json.dump(indievox_events, f, indent=4, ensure_ascii=False)
-                logger.info(f"Saved {len(indievox_events)} Indievox events")
-            else:
+            with open("data/events_indievox.json", "w", encoding="utf-8") as f:
+                json.dump(indievox_events, f, indent=4, ensure_ascii=False)
+            logger.info(f"Saved {len(indievox_events)} Indievox events")
+            if platform == 'all':
                 events.extend(indievox_events)
                 platform_stats['Indievox']['scraped'] = len(indievox_events)
                 
@@ -174,11 +174,10 @@ def main():
             scraper = TixCraftScraper(config)
             tixcraft_events = scraper.scrape_events()
             
-            if platform == 'tixcraft':
-                with open("data/events_tixcraft.json", "w", encoding="utf-8") as f:
-                    json.dump(tixcraft_events, f, indent=4, ensure_ascii=False)
-                logger.info(f"Saved {len(tixcraft_events)} tixCraft events")
-            else:
+            with open("data/events_tixcraft.json", "w", encoding="utf-8") as f:
+                json.dump(tixcraft_events, f, indent=4, ensure_ascii=False)
+            logger.info(f"Saved {len(tixcraft_events)} tixCraft events")
+            if platform == 'all':
                 events.extend(tixcraft_events)
                 platform_stats['tixCraft']['scraped'] = len(tixcraft_events)
                 
@@ -192,16 +191,33 @@ def main():
             scraper = TicketPlusScraper(config)
             tp_events = scraper.scrape_events()
             
-            if platform == 'ticketplus':
-                with open("data/events_ticketplus.json", "w", encoding="utf-8") as f:
-                    json.dump(tp_events, f, indent=4, ensure_ascii=False)
-                logger.info(f"Saved {len(tp_events)} Ticket Plus events")
-            else:
+            with open("data/events_ticketplus.json", "w", encoding="utf-8") as f:
+                json.dump(tp_events, f, indent=4, ensure_ascii=False)
+            logger.info(f"Saved {len(tp_events)} Ticket Plus events")
+            if platform == 'all':
                 events.extend(tp_events)
                 platform_stats['Ticket Plus']['scraped'] = len(tp_events)
                 
         except Exception as e:
             logger.error(f"Ticket Plus failed: {e}")
+
+    # 6. StreetVoice
+    if platform in ['streetvoice', 'all']:
+        try:
+            logger.info("Scraping StreetVoice...")
+            from src.scraper.discovery.streetvoice_scraper import StreetVoiceScraper
+            scraper = StreetVoiceScraper(config)
+            sv_events = scraper.scrape_events()
+            
+            with open("data/events_streetvoice.json", "w", encoding="utf-8") as f:
+                json.dump(sv_events, f, indent=4, ensure_ascii=False)
+            logger.info(f"Saved {len(sv_events)} StreetVoice events")
+            if platform == 'all':
+                events.extend(sv_events)
+                platform_stats['StreetVoice']['scraped'] = len(sv_events)
+                
+        except Exception as e:
+            logger.error(f"StreetVoice failed: {e}")
 
     # If 'all' mode, perform legacy save to main file
     if platform == 'all':

@@ -4,6 +4,7 @@ from typing import Dict, List, Optional
 from datetime import datetime, timedelta
 from dateutil import parser as date_parser
 from src.utils.logger import setup_logger
+from src.utils.ai_enricher import AIEnricher
 
 logger = setup_logger(__name__)
 
@@ -11,10 +12,11 @@ logger = setup_logger(__name__)
 class DataProcessor:
     """數據處理類"""
     
-    def __init__(self):
+    def __init__(self, ai_enricher: Optional[AIEnricher] = None):
         """初始化數據處理器"""
         self.exclude_keywords = ['Talk', '講座', '工作坊', '課程', '分享會']
         self.priority_keywords = ['Live', 'Concert', '專場', '發片', '巡迴']
+        self.ai_enricher = ai_enricher
 
     
     def filter_by_keywords(self, events: List[Dict]) -> List[Dict]:
@@ -65,6 +67,28 @@ class DataProcessor:
         except Exception as e:
             logger.error(f"數據清洗失敗: {str(e)}")
             return None
+
+    def enrich_locations_batch(self, events: List[Dict]) -> List[Dict]:
+        """
+        批次修復遺失的地點資訊
+        """
+        if not self.ai_enricher:
+            return events
+
+        for event in events:
+            venue = event.get('venue_name') or event.get('venue') or event.get('location')
+            if not venue or venue in ['Unknown', '未提供', 'See Details', '場地詳見活動頁']:
+                # 嘗試修復
+                recovered = self.ai_enricher.recover_missing_venue(
+                    event.get('name', ''), 
+                    event.get('description', '')
+                )
+                if recovered:
+                    logger.info(f"AI 修復地點: {event.get('name')} -> {recovered}")
+                    event['location'] = recovered
+                    event['venue_name'] = recovered
+        
+        return events
     
     def format_for_threads(self, event: Dict, template: str) -> str:
         """
