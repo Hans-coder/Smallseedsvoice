@@ -129,7 +129,7 @@ class ThreadsPoster:
 
     def post_thread(self, posts: List[Dict]) -> List[str]:
         """
-        發布一串貼文 (Threaded Posts)。支援單張圖片。
+        發布一串貼文 (Threaded Posts)。支援單張圖片與輪播 (Carousel)。
         
         Args:
             posts: 貼文列表，每個元素包含 {'text': str, 'images': List[str]}
@@ -143,23 +143,18 @@ class ThreadsPoster:
         for i, post in enumerate(posts):
             logger.info(f"正在發布第 {i+1}/{len(posts)} 則貼文...")
             text = post.get('text')
-            images = post.get('images', [])
+            images = [img for img in post.get('images', []) if img.startswith('http')]
             
-            # Threads API 為單張圖片或 Carousel。這裡我們先實作單張圖片。
-            # 必須是公開可訪問的 URL。
-            image_url = None
-            for img in images:
-                if img.startswith('http'):
-                    image_url = img
-                    break
-            
-            post_id = self.create_post(text, image_url, reply_to_id=parent_id)
+            if len(images) > 1:
+                logger.info(f"發布為多圖輪播 (共 {len(images)} 張圖片)...")
+                post_id = self.create_carousel_post(text, images, reply_to_id=parent_id)
+            else:
+                image_url = images[0] if images else None
+                post_id = self.create_post(text, image_url, reply_to_id=parent_id)
             
             if post_id:
                 created_ids.append(post_id)
                 parent_id = post_id
-                # 稍微等待一下，避免速率限制
-                # time.sleep(5) 
                 self.random_sleep(30, 60)
             else:
                 logger.error(f"第 {i+1} 則貼文發布失敗，停止後續發布")

@@ -175,11 +175,29 @@ class DigestBuilder:
         if current_text:
             posts.append({'text': current_text.strip(), 'images': current_images})
             
+        # Append AI Community Prompt (CTA) to the end of the last post if available
+        if self.enricher and sorted_events and posts:
+            try:
+                cta_prompt = self.enricher.generate_community_prompt(sorted_events)
+                if cta_prompt:
+                    last_post = posts[-1]
+                    combined_text = last_post['text'] + "\n\n" + cta_prompt.strip()
+                    if len(combined_text) <= self.max_chars:
+                        last_post['text'] = combined_text
+                    else:
+                        posts.append({'text': cta_prompt.strip(), 'images': []})
+            except Exception as e:
+                import logging
+                logger = logging.getLogger(__name__)
+                logger.error(f"Failed to append community prompt: {e}")
+            
         self._enforce_image_limits(posts)
         return posts
 
     def _sort_and_filter_events(self, events: List[Dict], start: datetime, end: datetime) -> List[Dict]:
         """Sorts events by time and filters by date range."""
+        if not events:
+            return []
         from dateutil import parser
         
         filtered_events = []

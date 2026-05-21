@@ -321,6 +321,45 @@ def main():
             logger.info("No posts to publish.")
             return
 
+        # Load digest_raw.json and card_urls.json to replace raw flyer images with social card URLs
+        raw_events_path = "data/digest_raw.json"
+        card_urls_path = "data/card_urls.json"
+        if os.path.exists(raw_events_path) and os.path.exists(card_urls_path):
+            try:
+                with open(raw_events_path, "r", encoding="utf-8") as f:
+                    raw_events = json.load(f)
+                with open(card_urls_path, "r", encoding="utf-8") as f:
+                    card_urls = json.load(f)
+                
+                # Build mapping from raw image_url to discord card url
+                url_mapping = {}
+                for i, e in enumerate(raw_events):
+                    event_id = e.get('activity_id') or e.get('ticket_url') or f"event_{i}"
+                    safe_id = "".join([c if c.isalnum() or c in "._-" else "_" for c in event_id])
+                    
+                    raw_img = e.get('image_url')
+                    if raw_img and safe_id in card_urls:
+                        url_mapping[raw_img] = card_urls[safe_id]
+                
+                # Replace image URLs in posts
+                replaced_count = 0
+                for post in posts:
+                    if 'images' in post:
+                        new_images = []
+                        for img in post['images']:
+                            if img in url_mapping:
+                                new_images.append(url_mapping[img])
+                                replaced_count += 1
+                            else:
+                                new_images.append(img)
+                        post['images'] = new_images
+                logger.info(f"Replaced {replaced_count} raw flyer URLs with Discord-hosted social card URLs.")
+                # Save the replaced posts back to digest_posts.json for reference
+                with open("data/digest_posts.json", "w", encoding="utf-8") as f:
+                    json.dump(posts, f, indent=4, ensure_ascii=False)
+            except Exception as e:
+                logger.error(f"Failed to map social cards: {e}")
+
         # Post to Threads
         access_token = os.getenv("THREADS_ACCESS_TOKEN")
         if not access_token:
