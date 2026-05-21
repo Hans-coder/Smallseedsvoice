@@ -103,6 +103,7 @@ class DiscordNotifier:
             
         payload = {"payload_json": json.dumps(payload_dict)}
 
+        try:
             url = self.webhook_url
             if "?" in url:
                 url += "&wait=true"
