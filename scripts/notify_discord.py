@@ -197,32 +197,20 @@ def main():
         )
         logger.info(f"✅ {args.type} notification {i} sent.")
 
+    # Send Rendered Image Attachments
+    import glob
+    import time
     rendered_cards = sorted(glob.glob("artifacts/card_*.jpg"))
     if rendered_cards:
-        card_urls_map = {}
         logger.info(f"📸 Sending {len(rendered_cards)} rendered image cards to Discord (one by one with 3s safe delay)...")
         for i, c in enumerate(rendered_cards, 1):
             card_filename = os.path.basename(c)
-            safe_id = card_filename.replace("card_", "").replace(".jpg", "")
             # Providing some text content prevents Discord from treating it as a suspicious empty message
-            url_or_success = notifier.send_file(c, content=f"📸 展演圖卡 ({i}/{len(rendered_cards)})")
-            if not url_or_success:
+            success = notifier.send_file(c, content=f"📸 展演圖卡 ({i}/{len(rendered_cards)})")
+            if not success:
                 logger.error(f"❌ Skipping rest of images due to Discord rejection or rate limit.")
                 sys.exit(1)
-            
-            if isinstance(url_or_success, str) and url_or_success.startswith("http"):
-                card_urls_map[safe_id] = url_or_success
-                
             time.sleep(3) # Very safe delay to completely bypass Discord Rate Limits
-            
-        if card_urls_map:
-            try:
-                os.makedirs("data", exist_ok=True)
-                with open("data/card_urls.json", "w", encoding="utf-8") as f:
-                    json.dump(card_urls_map, f, indent=4, ensure_ascii=False)
-                logger.info(f"💾 Saved {len(card_urls_map)} card URLs to data/card_urls.json")
-            except Exception as e:
-                logger.warning(f"Failed to save card URLs JSON: {e}")
 
     logger.info(f"✅ {args.type} notifications complete.")
 

@@ -268,11 +268,8 @@ def main():
             
             cards = page.locator('.card').all()
             print(f"🔍 Found {len(cards)} card elements in the DOM.")
-            for i, card in enumerate(cards):
-                e = events[i]
-                event_id = e.get('activity_id') or e.get('ticket_url') or f"event_{i}"
-                safe_id = "".join([c if c.isalnum() or c in "._-" else "_" for c in event_id])
-                img_path = f"artifacts/card_{safe_id}.jpg"
+            for i, card in enumerate(cards, 1):
+                img_path = f"artifacts/card_{i}.jpg"
                 card.screenshot(path=img_path, type="jpeg", quality=95)
                 print(f"   -> Saved {img_path}")
             browser.close()

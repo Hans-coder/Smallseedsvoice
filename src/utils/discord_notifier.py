@@ -104,28 +104,18 @@ class DiscordNotifier:
         payload = {"payload_json": json.dumps(payload_dict)}
 
         try:
-            url = self.webhook_url
-            if "?" in url:
-                url += "&wait=true"
-            else:
-                url += "?wait=true"
-                
             with open(file_path, 'rb') as f:
                 # Explicitly set MIME type to image/jpeg
                 files = {
                     'file': (os.path.basename(file_path), f, 'image/jpeg')
                 }
                 response = requests.post(
-                    url,
+                    self.webhook_url,
                     data=payload,
                     files=files,
                     timeout=30
                 )
             response.raise_for_status()
-            data = response.json()
-            attachments = data.get("attachments", [])
-            if attachments:
-                return attachments[0].get("url")
             return True
         except Exception as e:
             logger.error(f"Failed to upload file to Discord: {e}")
