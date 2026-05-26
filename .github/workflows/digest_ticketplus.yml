@@ -20,6 +20,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
+          python -m pip cache purge
           pip install -r requirements.txt
           playwright install chromium
           
@@ -61,3 +62,4 @@ jobs:
             data/
             artifacts/
             scraping_errors.json
+          retention-days: 1
