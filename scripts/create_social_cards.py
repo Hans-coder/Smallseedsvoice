@@ -22,6 +22,33 @@ def main():
         print("No events found to generate cards.")
         return
 
+    # Filter by date range for digest to align with run_weekly_digest.py
+    if args.source == 'digest':
+        import datetime
+        from dateutil import parser as date_parser
+        start_date = (datetime.datetime.now() + datetime.timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
+        end_date = start_date + datetime.timedelta(days=3, hours=23, minutes=59, seconds=59)
+        
+        filtered = []
+        for e in events:
+            date_str = e.get('date') or e.get('time')
+            if not date_str or date_str == "Unknown":
+                continue
+            try:
+                dt = date_parser.parse(date_str)
+                if dt.tzinfo is not None:
+                    dt = dt.replace(tzinfo=None)
+                if start_date <= dt <= end_date:
+                    filtered.append(e)
+            except:
+                continue
+        filtered.sort(key=lambda x: x.get('date', ''))
+        events = filtered
+
+    if not events:
+        print("No events left after date filtering to generate cards.")
+        return
+
     # Generate cards for all events
     # events = events[:6]
 
@@ -270,8 +297,18 @@ def main():
             print(f"🔍 Found {len(cards)} card elements in the DOM.")
             for i, card in enumerate(cards, 1):
                 img_path = f"artifacts/card_{i}.jpg"
-                card.screenshot(path=img_path, type="jpeg", quality=95)
-                print(f"   -> Saved {img_path}")
+                try:
+                    # Use a 5s timeout and disable animations for stability
+                    card.screenshot(path=img_path, type="jpeg", quality=95, timeout=5000, animations="disabled")
+                    print(f"   -> Saved {img_path}")
+                except Exception as e:
+                    print(f"   -> Warning: Failed to screenshot card {i} (timed out/error): {e}")
+                    # Fallback with scroll_into_view=False to avoid scroll wait issues
+                    try:
+                        card.screenshot(path=img_path, type="jpeg", quality=95, timeout=2000, scroll_into_view=False, animations="disabled")
+                        print(f"   -> Saved {img_path} (fallback)")
+                    except Exception as e2:
+                        print(f"   -> Error: Fallback also failed for card {i}: {e2}")
             browser.close()
             print(f"✅ Rendered {len(cards)} JPG images.")
 

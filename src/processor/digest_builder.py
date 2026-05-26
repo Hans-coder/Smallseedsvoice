@@ -135,8 +135,8 @@ class DigestBuilder:
                 'images': []
             }]
 
-        # 2. Group by City/Region
-        grouped_sections = self._group_events_by_city(sorted_events)
+        # 2. Group by Date
+        grouped_sections = self._group_events_by_date(sorted_events)
         
         # 3. Generate Posts
         posts = []
@@ -147,8 +147,13 @@ class DigestBuilder:
         current_images = []
         
         # Threads limit enforcement
-        for city, city_events in grouped_sections.items():
-            section_header = f"\n📍 {city}\n"
+        for date_str, date_events in grouped_sections.items():
+            if date_str != "TBA":
+                short_date = format_short_date(date_str)
+                weekday = self._get_weekday_zh(date_str)
+                section_header = f"\n📅 {short_date} ({weekday})\n"
+            else:
+                section_header = f"\n📅 時間待定\n"
             
             # If adding header exceeds limit, push current post and start new
             if len(current_text) + len(section_header) > self.max_chars:
@@ -158,7 +163,7 @@ class DigestBuilder:
             else:
                 current_text += section_header
             
-            for event in city_events:
+            for event in date_events:
                 event_line = self._format_event_line_concise(event)
                 
                 if len(current_text) + len(event_line) > self.max_chars:
@@ -192,6 +197,8 @@ class DigestBuilder:
                     
                 # Use dateutil for robust parsing
                 event_date = parser.parse(event['date'])
+                if event_date.tzinfo is not None:
+                    event_date = event_date.replace(tzinfo=None)
                 
                 # Check range (Inclusive)
                 if start <= event_date <= end:
@@ -204,6 +211,69 @@ class DigestBuilder:
         filtered_events.sort(key=lambda x: x.get('date', ''))
         
         return filtered_events 
+
+    def _group_events_by_date(self, events: List[Dict]) -> Dict[str, List[Dict]]:
+        """Groups events by normalized date string YYYY-MM-DD."""
+        from collections import defaultdict
+        grouped = defaultdict(list)
+        for event in events:
+            date_iso = event.get('date') or event.get('time')
+            if date_iso:
+                try:
+                    from dateutil import parser
+                    dt = parser.parse(date_iso.split(' ')[0], fuzzy=True)
+                    date_key = dt.strftime('%Y-%m-%d')
+                except Exception:
+                    date_key = "TBA"
+            else:
+                date_key = "TBA"
+            grouped[date_key].append(event)
+        
+        sorted_keys = sorted([k for k in grouped.keys() if k != "TBA"])
+        if "TBA" in grouped:
+            sorted_keys.append("TBA")
+        return {k: grouped[k] for k in sorted_keys}
+
+    def _get_event_city(self, event: Dict) -> str:
+        """Extract county/city from event city, location, venue name, or popular venue mapping."""
+        # 1. Collect all potential text from fields
+        candidates = []
+        for field in ['city', 'location', 'venue_name', 'name']:
+            val = event.get(field)
+            if val and val not in ["Unknown", "未提供", "See Details", "場地詳見活動頁"]:
+                candidates.append(str(val))
+                
+        text_to_search = " ".join(candidates).replace("臺", "台").lower()
+        
+        # 2. Match standard cities
+        target_cities = ['台北', '新北', '基隆', '桃園', '新竹', '苗栗', '台中', '彰化', '南投', '雲林', '嘉義', '台南', '高雄', '屏東', '宜蘭', '花蓮', '台東']
+        for city in target_cities:
+            if city in text_to_search:
+                return city
+                
+        # 3. Fallback venue-to-city mapping
+        venue_city_map = {
+            'the wall': '台北',
+            'revolver': '台北',
+            '女巫店': '台北',
+            'legacy taipei': '台北',
+            'clapper': '台北',
+            'nuzone': '台北',
+            'pipe': '台北',
+            '河岸留言': '台北',
+            'legacy taichung': '台中',
+            '迴響': '台中',
+            'sound live house': '台中',
+            'live warehouse': '高雄',
+            '百樂門': '高雄',
+            '高流': '高雄',
+            '駁二': '高雄'
+        }
+        for venue_keyword, city in venue_city_map.items():
+            if venue_keyword in text_to_search:
+                return city
+                
+        return ""
 
     def _group_events_by_city(self, events: List[Dict]) -> Dict[str, List[Dict]]:
         """Groups events into regional sections (Taipei, Taichung, Kaohsiung, etc.)"""
@@ -250,15 +320,14 @@ class DigestBuilder:
         # 移除地點中重複的城市名
         venue = venue.replace('台北', '').replace('台中', '').replace('高雄', '').strip(' |·-')
         
-        date_iso = event.get('date') or event.get('time')
-        short_date = format_short_date(date_iso)
-        weekday = self._get_weekday_zh(date_iso) if date_iso else ""
-        
         prefix = "• "
         if event.get('is_hot'): prefix = "🔥 "
         elif event.get('is_discovery'): prefix = "✨ "
         
-        return f"{prefix}{short_date}({weekday}) {name} @ {venue}\n"
+        city = self._get_event_city(event)
+        city_prefix = f"[{city}] " if city else ""
+        
+        return f"{prefix}{city_prefix}{name} @ {venue}\n"
 
     def _extract_city(self, location: str) -> str:
         # 簡單城市提取
