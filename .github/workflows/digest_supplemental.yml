@@ -1,0 +1,89 @@
+name: Digest - Supplemental (KKTIX + iNDIEVOX + tixCraft + TicketPlus)
+
+on:
+  schedule:
+    # 每週一、週四 10:30 執行，緊接在 StreetVoice 之後 (UTC: 02:30)
+    - cron: '30 2 * * 1,4'
+  workflow_dispatch:
+
+jobs:
+  digest-supplemental:
+    runs-on: macos-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip cache purge
+          pip install -r requirements.txt
+          playwright install chromium
+          playwright install-deps
+
+      - name: Cache Performer History
+        uses: actions/cache@v4
+        with:
+          path: data/events.db
+          key: ${{ runner.os }}-performer-history-supplemental-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-performer-history-supplemental-
+            ${{ runner.os }}-performer-history-
+
+      # ── 抓各平台資料 ──────────────────────────────────────────
+      - name: Scrape KKTIX
+        run: python run_weekly_digest.py --step scrape --source kktix
+
+      - name: Scrape iNDIEVOX
+        run: python run_weekly_digest.py --step scrape --source indievox --append
+
+      - name: Scrape tixCraft
+        run: python run_weekly_digest.py --step scrape --source tixcraft --append
+
+      - name: Scrape Ticket Plus
+        run: python run_weekly_digest.py --step scrape --source ticketplus --append
+
+      # ── 處理：過濾掉 StreetVoice 已有的活動 ──────────────────
+      - name: Process & Generate Content (StreetVoice dedup)
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python run_weekly_digest.py --step process --exclude-streetvoice
+
+      - name: Generate Manual Guide
+        run: python preview_generator.py
+
+      - name: Generate Social Media Cards
+        run: python scripts/create_social_cards.py --source digest --render
+
+      # ── 只通知 Discord，不自動發 Threads ────────────────────
+      - name: Notify Discord
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: python scripts/notify_discord.py --type digest --name "補充精選 (KKTIX+iNDIEVOX+tixCraft+TicketPlus)"
+
+      - name: Archive Digest Data & Guide
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: weekly-digest-supplemental-${{ github.run_id }}
+          path: |
+            preview.html
+            data/preview_cache/
+            data/digest_raw.json
+            data/digest_posts.json
+            data/scraping_errors.json
+            artifacts/social_cards.html
+            artifacts/card_*.jpg
+          retention-days: 1
+
+      - name: Cleanup
+        if: always()
+        run: rm -rf data/preview_cache/ preview.html

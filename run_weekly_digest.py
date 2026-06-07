@@ -86,6 +86,8 @@ def main():
     parser = argparse.ArgumentParser(description='Weekly Digest Pipeline')
     parser.add_argument('--step', type=str, choices=['scrape', 'process', 'post', 'all'], default='all', help='Pipeline step to execute')
     parser.add_argument('--source', type=str, choices=['instagram', 'kktix', 'indievox', 'ticketplus', 'tixcraft', 'streetvoice', 'all'], default='all', help='Specific source to scrape')
+    parser.add_argument('--append', action='store_true', help='Append results to existing digest_raw.json instead of overwriting (for multi-scraper supplemental runs)')
+    parser.add_argument('--exclude-streetvoice', action='store_true', help='Filter out events already captured by StreetVoice (reads data/streetvoice_raw.json)')
     args = parser.parse_args()
     
     logger.info(f"Starting Weekly Digest Pipeline (Step: {args.step}, Source: {args.source})...")
@@ -100,13 +102,23 @@ def main():
 
     # --- Step 1: Scrape ---
     if args.step in ['scrape', 'all']:
-        # 0. Clean up stale data
+        # 0. Clean up stale data (skip if --append to accumulate multiple scraper runs)
         raw_data_path = Path("data/digest_raw.json")
-        if raw_data_path.exists():
+        if raw_data_path.exists() and not args.append:
             raw_data_path.unlink()
             logger.info("Removed stale data/digest_raw.json")
+        elif args.append and raw_data_path.exists():
+            logger.info("--append mode: keeping existing data/digest_raw.json and adding to it")
 
+        # Load existing events if in append mode
         events = []
+        if args.append and raw_data_path.exists():
+            try:
+                with open(raw_data_path, 'r', encoding='utf-8') as f:
+                    events = json.load(f)
+                logger.info(f"--append mode: loaded {len(events)} existing events")
+            except Exception:
+                events = []
         
         # 1. Instagram Scraper
         if args.source in ['instagram', 'all']:
@@ -218,6 +230,14 @@ def main():
                 logger.error(f"StreetVoice scrape failed: {e}")
                 log_scraping_error("StreetVoice", e)
 
+        # Save StreetVoice events separately so supplemental job can exclude duplicates
+        _sv_events_to_save = locals().get('sv_events', [])
+        if args.source in ['streetvoice', 'all'] and _sv_events_to_save:
+            sv_raw_path = Path("data/streetvoice_raw.json")
+            with open(sv_raw_path, 'w', encoding='utf-8') as f:
+                json.dump(_sv_events_to_save, f, indent=4, ensure_ascii=False)
+            logger.info(f"Saved {len(_sv_events_to_save)} StreetVoice events to data/streetvoice_raw.json")
+
         if not events:
             logger.warning(f"No events found from any source. Writing empty list to prevent stale data usage.")
             # Write empty list so subsequent steps know there is no data
@@ -279,6 +299,40 @@ def main():
         
         # Fixed 4-day window from tomorrow
         end_date = start_date + datetime.timedelta(days=3, hours=23, minutes=59, seconds=59)
+        
+        # --- Exclude StreetVoice duplicates if requested ---
+        if args.exclude_streetvoice:
+            sv_raw_path = Path("data/streetvoice_raw.json")
+            if sv_raw_path.exists():
+                try:
+                    with open(sv_raw_path, 'r', encoding='utf-8') as f:
+                        sv_events_cached = json.load(f)
+                    sv_hashes = set()
+                    for e in sv_events_cached:
+                        sv_name = e.get('name') or e.get('activity_name')
+                        sv_date = e.get('date') or e.get('time')
+                        sv_venue = e.get('venue_name') or e.get('location') or e.get('venue')
+                        sv_hashes.add(get_event_hash(sv_name, sv_date, sv_venue))
+                    before_count = len(events)
+                    events = [
+                        e for e in events
+                        if get_event_hash(
+                            e.get('name') or e.get('activity_name'),
+                            e.get('date') or e.get('time'),
+                            e.get('venue_name') or e.get('location') or e.get('venue')
+                        ) not in sv_hashes
+                    ]
+                    logger.info(f"--exclude-streetvoice: removed {before_count - len(events)} duplicates already on StreetVoice. Remaining: {len(events)}")
+                except Exception as ex:
+                    logger.warning(f"Could not load StreetVoice cache for dedup: {ex}")
+            else:
+                logger.warning("--exclude-streetvoice set but data/streetvoice_raw.json not found. Skipping dedup.")
+        
+        if not events:
+            logger.warning("No events to process after filtering (possibly all were StreetVoice duplicates).")
+            with open("data/digest_posts.json", "w", encoding="utf-8") as f:
+                json.dump([], f, indent=4, ensure_ascii=False)
+            return
         
         
         # Initialize Builder with AI enrichment enabled

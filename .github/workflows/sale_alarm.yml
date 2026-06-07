@@ -1,9 +1,8 @@
 name: Sale Alarm Pipeline
 
+# ⚠️ 此 workflow 已由 radar_detect.yml + radar_post.yml 取代。
+# 保留此檔案作為備用（可手動觸發完整的官方平台售票掃描）。
 on:
-  schedule:
-    # Runs at 20:00 Taiwan Time (UTC+8) -> 12:00 UTC
-    - cron: '0 12 * * *'
   workflow_dispatch:
 
 jobs:

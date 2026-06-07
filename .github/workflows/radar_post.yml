@@ -1,0 +1,82 @@
+name: Radar - 手動發文
+
+# 此 workflow 只能手動觸發（你在 GitHub Actions 頁面按下 Run workflow）
+# 流程：
+#   1. 讀取 data/radar_manual.json（你已在本地 web 表單填寫並 git push 的內容）
+#   2. 格式化後發文到 Threads
+#   3. 發 Discord 通知確認結果
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: '僅預覽不發文（勾選 = Dry Run 模式）'
+        type: boolean
+        default: false
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Check radar_manual.json
+        run: |
+          if [ ! -f data/radar_manual.json ]; then
+            echo "❌ data/radar_manual.json 不存在！請先在本地填寫並 git push。"
+            exit 1
+          fi
+          echo "✅ radar_manual.json 已找到"
+          python -c "
+          import json
+          data = json.load(open('data/radar_manual.json', encoding='utf-8'))
+          real = [e for e in data if '_comment' not in e and e.get('name')]
+          print(f'📋 共 {len(real)} 筆確認活動')
+          for e in real:
+              print(f'  - {e.get(\"name\",\"?\")}  開賣：{e.get(\"sale_date\",\"?\")}')
+          if not real:
+              print('❌ 沒有有效的活動記錄！')
+              exit(1)
+          "
+
+      - name: Dry Run Preview
+        if: ${{ inputs.dry_run == true }}
+        run: python scripts/post_radar_manual.py --dry-run
+
+      - name: Post to Threads
+        if: ${{ inputs.dry_run == false }}
+        env:
+          THREADS_ACCESS_TOKEN: ${{ secrets.THREADS_ACCESS_TOKEN }}
+        run: python scripts/post_radar_manual.py
+
+      - name: Notify Discord
+        if: always()
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          python scripts/notify_discord.py --type radar --name "雷達快訊發文"
+
+      - name: Archive Post Data
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: radar-post-${{ github.run_id }}
+          path: |
+            data/radar_manual.json
+            data/radar_posts.json
+          retention-days: 7
