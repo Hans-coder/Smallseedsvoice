@@ -1,88 +1,108 @@
-# Taiwan Music Events Scraper
+# Smallseedsvoice — 台灣音樂活動自動化系統
 
-台灣音樂活動自動化爬蟲與發文系統
+自動偵測、整理並發佈台灣音樂演出資訊到 [Threads](https://threads.net) 的自動化工具。
+
+---
 
 ## 系統架構
 
-本專案採用**雙管道架構**，兩個獨立的爬蟲與發文流程：
+```
+主線 A：StreetVoice 每週精選
+  digest_streetvoice.yml（週一、週四）
+    └─► run_weekly_digest.py
+    └─► Threads 發文（免費 / 付費活動懶人包）
 
-### 1️⃣ 官方售票平台管道
-- **來源**: KKTIX, OPENTIX, 拓元售票
-- **特色**: 高準確度、結構化資料
-- **排程**: 每週一、三、五 早上 9:00
-- **腳本**: `scrape_official_platforms.py` → `post_official_to_threads.py`
+主線 B：雷達快訊（人工確認發文）
+  radar_detect.yml（每天 09:00）
+    └─► detect_trending.py
+    └─► Discord 候選清單通知
+         ↓ 確認後本地填表
+  radar_form_server.py（手機可操作，http://[IP]:5050）
+         ↓ git push
+  radar_post.yml（GitHub Actions 手動觸發）
+    └─► Threads 發文
 
-### 2️⃣ 活動雷達管道
-- **來源**: Indievox, Instagram (Live House 帳號)
-- **特色**: 高覆蓋率、地下音樂
-- **排程**: 每週二、四、六 早上 9:00
-- **腳本**: `scrape_activity_radar.py` → `post_radar_to_threads.py`
-
-## 本地使用
-
-### 官方平台管道
-```bash
-# 1. 爬取資料
-./venv/bin/python scrape_official_platforms.py
-
-# 2. 生成預覽
-./venv/bin/python preview_generator.py
-open preview.html
-
-# 3. 發文到 Threads
-source .env
-./venv/bin/python post_official_to_threads.py
+補充 Job（每週一、週四）：
+  digest_supplemental.yml
+    └─► KKTIX / iNDIEVOX / tixCraft / TicketPlus 比對去重
+    └─► Discord 通知（不自動發 Threads）
 ```
 
-### 活動雷達管道
-```bash
-# 1. 爬取資料
-./venv/bin/python scrape_activity_radar.py
+---
 
-# 2. 生成預覽
-./venv/bin/python preview_generator.py
-open preview.html
+## Workflows
 
-# 3. 發文到 Threads
-source .env
-./venv/bin/python post_radar_to_threads.py
-```
+| 名稱 | 排程 | 說明 |
+|------|------|------|
+| `digest_streetvoice.yml` | 週一、週四 10:00 | StreetVoice 主力抓取 → Threads |
+| `radar_detect.yml` | 每天 09:00（+隨機延遲）| 偵測熱門活動候選 → Discord |
+| `radar_post.yml` | 手動觸發 | 讀取確認清單 → Threads（含 Dry Run 模式）|
+| `digest_supplemental.yml` | 週一、週四 10:30 | 補充平台比對去重 → Discord |
 
-## GitHub Actions 設定
+---
 
-### 必要的 Secrets
-在 GitHub Repository Settings → Secrets 中設定：
-- `THREADS_ACCESS_TOKEN`: Threads API Token
-
-### 手動觸發
-1. 進入 Actions 頁面
-2. 選擇 "Official Events Pipeline" 或 "Radar Events Pipeline"
-3. 點擊 "Run workflow"
-
-### 自動排程
-- **官方平台**: 每週一、三、五 早上 9:00 自動執行
-- **活動雷達**: 每週二、四、六 早上 9:00 自動執行
-
-## 檔案結構
+## 目錄結構
 
 ```
-taiwan-music-events/
-├── scrape_official_platforms.py    # 官方平台爬蟲
-├── scrape_activity_radar.py        # 活動雷達爬蟲
-├── post_official_to_threads.py     # 官方平台發文
-├── post_radar_to_threads.py        # 雷達活動發文
-├── preview_generator.py            # 預覽生成器
-├── .github/workflows/
-│   ├── official_events.yml         # 官方平台 workflow
-│   └── radar_events.yml            # 活動雷達 workflow
+.
+├── .github/workflows/       # GitHub Actions workflows
+├── scripts/
+│   ├── detect_trending.py   # 每日熱門活動偵測（KKTIX + SV + IG）
+│   ├── radar_form_server.py # 本地 web 表單（Flask，手機可操作）
+│   ├── post_radar_manual.py # 雷達快訊發文腳本
+│   ├── notify_discord.py    # Discord 通知
+│   └── create_social_cards.py # 社群卡片產生
+├── src/
+│   ├── scraper/
+│   │   ├── discovery/
+│   │   │   └── streetvoice_scraper.py
+│   │   ├── ticketing/
+│   │   │   ├── kktix_scraper.py
+│   │   │   ├── indievox_scraper.py
+│   │   │   ├── tixcraft_scraper.py
+│   │   │   └── ticketplus_scraper.py
+│   │   └── instagram_scraper.py
+│   ├── processor/
+│   │   ├── digest_builder.py
+│   │   ├── ai_summarizer.py
+│   │   └── image_handler.py
+│   ├── threads/
+│   │   └── threads_poster.py
+│   └── utils/
+│       ├── discord_notifier.py
+│       ├── text_cleaners.py
+│       ├── date_parser.py
+│       └── logger.py
 ├── data/
-│   ├── official_events.json        # 官方活動資料
-│   └── radar_events.json           # 雷達活動資料
-└── ARCHITECTURE.md                 # 系統架構文件
+│   ├── radar_manual.json    # 手動確認的雷達快訊活動
+│   ├── trending_concerts.json # 每日偵測結果
+│   ├── streetvoice_raw.json # SV 快取（每日更新）
+│   ├── digest_raw.json      # 懶人包暫存
+│   └── events.db            # SQLite 演出者追蹤
+├── run_weekly_digest.py     # 每週懶人包主程式
+├── requirements.txt
+└── config.yaml
 ```
 
-## 詳細文件
+---
 
-- [ARCHITECTURE.md](ARCHITECTURE.md) - 系統架構說明
-- [QUICKSTART.md](QUICKSTART.md) - 快速開始指南
-- [THREADS_API_SETUP.md](THREADS_API_SETUP.md) - Threads API 設定
+## 雷達快訊操作流程
+
+1. 每天早上收到 **Discord 通知**（KKTIX + StreetVoice + IG 候選清單）
+2. 自行至官方平台確認**正確售票日期與資訊**
+3. 本機執行 `python3 scripts/radar_form_server.py`
+4. 用**手機或電腦**開啟 `http://[電腦IP]:5050`，填入確認的活動
+5. `git add data/radar_manual.json && git commit -m "update radar" && git push`
+6. 到 **GitHub Actions → Radar - 手動發文**：
+   - 先勾選 `dry_run = true` 預覽
+   - 確認無誤後取消勾選正式發文
+
+---
+
+## 環境變數（GitHub Secrets）
+
+| Secret | 用途 |
+|--------|------|
+| `THREADS_ACCESS_TOKEN` | Threads Graph API 發文 |
+| `DISCORD_WEBHOOK_URL` | Discord 通知 |
+| `GEMINI_API_KEY` | AI 摘要生成（懶人包）|
