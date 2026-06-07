@@ -21,6 +21,15 @@ from pathlib import Path
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
+# 載入 .env（讓 THREADS_ACCESS_TOKEN 在本地可用）
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass  # 沒有 dotenv 也無妨，可用環境變數直接設定
+
+
+
 try:
     from flask import Flask, request, jsonify, redirect, url_for
 except ImportError:
@@ -281,9 +290,14 @@ HTML_TEMPLATE = """<!DOCTYPE html>
   <p class="section-title">Threads 發文預覽</p>
   <div class="preview-box">{preview_text}</div>
   <br>
-  <div class="alert alert-info">
-    ✅ 確認內容後，到 GitHub Actions → <strong>Radar Post</strong> 手動執行發文。
-  </div>
+  <div id="post-result"></div>
+  <button id="btn-post" class="btn btn-primary" onclick="postToThreads(false)" {has_entries}style="margin-bottom:10px">
+    🚀 發文到 Threads
+  </button>
+  <button class="btn" onclick="postToThreads(true)" {has_entries}style="background:#252836;color:#94a3b8;margin-bottom:10px">
+    👁 Dry Run（只預覽，不發出）
+  </button>
+  {no_token_warning}
 </div>
 
 <script>
@@ -308,6 +322,36 @@ function fillForm(data) {{
     const el = document.getElementById('field-' + k);
     if (el) el.value = data[k] || '';
   }});
+}}
+
+function postToThreads(dryRun) {{
+  const btn = document.getElementById('btn-post');
+  const resultDiv = document.getElementById('post-result');
+  const url = dryRun ? '/post/dry-run' : '/post';
+  const label = dryRun ? 'Dry Run' : '發文';
+
+  if (!dryRun && !confirm('確定要發文到 Threads 嗎？')) return;
+
+  btn.disabled = true;
+  btn.textContent = `⏳ ${{label}}中...`;
+  resultDiv.innerHTML = '';
+
+  fetch(url, {{method: 'POST'}})
+    .then(r => r.json())
+    .then(d => {{
+      btn.disabled = false;
+      btn.textContent = '🚀 發文到 Threads';
+      if (d.ok) {{
+        resultDiv.innerHTML = `<div class="alert alert-success">✅ ${{d.message}}</div>`;
+      }} else {{
+        resultDiv.innerHTML = `<div class="alert" style="background:#7f1d1d33;color:#f87171;border:1px solid #7f1d1d">❌ ${{d.error}}</div>`;
+      }}
+    }})
+    .catch(e => {{
+      btn.disabled = false;
+      btn.textContent = '🚀 發文到 Threads';
+      resultDiv.innerHTML = `<div class="alert" style="background:#7f1d1d33;color:#f87171;border:1px solid #7f1d1d">❌ 網路錯誤：${{e}}</div>`;
+    }});
 }}
 </script>
 </body>
@@ -481,12 +525,23 @@ def index():
     trending = load_trending()
     preview = format_preview_text(entries)
 
+    has_token = bool(os.getenv("THREADS_ACCESS_TOKEN"))
+    has_entries = "" if entries else "disabled "
+    no_token_warning = (
+        '<div class="alert" style="background:#78350f33;color:#fbbf24;border:1px solid #78350f">'
+        '⚠️ <strong>THREADS_ACCESS_TOKEN</strong> 未設定。'
+        '請在 .env 中加入後重啟伺服器才能發文。</div>'
+        if not has_token else ""
+    )
+
     html = HTML_TEMPLATE.format(
         confirmed_count=len(entries),
         trending_content=render_trending_section(trending),
         confirmed_content=render_confirmed_section(entries),
         add_form=render_add_form(),
         preview_text=preview,
+        has_entries=has_entries,
+        no_token_warning=no_token_warning,
     )
     return html
 
@@ -526,6 +581,53 @@ def delete_entry(idx: int):
 @app.route("/api/entries")
 def api_entries():
     return jsonify(load_radar_manual())
+
+
+@app.route("/post", methods=["POST"])
+def post_to_threads():
+    return _do_post(dry_run=False)
+
+
+@app.route("/post/dry-run", methods=["POST"])
+def post_dry_run():
+    return _do_post(dry_run=True)
+
+
+def _do_post(dry_run: bool):
+    """直接呼叫 Threads API 發文（或 dry-run 只回傳預覽）"""
+    entries = load_radar_manual()
+    if not entries:
+        return jsonify({"ok": False, "error": "沒有確認的活動，請先新增活動。"})
+
+    # 引入發文邏輯（和 post_radar_manual.py 共用）
+    try:
+        sys.path.insert(0, str(Path(__file__).parent))
+        from post_radar_manual import format_threads_posts
+        posts = format_threads_posts(entries)
+    except Exception as ex:
+        return jsonify({"ok": False, "error": f"格式化失敗：{ex}"})
+
+    if dry_run:
+        previews = [p["text"] for p in posts]
+        return jsonify({"ok": True, "message": f"Dry Run 完成，共 {len(posts)} 則貼文。", "previews": previews})
+
+    # 正式發文
+    access_token = os.getenv("THREADS_ACCESS_TOKEN")
+    if not access_token:
+        return jsonify({"ok": False, "error": "THREADS_ACCESS_TOKEN 未設定，無法發文。請在 .env 設定後重啟伺服器。"})
+
+    try:
+        from src.threads.threads_poster import ThreadsPoster
+        poster = ThreadsPoster(access_token)
+        created_ids = poster.post_thread(posts)
+        if created_ids:
+            # 發文成功後清空清單
+            save_radar_manual([])
+            return jsonify({"ok": True, "message": f"發文成功！共 {len(posts)} 則貼文已發出。已清空確認清單。", "ids": created_ids})
+        else:
+            return jsonify({"ok": False, "error": "發文失敗，請確認 THREADS_ACCESS_TOKEN 是否有效。"})
+    except Exception as ex:
+        return jsonify({"ok": False, "error": f"發文錯誤：{ex}"})
 
 
 # ─────────────────────────────────────────────────────────────
