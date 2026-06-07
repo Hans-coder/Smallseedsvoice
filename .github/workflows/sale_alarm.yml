@@ -38,9 +38,8 @@ jobs:
       - name: Scrape KKTIX
         run: python scripts/scrape_official_platforms.py --platform kktix
         
-      - name: Scrape OPENTIX
-        run: python scripts/scrape_official_platforms.py --platform opentix
-        
+
+
       - name: Scrape tixCraft
         run: python scripts/scrape_official_platforms.py --platform tixcraft
         
