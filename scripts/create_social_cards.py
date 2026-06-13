@@ -102,7 +102,12 @@ def main():
         bg_image = e.get('image_url')
         img_html = ""
         if bg_image:
-             img_html = f'<div class="img-wrapper"><img src="{bg_image}" alt="{name}"/></div>'
+             img_html = (
+                 f'<div class="img-wrapper">'
+                 f'<div class="bg-blur" style="background-image:url(\'{bg_image}\')"></div>'
+                 f'<img src="{bg_image}" alt="{name}"/>'
+                 f'</div>'
+             )
         else:
              img_html = f'<div class="img-wrapper no-img"><div class="logo-mark">SMALLSEEDS<br/>VOICE</div></div>'
 
@@ -184,12 +189,31 @@ def main():
             height: 700px;
             overflow: hidden;
             border-bottom: 4px solid #1B4F8B;
-            background: #E4DDD0;
+            background: #1a1a1a;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }}
+        /* 模糊背景層（放大的相同圖片） */
+        .img-wrapper .bg-blur {{
+            position: absolute;
+            inset: -30px;
+            background-size: cover;
+            background-position: center;
+            filter: blur(24px) brightness(0.55) saturate(1.4);
+            transform: scale(1.1);
+        }}
+        /* 前景主圖（完整顯示，不切版） */
         .img-wrapper img {{
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+            position: relative;
+            z-index: 1;
+            max-width: 100%;
+            max-height: 700px;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            display: block;
         }}
         .no-img {{
             display: flex;
