@@ -400,7 +400,7 @@ def main():
     if not args.skip_ig:
         ig_events = scrape_ig_trending()
 
-    # 儲存結果
+    # 儲存結果（原始分類格式）
     result = {
         "generated_at": datetime.datetime.now().isoformat(),
         "kktix_new": kktix_events,
@@ -412,6 +412,35 @@ def main():
         json.dump(result, f, indent=4, ensure_ascii=False)
     logger.info(f"已儲存 {output_path}（KKTIX:{len(kktix_events)} SV:{len(sv_events)} IG:{len(ig_events)}）")
 
+    # ── 同時輸出扁平化的 radar_events.json 供圖卡生成使用 ──────
+    flat_events = []
+    # KKTIX 優先（有圖片的放前面）
+    for e in kktix_events:
+        flat_events.append({
+            "name": e.get("name", ""),
+            "date": e.get("date_display", ""),
+            "venue": "",
+            "image_url": e.get("image_url", ""),
+            "ticket_url": e.get("ticket_url", ""),
+            "source": "KKTIX",
+        })
+    for e in sv_events:
+        flat_events.append({
+            "name": e.get("name", ""),
+            "date": e.get("date_display", ""),
+            "venue": e.get("venue", ""),
+            "image_url": e.get("image_url", ""),
+            "ticket_url": e.get("ticket_url", ""),
+            "source": "StreetVoice",
+        })
+    # 有圖片的排前面，最多取 12 筆
+    flat_events.sort(key=lambda x: (0 if x.get("image_url") else 1))
+    flat_events = flat_events[:12]
+    radar_path = Path("data/radar_events.json")
+    with open(radar_path, "w", encoding="utf-8") as f:
+        json.dump(flat_events, f, indent=4, ensure_ascii=False)
+    logger.info(f"已輸出圖卡用資料 {radar_path}（{len(flat_events)} 筆）")
+
     # 組合通知
     message = build_discord_message(kktix_events, sv_events, ig_events)
 
@@ -422,14 +451,20 @@ def main():
         logger.info("Dry run 完成。")
         return
 
-    webhook_url = os.getenv("DISCORD_WEBHOOK_URL")
-    if not webhook_url:
-        logger.error("DISCORD_WEBHOOK_URL 未設定，無法送通知。")
-        print(message)
-        return
-
-    ok = send_discord(message, webhook_url)
-    logger.info("✅ Discord 通知已送出" if ok else "❌ Discord 通知失敗")
+    # Discord 通知改由 notify_discord.py 統一處理（含圖卡附件）
+    # 這裡只在有 DISCORD_WEBHOOK_URL 且沒有渲染圖卡時才發純文字版
+    import glob
+    has_rendered_cards = bool(glob.glob("artifacts/card_*.jpg"))
+    if not has_rendered_cards:
+        webhook_url = os.getenv("DISCORD_WEBHOOK_URL")
+        if not webhook_url:
+            logger.error("DISCORD_WEBHOOK_URL 未設定，無法送通知。")
+            print(message)
+            return
+        ok = send_discord(message, webhook_url)
+        logger.info("✅ Discord 通知已送出（純文字版）" if ok else "❌ Discord 通知失敗")
+    else:
+        logger.info("📸 偵測到已渲染圖卡，跳過純文字通知（由 notify_discord.py 發送）")
 
 
 if __name__ == "__main__":

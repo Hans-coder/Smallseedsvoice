@@ -55,6 +55,17 @@ jobs:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: python scripts/detect_trending.py --skip-ig
 
+      # ── 生成自製圖片框 ─────────────────────────────────────
+      - name: Generate Social Media Cards
+        run: python scripts/create_social_cards.py --source radar --render
+        continue-on-error: true  # 圖卡失敗不影響後續通知
+
+      # ── 送出含圖卡的 Discord 通知 ──────────────────────────
+      - name: Notify Discord (with image cards)
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: python scripts/notify_discord.py --type radar --name "每日熱門偵測"
+
       - name: Archive Results
         if: always()
         uses: actions/upload-artifact@v4
@@ -62,5 +73,8 @@ jobs:
           name: trending-${{ github.run_id }}
           path: |
             data/trending_concerts.json
+            data/radar_events.json
             data/streetvoice_raw.json
+            artifacts/social_cards.html
+            artifacts/card_*.jpg
           retention-days: 3

@@ -22,6 +22,8 @@ def main():
         print("No events found to generate cards.")
         return
 
+    # Radar: no date filtering (already limited to 12 items upstream)
+    # Sale: no date filtering here either
     # Filter by date range for digest to align with run_weekly_digest.py
     if args.source == 'digest':
         import datetime
@@ -104,6 +106,13 @@ def main():
         else:
              img_html = f'<div class="img-wrapper no-img"><div class="logo-mark">SMALLSEEDS<br/>VOICE</div></div>'
 
+        # Source badge (for radar cards)
+        source_badge = ""
+        if args.source == 'radar':
+            source_label = e.get('source', '')
+            if source_label:
+                source_badge = f'<div class="source-badge">{source_label}</div>'
+
         card = f"""
         <div class="card">
             <div class="card-inner">
@@ -111,7 +120,7 @@ def main():
                 <div class="content">
                     <div class="meta-row">
                         <div class="date-badge">{date}</div>
-                        {platform_html}
+                        {source_badge if args.source == 'radar' else platform_html}
                     </div>
                     <div class="title">{name}</div>
                     {performers_html}
@@ -263,6 +272,15 @@ def main():
         }}
         .platform-tag {{ display: none; }}
         .detail-link {{ display: none; }}
+        .source-badge {{
+            display: inline-block;
+            background: #1B4F8B;
+            color: #F8F5F0;
+            font-size: 28px;
+            font-weight: 900;
+            padding: 10px 20px;
+            letter-spacing: 2px;
+        }}
     </style>
     </head>
     <body>
