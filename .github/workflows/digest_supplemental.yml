@@ -57,9 +57,6 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: python run_weekly_digest.py --step process --exclude-streetvoice
 
-      - name: Generate Manual Guide
-        run: python preview_generator.py
-
       - name: Generate Social Media Cards
         run: python scripts/create_social_cards.py --source digest --render
 
@@ -75,8 +72,6 @@ jobs:
         with:
           name: weekly-digest-supplemental-${{ github.run_id }}
           path: |
-            preview.html
-            data/preview_cache/
             data/digest_raw.json
             data/digest_posts.json
             data/scraping_errors.json
@@ -86,4 +81,4 @@ jobs:
 
       - name: Cleanup
         if: always()
-        run: rm -rf data/preview_cache/ preview.html
+        run: rm -rf artifacts/card_*.jpg artifacts/social_cards.html
