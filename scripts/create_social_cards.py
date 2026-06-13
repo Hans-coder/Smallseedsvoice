@@ -309,6 +309,40 @@ def main():
     </head>
     <body>
         {html_cards}
+    <script>
+    // 依圖片方向自動切換顯示模式
+    // 直幅(h>=w): cover 填滿寬度，上下略裁，隱藏模糊背景
+    // 橫幅(w>h): contain + 模糊背景（預設）
+    window.addEventListener('load', function() {{
+        document.querySelectorAll('.img-wrapper img').forEach(function(img) {{
+            function applyLayout() {{
+                var w = img.naturalWidth, h = img.naturalHeight;
+                if (!w || !h) return;
+                if (h >= w) {{
+                    // 直幅：填滿寬度，center top 裁切（保留上方主視覺）
+                    img.style.width = '100%';
+                    img.style.height = '100%';
+                    img.style.objectFit = 'cover';
+                    img.style.objectPosition = 'center top';
+                    img.style.maxWidth = '';
+                    img.style.maxHeight = '';
+                    // 不需要模糊背景，隱藏它
+                    var blur = img.parentElement.querySelector('.bg-blur');
+                    if (blur) blur.style.opacity = '0';
+                }}
+                // 橫幅：保持 CSS 預設的 contain + blur 背景
+            }}
+            if (img.complete && img.naturalWidth) {{
+                applyLayout();
+            }} else {{
+                img.addEventListener('load', applyLayout);
+                img.addEventListener('error', function() {{
+                    img.parentElement.style.display = 'none';
+                }});
+            }}
+        }});
+    }});
+    </script>
     </body>
     </html>
     """
@@ -332,8 +366,8 @@ def main():
             file_url = 'file://' + urllib.parse.quote(abs_path)
             
             page.goto(file_url, wait_until='networkidle')
-            # Add a tiny wait for image loads and animations
-            page.wait_for_timeout(1000)
+            # 等圖片全部載入 + JS 方向偵測執行完畢
+            page.wait_for_timeout(2500)
             
             cards = page.locator('.card').all()
             print(f"🔍 Found {len(cards)} card elements in the DOM.")
