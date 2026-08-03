@@ -180,6 +180,18 @@ class DigestBuilder:
         if current_text:
             posts.append({'text': current_text.strip(), 'images': current_images})
             
+        # Apply AI Polishing to each post text
+        if self.enricher:
+            import time
+            for idx, post in enumerate(posts):
+                # Don't polish if it's the empty state message
+                if "這兩週暫無推薦活動" in post['text']:
+                    continue
+                polished = self.enricher.polish_digest_post(post['text'])
+                post['text'] = polished
+                if idx < len(posts) - 1:
+                    time.sleep(4.5)  # rate limit
+            
         self._enforce_image_limits(posts)
         return posts
 

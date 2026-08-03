@@ -294,10 +294,10 @@ def main():
             return
 
         # Process & Build Digest
-        # Start from tomorrow as per user request
-        start_date = (datetime.datetime.now() + datetime.timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
+        # Start from next week (8 days from now) as per user request to give more lead time
+        start_date = (datetime.datetime.now() + datetime.timedelta(days=8)).replace(hour=0, minute=0, second=0, microsecond=0)
         
-        # Fixed 4-day window from tomorrow
+        # Fixed 4-day window from start_date
         end_date = start_date + datetime.timedelta(days=3, hours=23, minutes=59, seconds=59)
         
         # --- Exclude StreetVoice duplicates if requested ---

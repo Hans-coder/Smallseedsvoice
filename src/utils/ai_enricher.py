@@ -279,3 +279,44 @@ class AIEnricher:
             logger.error(f"Failed to recover venue for {event_name}: {e}")
             return None
 
+    def polish_digest_post(self, raw_text: str) -> str:
+        """
+        讓 Gemini 潤飾已經組裝好的 Thread 貼文，使其排版更像真人且易讀，並控制字數。
+        """
+        if not self.model:
+            return raw_text
+
+        prompt = f"""
+        你是一位在台灣獨立音樂圈打滾多年的資深樂迷。
+        請幫我將以下這段系統自動生成的音樂活動清單重新排版潤飾，讓它看起來像是一個熱心樂迷的手打分享。
+        
+        原始文字：
+        {raw_text}
+        
+        要求：
+        1. 乾淨、易讀，可以適度使用項目符號或分隔線。
+        2. 絕對禁止使用 AI 罐頭用語（例如：「為您整理」、「這是一個」、「結論是」）。
+        3. 絕對保留「所有」的活動名稱、日期與地點，不可隨意刪減任何一場活動。
+        4. 因為 Threads 字數限制，總字數務必嚴格控制在 450 字以內。
+        5. 不要使用過多的 Emoji，保持俐落自然。
+        
+        請直接回傳潤飾後的文字，不需加引號或其他廢話。
+        """
+        try:
+            response = self._safe_generate(prompt)
+            if response and hasattr(response, 'usage_metadata'):
+                logger.info(f"AI Polish Token Usage: {response.usage_metadata.prompt_token_count} prompt, {response.usage_metadata.candidates_token_count} candidates")
+            
+            if response and response.text:
+                polished_text = response.text.strip()
+                # 簡單防禦：如果 AI 產生的字數反而爆滿（超過 490），就退回使用原文字
+                if len(polished_text) > 490:
+                    logger.warning(f"AI Polished text is too long ({len(polished_text)} chars), falling back to raw text.")
+                    return raw_text
+                return polished_text
+            return raw_text
+        except Exception as e:
+            logger.error(f"Failed to polish digest post: {e}")
+            return raw_text
+
+
