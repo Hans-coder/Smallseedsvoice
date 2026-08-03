@@ -20,7 +20,7 @@ class KktixScraper(BaseScraper):
             from datetime import timedelta
             today_dt = datetime.now()
             today_str = today_dt.strftime("%Y/%m/%d")
-            max_date_str = (today_dt + timedelta(days=30)).strftime("%Y/%m/%d")
+            max_date_str = (today_dt + timedelta(days=180)).strftime("%Y/%m/%d")
             import urllib.parse
             # URL encode the dates
             start_at = urllib.parse.quote(today_str)
@@ -70,7 +70,7 @@ class KktixScraper(BaseScraper):
                         from datetime import timedelta
                         today_dt = datetime.now()
                         today = today_dt.strftime("%Y-%m-%d")
-                        max_date = (today_dt + timedelta(days=30)).strftime("%Y-%m-%d")
+                        max_date = (today_dt + timedelta(days=180)).strftime("%Y-%m-%d")
                         if event_data.get('date'):
                             if event_data['date'] < today or event_data['date'] > max_date:
                                 continue
