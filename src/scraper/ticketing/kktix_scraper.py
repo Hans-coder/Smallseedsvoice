@@ -26,8 +26,8 @@ class KktixScraper(BaseScraper):
             start_at = urllib.parse.quote(today_str)
             end_at = urllib.parse.quote(max_date_str)
             
-            # Default behavior: Search for Concerts within next 14 days
-            target_url = f"https://kktix.com/events?utf8=%E2%9C%93&search=https%3A%2F%2Fkktix.com%2F&max_price=&min_price=&start_at={start_at}&end_at={end_at}&event_tag_ids_in=1"
+            # Default behavior: Search for Concerts within date range
+            target_url = f"https://kktix.com/events?utf8=%E2%9C%93&search=&max_price=&min_price=&start_at={start_at}&end_at={end_at}&event_tag_ids_in=1"
             urls_to_scrape = [
                 (target_url, True)
             ]
