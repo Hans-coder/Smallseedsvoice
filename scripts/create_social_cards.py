@@ -28,7 +28,7 @@ def main():
     if args.source == 'digest':
         import datetime
         from dateutil import parser as date_parser
-        start_date = (datetime.datetime.now() + datetime.timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
+        start_date = (datetime.datetime.now() + datetime.timedelta(days=8)).replace(hour=0, minute=0, second=0, microsecond=0)
         end_date = start_date + datetime.timedelta(days=3, hours=23, minutes=59, seconds=59)
         
         filtered = []
