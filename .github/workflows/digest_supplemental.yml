@@ -8,7 +8,7 @@ on:
 
 jobs:
   digest-supplemental:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
@@ -24,10 +24,22 @@ jobs:
 
       - name: Install dependencies
         run: |
-          python -m pip cache purge
           pip install -r requirements.txt
-          playwright install chromium
-          playwright install-deps
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        id: playwright-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-chromium-${{ hashFiles('requirements.txt') }}
+
+      - name: Install Playwright Chromium
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: playwright install chromium --with-deps
+
+      - name: Install Playwright deps only
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: playwright install-deps chromium
 
       - name: Cache Performer History
         uses: actions/cache@v4
