@@ -9,15 +9,13 @@ on:
 jobs:
   digest-supplemental:
     runs-on: ubuntu-latest
-    env:
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: '3.9'
           cache: 'pip'
@@ -27,7 +25,7 @@ jobs:
           pip install -r requirements.txt
 
       - name: Cache Playwright browsers
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         id: playwright-cache
         with:
           path: ~/.cache/ms-playwright
@@ -42,7 +40,7 @@ jobs:
         run: playwright install-deps chromium
 
       - name: Cache Performer History
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: data/events.db
           key: ${{ runner.os }}-performer-history-supplemental-${{ github.sha }}
@@ -80,7 +78,7 @@ jobs:
 
       - name: Archive Digest Data & Guide
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: weekly-digest-supplemental-${{ github.run_id }}
           path: |
