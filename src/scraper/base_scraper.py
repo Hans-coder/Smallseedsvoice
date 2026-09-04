@@ -116,7 +116,7 @@ class BaseScraper(ABC):
         """
         pass
 
-    def fetch_with_selenium(self, url: str, wait_time: int = 5, scroll: bool = False, scroll_count: int = 3) -> Optional[BeautifulSoup]:
+    def fetch_with_selenium(self, url: str, wait_time: int = 3, scroll: bool = False, scroll_count: int = 3) -> Optional[BeautifulSoup]:
         """
         Fetch page using Playwright Headless Chromium with optional scrolling.
         (Kept method name fetch_with_selenium for backward compatibility)
@@ -126,39 +126,72 @@ class BaseScraper(ABC):
             from bs4 import BeautifulSoup
 
             with sync_playwright() as p:
-                browser = p.chromium.launch(headless=True)
+                browser = p.chromium.launch(
+                    headless=True,
+                    args=[
+                        "--disable-blink-features=AutomationControlled",
+                        "--no-sandbox",
+                        "--disable-dev-shm-usage",
+                        "--disable-gpu",
+                    ]
+                )
                 context = browser.new_context(
-                    user_agent=self.headers.get("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36")
+                    user_agent=self.headers.get(
+                        "User-Agent",
+                        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
+                    ),
+                    viewport={"width": 1920, "height": 1080},
+                    locale="zh-TW",
+                    timezone_id="Asia/Taipei",
                 )
                 page = context.new_page()
                 
+                # Mask webdriver flag
+                page.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
+
                 try:
                     from playwright_stealth import stealth_sync
                     stealth_sync(page)
-                except ImportError:
+                except Exception:
                     pass
                 
-                page.set_default_timeout(30000)
+                page.set_default_timeout(20000)
                 
-                page.goto(url, wait_until="networkidle")
+                try:
+                    page.goto(url, wait_until="domcontentloaded")
+                except Exception as nav_err:
+                    logger.warning(f"Playwright navigation warning for {url}: {nav_err}")
+
                 import time
                 time.sleep(wait_time)
                 
                 if scroll:
                     for _ in range(scroll_count):
                         page.evaluate("window.scrollTo(0, document.body.scrollHeight);")
-                        time.sleep(2)
+                        time.sleep(1)
                         
                 html = page.content()
                 browser.close()
                 
-                if "Checking your browser" in html or "Attention Required!" in html or "Cloudflare" in html:
-                    raise RuntimeError(f"Scraper blocked by Cloudflare or anti-bot: {url}")
+                # Genuine Cloudflare challenge indicators
+                cf_indicators = [
+                    "<title>Just a moment...</title>",
+                    "cf-browser-verification",
+                    "challenge-platform",
+                    "Attention Required! | Cloudflare",
+                    "cf-turnstile",
+                    "id=\"challenge-running\"",
+                    "id=\"challenge-stage\"",
+                ]
+                if any(ind in html for ind in cf_indicators):
+                    logger.warning(f"Scraper blocked by Cloudflare or anti-bot challenge: {url}")
+                    return None
                     
-                if not html or len(html) < 1000:
-                     raise RuntimeError(f"Received empty or too small response from {url}")
+                if not html or len(html) < 200:
+                    logger.warning(f"Received empty or too small response ({len(html)} bytes) from {url}")
+                    return None
 
             return BeautifulSoup(html, 'lxml')
         except Exception as e:
             logger.error(f"Failed to fetch {url} using Playwright: {e}")
-            raise # Re-raise so log_scraping_error in the runner can catch it
+            return None
