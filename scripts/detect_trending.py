@@ -3,8 +3,9 @@ detect_trending.py
 偵測目前台灣音樂圈最受關注的演唱會 / 即將開賣的活動。
 來源：
   1. KKTIX 最新音樂活動（含即將開賣）
-  2. StreetVoice 近期活動（從快取或現場抓）
-  3. Instagram 指定帳號最新貼文（演唱會/開賣相關）
+  2. KKTIX 關鍵字搜尋（watchlist，含子域名活動如 xxx.kktix.cc）
+  3. StreetVoice 近期活動（從快取或現場抓）
+  4. Instagram 指定帳號最新貼文（演唱會/開賣相關）
 
 輸出：data/trending_concerts.json + Discord 通知（簡潔清單，供人工查核）
 
@@ -91,6 +92,90 @@ def scrape_kktix_new() -> List[Dict]:
 
     except Exception as ex:
         logger.warning(f"KKTIX 抓取失敗: {ex}")
+        return []
+
+
+# ─────────────────────────────────────────────────────────────
+# 1b. KKTIX 關鍵字 Watchlist 搜尋（補抓子域名活動）
+# ─────────────────────────────────────────────────────────────
+
+def scrape_kktix_watchlist() -> List[Dict]:
+    """
+    用 config.yaml 中的 radar.watch_keywords 對 KKTIX 搜尋 API 批次查詢。
+    這樣可以找到掛在主辦方子域名（如 binliveco.kktix.cc）的活動。
+    每個關鍵字只抓第一頁（輕量），並做去重。
+    """
+    import urllib.parse
+    import yaml
+    from pathlib import Path
+
+    # 讀取關鍵字清單
+    config_path = Path("config.yaml")
+    watch_keywords = []
+    if config_path.exists():
+        try:
+            with open(config_path, "r", encoding="utf-8") as f:
+                cfg = yaml.safe_load(f)
+            watch_keywords = cfg.get("radar", {}).get("watch_keywords", [])
+        except Exception as ex:
+            logger.warning(f"讀取 config.yaml watch_keywords 失敗: {ex}")
+
+    if not watch_keywords:
+        logger.info("watchlist 為空，跳過關鍵字搜尋")
+        return []
+
+    logger.info(f"KKTIX Watchlist: 搜尋 {len(watch_keywords)} 個關鍵字...")
+
+    try:
+        from src.scraper.ticketing.kktix_scraper import KktixScraper
+        from datetime import timedelta
+
+        scraper = KktixScraper({})
+        today_dt = datetime.datetime.now()
+        today_str = today_dt.strftime("%Y/%m/%d")
+        max_date_str = (today_dt + timedelta(days=180)).strftime("%Y/%m/%d")
+        start_at = urllib.parse.quote(today_str)
+        end_at = urllib.parse.quote(max_date_str)
+
+        all_found = []
+        seen_names = set()
+
+        for kw in watch_keywords:
+            _random_sleep(1, 3)  # 關鍵字間延遲，避免被封
+            kw_encoded = urllib.parse.quote(kw)
+            search_url = (
+                f"https://kktix.com/events?utf8=%E2%9C%93&search={kw_encoded}"
+                f"&start_at={start_at}&end_at={end_at}"
+            )
+            try:
+                events = scraper.scrape_events(url=search_url)
+                for e in events:
+                    name = e.get("name") or e.get("activity_name", "")
+                    if not name or name in seen_names:
+                        continue
+                    seen_names.add(name)
+
+                    ticket_url = e.get("ticket_url") or ""
+                    date_display = e.get("date") or e.get("ticket_sale_date", "")
+
+                    all_found.append({
+                        "name": name,
+                        "source": f"KKTIX Watchlist [{kw}]",
+                        "date_display": date_display,
+                        "ticket_url": ticket_url,
+                        "image_url": e.get("image_url", ""),
+                        "matched_keyword": kw,
+                    })
+                if events:
+                    logger.info(f"  [{kw}] 找到 {len(events)} 筆")
+            except Exception as ex:
+                logger.warning(f"  [{kw}] 搜尋失敗: {ex}")
+
+        logger.info(f"KKTIX Watchlist 完成：共 {len(all_found)} 筆新活動")
+        return all_found
+
+    except Exception as ex:
+        logger.warning(f"KKTIX Watchlist 整體失敗: {ex}")
         return []
 
 
@@ -306,7 +391,7 @@ def _random_sleep(min_sec: float, max_sec: float):
 # Discord 通知（精簡版，只告知活動名稱讓人工查核）
 # ─────────────────────────────────────────────────────────────
 
-def build_discord_message(kktix: List[Dict], sv: List[Dict], ig: List[Dict]) -> str:
+def build_discord_message(kktix: List[Dict], watchlist: List[Dict], sv: List[Dict], ig: List[Dict]) -> str:
     now_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
     lines = [
         f"## 🔍 雷達快訊候選清單",
@@ -320,6 +405,15 @@ def build_discord_message(kktix: List[Dict], sv: List[Dict], ig: List[Dict]) -> 
         for i, e in enumerate(kktix[:12], 1):
             date_str = f"  `{e['date_display']}`" if e.get("date_display") else ""
             lines.append(f"{i}. **{e['name']}**{date_str}")
+            lines.append(f"   {e['ticket_url']}")
+        lines.append("")
+
+    if watchlist:
+        lines.append(f"### 🎯 熱門活動 Watchlist（{len(watchlist)} 筆，含子域名）")
+        for i, e in enumerate(watchlist[:15], 1):
+            date_str = f"  `{e['date_display']}`" if e.get("date_display") else ""
+            kw_str = f"  🔑_{e.get('matched_keyword', '')}_" if e.get("matched_keyword") else ""
+            lines.append(f"{i}. **{e['name']}**{date_str}{kw_str}")
             lines.append(f"   {e['ticket_url']}")
         lines.append("")
 
@@ -343,7 +437,7 @@ def build_discord_message(kktix: List[Dict], sv: List[Dict], ig: List[Dict]) -> 
             lines.append(f"   {e['ticket_url']}")
         lines.append("")
 
-    if not kktix and not sv and not ig:
+    if not kktix and not watchlist and not sv and not ig:
         lines.append("⚠️ 本次未偵測到新活動。")
 
     lines.append("---")
@@ -393,6 +487,10 @@ def main():
     kktix_events = scrape_kktix_new()
     _random_sleep(2, 4)
 
+    # Watchlist 搜尋（補抓子域名活動）
+    watchlist_events = scrape_kktix_watchlist()
+    _random_sleep(2, 4)
+
     sv_events = scrape_streetvoice_upcoming()
     _random_sleep(2, 4)
 
@@ -404,13 +502,14 @@ def main():
     result = {
         "generated_at": datetime.datetime.now().isoformat(),
         "kktix_new": kktix_events,
+        "kktix_watchlist": watchlist_events,
         "streetvoice_upcoming": sv_events,
         "ig_posts": ig_events,
     }
     output_path = Path("data/trending_concerts.json")
     with open(output_path, "w", encoding="utf-8") as f:
         json.dump(result, f, indent=4, ensure_ascii=False)
-    logger.info(f"已儲存 {output_path}（KKTIX:{len(kktix_events)} SV:{len(sv_events)} IG:{len(ig_events)}）")
+    logger.info(f"已儲存 {output_path}（KKTIX:{len(kktix_events)} Watchlist:{len(watchlist_events)} SV:{len(sv_events)} IG:{len(ig_events)}）")
 
     # ── 同時輸出扁平化的 radar_events.json 供圖卡生成使用 ──────
     flat_events = []
@@ -442,7 +541,7 @@ def main():
     logger.info(f"已輸出圖卡用資料 {radar_path}（{len(flat_events)} 筆）")
 
     # 組合通知
-    message = build_discord_message(kktix_events, sv_events, ig_events)
+    message = build_discord_message(kktix_events, watchlist_events, sv_events, ig_events)
 
     if args.dry_run:
         print("\n" + "=" * 60)

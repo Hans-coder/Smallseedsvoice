@@ -85,7 +85,7 @@ def main():
     
     parser = argparse.ArgumentParser(description='Weekly Digest Pipeline')
     parser.add_argument('--step', type=str, choices=['scrape', 'process', 'post', 'all'], default='all', help='Pipeline step to execute')
-    parser.add_argument('--source', type=str, choices=['instagram', 'kktix', 'indievox', 'ticketplus', 'tixcraft', 'streetvoice', 'all'], default='all', help='Specific source to scrape')
+    parser.add_argument('--source', type=str, choices=['instagram', 'kktix', 'indievox', 'ticketplus', 'tixcraft', 'accupass', 'streetvoice', 'all'], default='all', help='Specific source to scrape')
     parser.add_argument('--append', action='store_true', help='Append results to existing digest_raw.json instead of overwriting (for multi-scraper supplemental runs)')
     parser.add_argument('--exclude-streetvoice', action='store_true', help='Filter out events already captured by StreetVoice (reads data/streetvoice_raw.json)')
     args = parser.parse_args()
@@ -214,6 +214,24 @@ def main():
             except Exception as e:
                 logger.error(f"Ticket Plus scrape failed: {e}")
                 log_scraping_error("Ticket Plus", e)
+
+        # 4.3 Accupass Scraper
+        if args.source in ['accupass', 'all']:
+            try:
+                logger.info("Scraping Accupass (Music events)...")
+                from src.scraper.ticketing.accupass_scraper import AccupassScraper
+                accupass_scraper = AccupassScraper(config.get("scraper", {}))
+                # 抓音樂分類（含付費活動）
+                accupass_events = accupass_scraper.scrape_events(
+                    url="https://www.accupass.com/search?c=music"
+                )
+                for e in accupass_events:
+                    e['is_hot'] = is_hot_event(e)
+                events.extend(accupass_events)
+                logger.info(f"Accupass: Found {len(accupass_events)} events.")
+            except Exception as e:
+                logger.error(f"Accupass scrape failed: {e}")
+                log_scraping_error("Accupass", e)
             
         # 5. StreetVoice Scraper (Discovery)
         if args.source in ['streetvoice', 'all']:
@@ -294,11 +312,14 @@ def main():
             return
 
         # Process & Build Digest
-        # Start from next week (8 days from now) as per user request to give more lead time
-        start_date = (datetime.datetime.now() + datetime.timedelta(days=8)).replace(hour=0, minute=0, second=0, microsecond=0)
-        
-        # Fixed 4-day window from start_date
-        end_date = start_date + datetime.timedelta(days=3, hours=23, minutes=59, seconds=59)
+        # 固定「下一個完整日曆週」（週一到週日），讓週一與週四兩個 workflow 看同一窗口。
+        # 例如：週一跑 → 下週一到週日；週四跑 → 同一個下週一到週日。
+        today = datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+        days_until_next_monday = (7 - today.weekday()) % 7
+        if days_until_next_monday == 0:
+            days_until_next_monday = 7  # 今天就是週一，則取「下下週一」
+        start_date = today + datetime.timedelta(days=days_until_next_monday)
+        end_date = start_date + datetime.timedelta(days=6, hours=23, minutes=59, seconds=59)
         
         # --- Exclude StreetVoice duplicates if requested ---
         if args.exclude_streetvoice:

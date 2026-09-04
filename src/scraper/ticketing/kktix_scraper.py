@@ -18,19 +18,32 @@ class KktixScraper(BaseScraper):
         """
         if not url:
             from datetime import timedelta
+            import urllib.parse
             today_dt = datetime.now()
             today_str = today_dt.strftime("%Y/%m/%d")
             max_date_str = (today_dt + timedelta(days=180)).strftime("%Y/%m/%d")
-            import urllib.parse
-            # URL encode the dates
             start_at = urllib.parse.quote(today_str)
             end_at = urllib.parse.quote(max_date_str)
-            
-            # Default behavior: Search for Concerts within date range
-            target_url = f"https://kktix.com/events?utf8=%E2%9C%93&search=&max_price=&min_price=&start_at={start_at}&end_at={end_at}&event_tag_ids_in=1"
-            urls_to_scrape = [
-                (target_url, True)
-            ]
+
+            # 主頁：音樂 tag 活動（主域名 kktix.com 上架的活動）
+            main_url = (
+                f"https://kktix.com/events?utf8=%E2%9C%93&search=&max_price=&min_price="
+                f"&start_at={start_at}&end_at={end_at}&event_tag_ids_in=1"
+            )
+
+            # 搜尋 API：關鍵字查詢，可跨子域名抓到主辦方自建頁（如 binliveco.kktix.cc）
+            # 搜尋關鍵字組合：涵蓋常見演唱會 / 音樂祭型態
+            search_keywords = ["演唱會", "音樂祭", "巡迴", "livehouse", "live house"]
+            search_urls = []
+            for kw in search_keywords:
+                kw_encoded = urllib.parse.quote(kw)
+                search_url = (
+                    f"https://kktix.com/events?utf8=%E2%9C%93&search={kw_encoded}"
+                    f"&start_at={start_at}&end_at={end_at}"
+                )
+                search_urls.append((search_url, False))  # False = 只抓第一頁，避免過多請求
+
+            urls_to_scrape = [(main_url, True)] + search_urls
         else:
             urls_to_scrape = [(url, True)]
             

@@ -138,6 +138,9 @@ class DigestBuilder:
         # 2. Group by Date
         grouped_sections = self._group_events_by_date(sorted_events)
         
+        # 2.5 若六/日活動過多，拆成 (上)(下) 兩篇，避免 AI 因字數限制而省略活動
+        grouped_sections = self._split_heavy_weekend_days(grouped_sections)
+        
         # 3. Generate Posts
         posts = []
         
@@ -148,10 +151,17 @@ class DigestBuilder:
         
         # Threads limit enforcement
         for date_str, date_events in grouped_sections.items():
-            if date_str != "TBA":
-                short_date = format_short_date(date_str)
-                weekday = self._get_weekday_zh(date_str)
-                section_header = f"\n📅 {short_date} ({weekday})\n"
+            # 處理 __part1 / __part2 後綴（六/日拆篇用）
+            base_date_str = date_str.split('__')[0]
+            part_label = ""
+            if '__part' in date_str:
+                part_num = date_str.split('__part')[1]
+                part_label = " (下)" if part_num == "2" else " (上)"
+            
+            if base_date_str != "TBA":
+                short_date = format_short_date(base_date_str)
+                weekday = self._get_weekday_zh(base_date_str)
+                section_header = f"\n📅 {short_date} ({weekday}){part_label}\n"
             else:
                 section_header = f"\n📅 時間待定\n"
             
@@ -187,8 +197,20 @@ class DigestBuilder:
                 # Don't polish if it's the empty state message
                 if "這兩週暫無推薦活動" in post['text']:
                     continue
+                original_event_count = self._count_event_lines(post['text'])
                 polished = self.enricher.polish_digest_post(post['text'])
-                post['text'] = polished
+                polished_event_count = self._count_event_lines(polished)
+                
+                if polished_event_count < original_event_count:
+                    # AI 省略了活動，退回使用原始文字
+                    import logging
+                    logging.getLogger(__name__).warning(
+                        f"[Post {idx+1}] AI 潤飾省略了活動 "
+                        f"({original_event_count} → {polished_event_count} 筆)，已退回原始文字。"
+                    )
+                else:
+                    post['text'] = polished
+                
                 if idx < len(posts) - 1:
                     time.sleep(4.5)  # rate limit
             
@@ -315,22 +337,21 @@ class DigestBuilder:
         return sorted_grouped
 
     def _generate_cover_text(self, start: datetime, end: datetime, count: int, events: List[Dict]) -> str:
-        date_str = f"{start.strftime('%m/%d')} - {end.strftime('%m/%d')}"
+        date_str = f"{start.strftime('%m/%d')} ({self._get_weekday_zh(start.strftime('%Y-%m-%d'))}) - {end.strftime('%m/%d')} ({self._get_weekday_zh(end.strftime('%Y-%m-%d'))})"
         # Fixed cover text template to save AI tokens (User request)
-        # Simplified and removed emoji/redundant words
         return (
             f"音樂活動懶人包 ({date_str})\n\n"
-            f"接下來半週為您整理了 {count} 場演出！\n"
+            f"下週共有 {count} 場演出！\n"
             "詳細資訊請看下方整理 👇"
         )
 
 
     def _format_event_line_concise(self, event: Dict) -> str:
-        """鏡像使用者手動發文風格：強調 地點、時間、標題，不列出過多表演者細節"""
+        """格式：[城市] 活動名 @ 場地 — 城市前綴，不在 venue 中二次移除"""
         name = clean_event_title(event.get('name') or event.get('activity_name') or "Unknown Event")
-        venue = event.get('venue_name') or event.get('location') or "Venue"
-        # 移除地點中重複的城市名
-        venue = venue.replace('台北', '').replace('台中', '').replace('高雄', '').strip(' |·-')
+        venue = event.get('venue_name') or event.get('location') or ""
+        # 若場地名稱中包含城市名（如「台北 Legacy」），保留完整場地名即可，不刪除
+        venue = venue.strip()
         
         prefix = "• "
         if event.get('is_hot'): prefix = "🔥 "
@@ -339,7 +360,10 @@ class DigestBuilder:
         city = self._get_event_city(event)
         city_prefix = f"[{city}] " if city else ""
         
-        return f"{prefix}{city_prefix}{name} @ {venue}\n"
+        if venue:
+            return f"{prefix}{city_prefix}{name} @ {venue}\n"
+        else:
+            return f"{prefix}{city_prefix}{name}\n"
 
     def _extract_city(self, location: str) -> str:
         # 簡單城市提取
@@ -391,4 +415,47 @@ class DigestBuilder:
             if any(k in content for k in keywords):
                 return genre
         return "Other"
+
+    def _split_heavy_weekend_days(self, grouped_sections: dict) -> dict:
+        """
+        若六/日活動數量超過閾值，自動拆成 (上)(下) 兩個區塊。
+        確保每個 AI polish 呼叫處理的活動量適中，避免 AI 因字數限制而省略活動資訊。
+        """
+        HEAVY_DAY_THRESHOLD = 4
+        new_grouped = {}
+        
+        for date_str, events in grouped_sections.items():
+            if date_str == "TBA":
+                new_grouped[date_str] = events
+                continue
+            
+            try:
+                from dateutil import parser as date_parser
+                dt = date_parser.parse(date_str)
+                is_weekend = dt.weekday() in [5, 6]  # Saturday=5, Sunday=6
+            except Exception:
+                is_weekend = False
+            
+            if is_weekend and len(events) > HEAVY_DAY_THRESHOLD:
+                mid = (len(events) + 1) // 2  # 前半多一場
+                new_grouped[f"{date_str}__part1"] = events[:mid]
+                new_grouped[f"{date_str}__part2"] = events[mid:]
+                import logging
+                logging.getLogger(__name__).info(
+                    f"六/日活動過多，自動拆篇：{date_str} "
+                    f"({len(events)} 場) → (上){mid} 場 + (下){len(events) - mid} 場"
+                )
+            else:
+                new_grouped[date_str] = events
+        
+        return new_grouped
+
+    def _count_event_lines(self, text: str) -> int:
+        """計算貼文中的活動行數（用前綴符號識別），驗證 AI 潤飾是否省略了活動。"""
+        count = 0
+        for line in text.split('\n'):
+            stripped = line.strip()
+            if stripped.startswith(('•', '🔥', '✨')):
+                count += 1
+        return count
 

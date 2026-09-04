@@ -61,6 +61,10 @@ jobs:
       - name: Scrape Ticket Plus
         run: python run_weekly_digest.py --step scrape --source ticketplus --append
 
+      - name: Scrape Accupass
+        run: python run_weekly_digest.py --step scrape --source accupass --append
+        continue-on-error: true  # Accupass 結構可能有變動，失敗不阻斷流程
+
       # ── 處理：過濾掉 StreetVoice 已有的活動 ──────────────────
       - name: Process & Generate Content (StreetVoice dedup)
         env:
