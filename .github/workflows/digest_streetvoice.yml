@@ -2,8 +2,8 @@ name: Digest - StreetVoice
 
 on:
   schedule:
-    # 每週一、週四 10:00 發送 (UTC: 02:00)
-    - cron: '0 2 * * 1,4'
+    # 每週一 10:00 執行 (UTC: 02:00)，固定覆蓋「下週一到週日」完整日曆週
+    - cron: '0 2 * * 1'
   workflow_dispatch:
 
 jobs:

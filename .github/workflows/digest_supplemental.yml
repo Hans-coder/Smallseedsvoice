@@ -2,8 +2,8 @@ name: Digest - Supplemental (KKTIX + iNDIEVOX + tixCraft + TicketPlus)
 
 on:
   schedule:
-    # 每週一、週四 10:30 執行，緊接在 StreetVoice 之後 (UTC: 02:30)
-    - cron: '30 2 * * 1,4'
+    # 每週一 10:30 執行，緊接在 StreetVoice 之後 (UTC: 02:30)
+    - cron: '30 2 * * 1'
   workflow_dispatch:
 
 jobs:
@@ -60,10 +60,6 @@ jobs:
 
       - name: Scrape Ticket Plus
         run: python run_weekly_digest.py --step scrape --source ticketplus --append
-
-      - name: Scrape Accupass
-        run: python run_weekly_digest.py --step scrape --source accupass --append
-        continue-on-error: true  # Accupass 結構可能有變動，失敗不阻斷流程
 
       # ── 處理：過濾掉 StreetVoice 已有的活動 ──────────────────
       - name: Process & Generate Content (StreetVoice dedup)

@@ -85,7 +85,7 @@ def main():
     
     parser = argparse.ArgumentParser(description='Weekly Digest Pipeline')
     parser.add_argument('--step', type=str, choices=['scrape', 'process', 'post', 'all'], default='all', help='Pipeline step to execute')
-    parser.add_argument('--source', type=str, choices=['instagram', 'kktix', 'indievox', 'ticketplus', 'tixcraft', 'accupass', 'streetvoice', 'all'], default='all', help='Specific source to scrape')
+    parser.add_argument('--source', type=str, choices=['instagram', 'kktix', 'indievox', 'ticketplus', 'tixcraft', 'streetvoice', 'all'], default='all', help='Specific source to scrape')
     parser.add_argument('--append', action='store_true', help='Append results to existing digest_raw.json instead of overwriting (for multi-scraper supplemental runs)')
     parser.add_argument('--exclude-streetvoice', action='store_true', help='Filter out events already captured by StreetVoice (reads data/streetvoice_raw.json)')
     args = parser.parse_args()
@@ -215,24 +215,6 @@ def main():
                 logger.error(f"Ticket Plus scrape failed: {e}")
                 log_scraping_error("Ticket Plus", e)
 
-        # 4.3 Accupass Scraper
-        if args.source in ['accupass', 'all']:
-            try:
-                logger.info("Scraping Accupass (Music events)...")
-                from src.scraper.ticketing.accupass_scraper import AccupassScraper
-                accupass_scraper = AccupassScraper(config.get("scraper", {}))
-                # 抓音樂分類（含付費活動）
-                accupass_events = accupass_scraper.scrape_events(
-                    url="https://www.accupass.com/search?c=music"
-                )
-                for e in accupass_events:
-                    e['is_hot'] = is_hot_event(e)
-                events.extend(accupass_events)
-                logger.info(f"Accupass: Found {len(accupass_events)} events.")
-            except Exception as e:
-                logger.error(f"Accupass scrape failed: {e}")
-                log_scraping_error("Accupass", e)
-            
         # 5. StreetVoice Scraper (Discovery)
         if args.source in ['streetvoice', 'all']:
             try:

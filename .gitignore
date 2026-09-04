@@ -39,6 +39,7 @@ data/
 *.png
 *.webp
 *.gif
+!assets/**
 
 # IDE
 .vscode/

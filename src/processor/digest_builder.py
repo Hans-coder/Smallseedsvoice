@@ -78,31 +78,22 @@ class DigestBuilder:
                 if i + batch_size < len(events_needing_extraction):
                     time.sleep(4.5)
         
-        # 1.5 New Blood Detection（標記是否為首次出現的藝人，不做 AI 查詢）
+        # 1.5 New Blood Detection（只做 history 記錄，不再影響前綴符號）
         from src.utils.performer_tracker import PerformerTracker
         tracker = PerformerTracker()
-        
-        all_performers_this_week = set()
+        all_performers = set()
         for event in sorted_events:
             performers = event.get('performers', [])
             if not performers:
                 performers = [event.get('name') or event.get('activity_name', 'Unknown')]
-            all_performers_this_week.update(performers)
-            
-        tracker.update_history(list(all_performers_this_week))
-        
+            all_performers.update(performers)
+        tracker.update_history(list(all_performers))
+
         for event in sorted_events:
-            performers = event.get('performers', [])
-            if not performers:
-                performers = [event.get('name') or event.get('activity_name', 'Unknown')]
-            
-            new_blood = tracker.get_new_blood(performers)
-            event['is_discovery'] = len(new_blood) > 0
-            event['new_artists'] = new_blood
+            event['is_discovery'] = False   # 不再使用，統一前綴
             event['performer_profiles'] = {}
-            
-            # Simple Genre Classification
             event['genre'] = self._classify_genre(event)
+
         
         if not sorted_events:
             date_str = f"{start_date.strftime('%m/%d')} - {end_date.strftime('%m/%d')}"
@@ -165,6 +156,13 @@ class DigestBuilder:
         
         if current_text:
             posts.append({'text': current_text.strip(), 'images': current_images})
+
+        # 品牌圖 fallback：若第一篇 cover post 沒有圖片，加入 Smallseeds 品牌圖
+        BRAND_IMAGE_URL = (
+            "https://raw.githubusercontent.com/Hans-coder/Smallseedsvoice/main/assets/brand_cover.png"
+        )
+        if posts and not posts[0].get('images'):
+            posts[0]['images'] = [BRAND_IMAGE_URL]
             
         # Apply AI Polishing to each post text
         if self.enricher:
@@ -323,15 +321,15 @@ class DigestBuilder:
 
 
     def _format_event_line_concise(self, event: Dict) -> str:
-        """格式：[城市] 活動名 @ 場地 — 城市前綴，不在 venue 中二次移除"""
+        """格式：[城市] 活動名 @ 場地。熱門活動用 🔥，其他統一用 •，移除無效的 ✨ 前綴。"""
         name = clean_event_title(event.get('name') or event.get('activity_name') or "Unknown Event")
         venue = event.get('venue_name') or event.get('location') or ""
-        # 若場地名稱中包含城市名（如「台北 Legacy」），保留完整場地名即可，不刪除
         venue = venue.strip()
         
         prefix = "• "
-        if event.get('is_hot'): prefix = "🔥 "
-        elif event.get('is_discovery'): prefix = "✨ "
+        if event.get('is_hot'):
+            prefix = "🔥 "
+        # is_discovery / ✨ 已移除（DB 在 CI 中不穩定，訊號沒有意義）
         
         city = self._get_event_city(event)
         city_prefix = f"[{city}] " if city else ""
@@ -340,6 +338,7 @@ class DigestBuilder:
             return f"{prefix}{city_prefix}{name} @ {venue}\n"
         else:
             return f"{prefix}{city_prefix}{name}\n"
+
 
     def _extract_city(self, location: str) -> str:
         # 簡單城市提取
