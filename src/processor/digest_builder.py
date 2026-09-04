@@ -72,30 +72,24 @@ class DigestBuilder:
                                 venue = res.get('venue')
                                 if perfs and isinstance(perfs, list) and not e.get('performers'):
                                     e['performers'] = perfs
-                                if venue and (not e.get('venue_name') or e.get('venue_name') in ["Unknown", "See Details", "未提供"]):
+                                if venue and (not e.get('venue_name') or e.get('venue_name') in ["Unknown", "See Details", "未提供", "Live House", "場地詳見官網"]):
                                     e['venue_name'] = venue
                                     e['location'] = venue
                 if i + batch_size < len(events_needing_extraction):
                     time.sleep(4.5)
         
-        # 1.5 New Blood Detection & Performer Profiles
+        # 1.5 New Blood Detection（標記是否為首次出現的藝人，不做 AI 查詢）
         from src.utils.performer_tracker import PerformerTracker
         tracker = PerformerTracker()
         
         all_performers_this_week = set()
-        
         for event in sorted_events:
             performers = event.get('performers', [])
             if not performers:
                 performers = [event.get('name') or event.get('activity_name', 'Unknown')]
             all_performers_this_week.update(performers)
             
-        # Register them first so update_profile works
         tracker.update_history(list(all_performers_this_week))
-        
-        # --- GLOBAL AI CAP TO AVOID TOKEN BURN ---
-        max_ai_calls = 5
-        ai_calls_made = 0
         
         for event in sorted_events:
             performers = event.get('performers', [])
@@ -105,25 +99,7 @@ class DigestBuilder:
             new_blood = tracker.get_new_blood(performers)
             event['is_discovery'] = len(new_blood) > 0
             event['new_artists'] = new_blood
-            
-            profiles = tracker.get_profiles(performers)
-            
-            # Enrich New Blood via AI
-            for artist in new_blood:
-                if self.enricher and self.enricher.model and ai_calls_made < max_ai_calls:
-                    import time
-                    time.sleep(4.5) # Rate limit protection (Free tier 15 RPM)
-                    profile_data = self.enricher.get_performer_profile(artist)
-                    ai_calls_made += 1
-                    
-                    if profile_data:
-                        desc = profile_data.get('description', '')
-                        handle = profile_data.get('ig_handle', '')
-                        if desc or handle:
-                            tracker.update_profile(artist, description=desc, ig_handle=handle)
-                            profiles[artist.lower()] = {"description": desc, "ig_handle": handle}
-            
-            event['performer_profiles'] = profiles
+            event['performer_profiles'] = {}
             
             # Simple Genre Classification
             event['genre'] = self._classify_genre(event)
