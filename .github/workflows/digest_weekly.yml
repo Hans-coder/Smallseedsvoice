@@ -1,14 +1,13 @@
-name: Digest - Supplemental (KKTIX + iNDIEVOX + tixCraft + TicketPlus)
+name: Digest - Weekly (每週音樂活動整合週報)
 
-# on:
-#   schedule:
-#     # 每週一 10:30 執行，緊接在 StreetVoice 之後 (UTC: 02:30)
-#     - cron: '30 2 * * 1'
 on:
+  schedule:
+    # 每週一 10:00 執行 (UTC: 02:00)，覆蓋「下週一至週日」完整日曆週
+    - cron: '0 2 * * 1'
   workflow_dispatch:
 
 jobs:
-  digest-supplemental:
+  digest-weekly:
     runs-on: ubuntu-latest
 
     steps:
@@ -18,7 +17,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
-          python-version: '3.9'
+          python-version: '3.10'
           cache: 'pip'
 
       - name: Install dependencies
@@ -44,52 +43,46 @@ jobs:
         uses: actions/cache@v5
         with:
           path: data/events.db
-          key: ${{ runner.os }}-performer-history-supplemental-${{ github.sha }}
+          key: ${{ runner.os }}-performer-history-weekly-${{ github.sha }}
           restore-keys: |
-            ${{ runner.os }}-performer-history-supplemental-
+            ${{ runner.os }}-performer-history-weekly-
             ${{ runner.os }}-performer-history-
 
-      # ── 抓各平台資料 ──────────────────────────────────────────
-      - name: Scrape KKTIX
-        run: python run_weekly_digest.py --step scrape --source kktix
+      # ── 全平台抓取（StreetVoice ➔ KKTIX ➔ iNDIEVOX ➔ tixCraft ➔ TicketPlus）──
+      - name: Scrape All Sources & Cross-Platform Deduplicate
+        run: python run_weekly_digest.py --step scrape --source all
 
-      - name: Scrape iNDIEVOX
-        run: python run_weekly_digest.py --step scrape --source indievox --append
-
-      - name: Scrape tixCraft
-        run: python run_weekly_digest.py --step scrape --source tixcraft --append
-
-      - name: Scrape Ticket Plus
-        run: python run_weekly_digest.py --step scrape --source ticketplus --append
-
-      # ── 處理：過濾掉 StreetVoice 已有的活動 ──────────────────
-      - name: Process & Generate Content (StreetVoice dedup)
+      # ── AI 摘要與內容生成（週一至週日完整行事曆）─────────────────
+      - name: Process & Generate Content
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: python run_weekly_digest.py --step process --exclude-streetvoice
+        run: python run_weekly_digest.py --step process
 
+      # ── 生成社群視覺圖卡 ─────────────────────────────────────────
       - name: Generate Social Media Cards
         run: python scripts/create_social_cards.py --source digest --render
+        continue-on-error: true
 
-      # ── 只通知 Discord，不自動發 Threads ────────────────────
+      # ── 送出 Discord 整合通知 ───────────────────────────────────
       - name: Notify Discord
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
-        run: python scripts/notify_discord.py --type digest --name "補充精選 (KKTIX+iNDIEVOX+tixCraft+TicketPlus)"
+        run: python scripts/notify_discord.py --type digest --name "每週音樂活動整合週報"
 
-      - name: Archive Digest Data & Guide
+      # ── 封存週報資料與圖卡 ─────────────────────────────────────
+      - name: Archive Digest Data & Artifacts
         if: always()
         uses: actions/upload-artifact@v6
         with:
-          name: weekly-digest-supplemental-${{ github.run_id }}
+          name: weekly-digest-complete-${{ github.run_id }}
           path: |
             data/digest_raw.json
             data/digest_posts.json
             data/scraping_errors.json
             artifacts/social_cards.html
             artifacts/card_*.jpg
-          retention-days: 1
+          retention-days: 7
 
-      - name: Cleanup
+      - name: Cleanup Temporary Artifacts
         if: always()
         run: rm -rf artifacts/card_*.jpg artifacts/social_cards.html

@@ -9,7 +9,7 @@ from src.processor.digest_builder import DigestBuilder
 from src.threads.threads_poster import ThreadsPoster
 from src.utils.logger import setup_logger
 from src.utils.error_handler import log_scraping_error
-from src.utils.text_cleaners import get_event_hash, refine_image_url
+from src.utils.text_cleaners import get_event_hash, refine_image_url, is_same_event, merge_event_details
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
@@ -120,43 +120,35 @@ def main():
             except Exception:
                 events = []
         
-        # 1. Instagram Scraper
-        if args.source in ['instagram', 'all']:
+        # 1. StreetVoice Scraper (Discovery base - runs first to capture indie performers)
+        if args.source in ['streetvoice', 'all']:
             try:
-                ig_config = config.get("pipelines", {}).get("weekly_digest", {}).get("sources", {}).get("instagram", {})
-                if ig_config.get("enabled", True):
-                    usernames = ig_config.get("usernames", ["livetws"])
-                    max_posts = ig_config.get("max_posts", 20)
-                    
-                    logger.info(f"Scraping Instagram accounts: {usernames}")
-                    
-                    # Merge global scraper config with IG config
-                    scraper_config = config.get("scraper", {})
-                    scraper_config.update(ig_config)
-                    
-                    ig_scraper = InstagramScraper(scraper_config)
-                    # 使用新開發的批量抓取方法
-                    ig_events = ig_scraper.scrape_multiple_accounts(usernames, max_posts=max_posts)
-                    
-                    # 標註熱門活動
-                    for e in ig_events:
-                        e['is_hot'] = is_hot_event(e)
-                    
-                    events.extend(ig_events)
-                    logger.info(f"Found {len(ig_events)} events from Instagram.")
+                logger.info("Scraping StreetVoice (Discovery)...")
+                from src.scraper.discovery.streetvoice_scraper import StreetVoiceScraper
+                sv_scraper = StreetVoiceScraper(config.get("scraper", {}))
+                sv_events = sv_scraper.scrape_events()
+                events.extend(sv_events)
+                logger.info(f"StreetVoice: Added {len(sv_events)} discovery events.")
             except Exception as e:
-                logger.error(f"Instagram scrape failed: {e}")
-                log_scraping_error("Instagram", e)
+                logger.error(f"StreetVoice scrape failed: {e}")
+                log_scraping_error("StreetVoice", e)
 
-        # 2. KKTIX Scraper (Music Tag + Keywords)
+        # Save StreetVoice events separately for backward compatibility
+        _sv_events_to_save = locals().get('sv_events', [])
+        if args.source in ['streetvoice', 'all'] and _sv_events_to_save:
+            sv_raw_path = Path("data/streetvoice_raw.json")
+            with open(sv_raw_path, 'w', encoding='utf-8') as f:
+                json.dump(_sv_events_to_save, f, indent=4, ensure_ascii=False)
+            logger.info(f"Saved {len(_sv_events_to_save)} StreetVoice events to data/streetvoice_raw.json")
+
+        # 2. KKTIX Scraper (Official Atom feed + Keywords)
         if args.source in ['kktix', 'all']:
             try:
-                logger.info("Scraping KKTIX (Music & Keywords) using Playwright...")
+                logger.info("Scraping KKTIX (Atom feeds & Keywords)...")
                 kktix_scraper = KktixScraper(config.get("scraper", {}))
                 kktix_events = kktix_scraper.scrape_events()
                 
                 relevant_kktix = []
-                skipped_count = 0
                 for e in kktix_events:
                     e['is_hot'] = is_hot_event(e)
                     relevant_kktix.append(e)
@@ -167,8 +159,7 @@ def main():
                 logger.error(f"KKTIX scrape failed: {e}")
                 log_scraping_error("KKTIX", e)
 
-
-        # 4. Indievox Scraper
+        # 3. Indievox Scraper
         if args.source in ['indievox', 'all']:
             try:
                 logger.info("Scraping Indievox (Table View)...")
@@ -177,10 +168,8 @@ def main():
                 indievox_events = indievox_scraper.scrape_events()
                 
                 relevant_indievox = []
-                skipped_count = 0
                 for e in indievox_events:
                     e['is_hot'] = is_hot_event(e)
-                    # Take all events as requested
                     relevant_indievox.append(e)
                 
                 events.extend(relevant_indievox)
@@ -189,7 +178,7 @@ def main():
                 logger.error(f"Indievox scrape failed: {e}")
                 log_scraping_error("Indievox", e)
 
-        # 4.1 tixCraft Scraper
+        # 4. tixCraft Scraper
         if args.source in ['tixcraft', 'all']:
             try:
                 logger.info("Scraping tixCraft...")
@@ -202,7 +191,7 @@ def main():
                 logger.error(f"tixCraft scrape failed: {e}")
                 log_scraping_error("tixCraft", e)
 
-        # 4.2 Ticket Plus Scraper
+        # 5. Ticket Plus Scraper
         if args.source in ['ticketplus', 'all']:
             try:
                 logger.info("Scraping Ticket Plus...")
@@ -215,61 +204,70 @@ def main():
                 logger.error(f"Ticket Plus scrape failed: {e}")
                 log_scraping_error("Ticket Plus", e)
 
-        # 5. StreetVoice Scraper (Discovery)
-        if args.source in ['streetvoice', 'all']:
+        # 6. Instagram Scraper (Optional)
+        if args.source in ['instagram', 'all']:
             try:
-                logger.info("Scraping StreetVoice (Discovery)...")
-                from src.scraper.discovery.streetvoice_scraper import StreetVoiceScraper
-                sv_scraper = StreetVoiceScraper(config.get("scraper", {}))
-                sv_events = sv_scraper.scrape_events()
-                
-                # For StreetVoice, we take everything for now as it's targeted discovery
-                events.extend(sv_events)
-                logger.info(f"StreetVoice: Added {len(sv_events)} discovery events.")
+                ig_config = config.get("pipelines", {}).get("weekly_digest", {}).get("sources", {}).get("instagram", {})
+                if ig_config.get("enabled", False):
+                    usernames = ig_config.get("usernames", ["livetws"])
+                    max_posts = ig_config.get("max_posts", 20)
+                    
+                    logger.info(f"Scraping Instagram accounts: {usernames}")
+                    scraper_config = config.get("scraper", {})
+                    scraper_config.update(ig_config)
+                    
+                    ig_scraper = InstagramScraper(scraper_config)
+                    ig_events = ig_scraper.scrape_multiple_accounts(usernames, max_posts=max_posts)
+                    for e in ig_events:
+                        e['is_hot'] = is_hot_event(e)
+                    events.extend(ig_events)
+                    logger.info(f"Found {len(ig_events)} events from Instagram.")
             except Exception as e:
-                logger.error(f"StreetVoice scrape failed: {e}")
-                log_scraping_error("StreetVoice", e)
-
-        # Save StreetVoice events separately so supplemental job can exclude duplicates
-        _sv_events_to_save = locals().get('sv_events', [])
-        if args.source in ['streetvoice', 'all'] and _sv_events_to_save:
-            sv_raw_path = Path("data/streetvoice_raw.json")
-            with open(sv_raw_path, 'w', encoding='utf-8') as f:
-                json.dump(_sv_events_to_save, f, indent=4, ensure_ascii=False)
-            logger.info(f"Saved {len(_sv_events_to_save)} StreetVoice events to data/streetvoice_raw.json")
+                logger.error(f"Instagram scrape failed: {e}")
+                log_scraping_error("Instagram", e)
 
         if not events:
             logger.warning(f"No events found from any source. Writing empty list to prevent stale data usage.")
-            # Write empty list so subsequent steps know there is no data
             with open("data/digest_raw.json", "w", encoding="utf-8") as f:
                 json.dump([], f, indent=4, ensure_ascii=False)
             return
 
-        # 6. Improved Cross-Platform Deduplication
-        unique_events = {}
+        # 7. Improved Cross-Platform Deduplication & Smart Detail Merging
+        deduplicated_events = []
+        hash_to_idx = {}
+
         for e in events:
-            # 1. Refine image quality
+            # Refine image quality
             if e.get('image_url'):
                 e['image_url'] = refine_image_url(e['image_url'])
             
-            # 2. Content-based deduplication
-            name = e.get('name') or e.get('activity_name')
-            date = e.get('date') or e.get('time')
-            venue = e.get('venue_name') or e.get('location') or e.get('venue')
+            name = e.get('name') or e.get('activity_name', '')
+            date = e.get('date') or e.get('time', '')
+            venue = e.get('venue_name') or e.get('location') or e.get('venue', '')
             
             content_hash = get_event_hash(name, date, venue)
             
-            # If already exists, keep the one with a better image or more detail? 
-            # Current logic: first one found (Instagram > KKTIX > Others usually)
-            if content_hash not in unique_events:
-                unique_events[content_hash] = e
+            matched_idx = -1
+            if content_hash in hash_to_idx:
+                matched_idx = hash_to_idx[content_hash]
             else:
-                # Prefer events with images
-                if not unique_events[content_hash].get('image_url') and e.get('image_url'):
-                    unique_events[content_hash] = e
+                # Fuzzy matching across existing events
+                for idx, existing in enumerate(deduplicated_events):
+                    if is_same_event(existing, e):
+                        matched_idx = idx
+                        break
 
-        final_events = list(unique_events.values())
-        logger.info(f"Total Events: {len(events)} -> Deduplicated: {len(final_events)}")
+            if matched_idx >= 0:
+                # Merge details into existing event (performers + ticket info + poster)
+                deduplicated_events[matched_idx] = merge_event_details(deduplicated_events[matched_idx], e)
+                hash_to_idx[content_hash] = matched_idx
+            else:
+                new_idx = len(deduplicated_events)
+                deduplicated_events.append(e)
+                hash_to_idx[content_hash] = new_idx
+
+        final_events = deduplicated_events
+        logger.info(f"Total Events: {len(events)} -> Deduplicated & Merged: {len(final_events)}")
         
         # Save raw events
         with open("data/digest_raw.json", "w", encoding="utf-8") as f:
@@ -323,7 +321,7 @@ def main():
                             e.get('name') or e.get('activity_name'),
                             e.get('date') or e.get('time'),
                             e.get('venue_name') or e.get('location') or e.get('venue')
-                        ) not in sv_hashes
+                        ) not in sv_hashes and not any(is_same_event(sv_e, e) for sv_e in sv_events_cached)
                     ]
                     logger.info(f"--exclude-streetvoice: removed {before_count - len(events)} duplicates already on StreetVoice. Remaining: {len(events)}")
                 except Exception as ex:

@@ -56,4 +56,7 @@ logs/
 .DS_Store
 Thumbs.db
 
+# Artifacts
+artifacts/
+
 

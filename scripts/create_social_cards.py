@@ -28,8 +28,12 @@ def main():
     if args.source == 'digest':
         import datetime
         from dateutil import parser as date_parser
-        start_date = (datetime.datetime.now() + datetime.timedelta(days=8)).replace(hour=0, minute=0, second=0, microsecond=0)
-        end_date = start_date + datetime.timedelta(days=3, hours=23, minutes=59, seconds=59)
+        today = datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+        days_until_next_monday = (7 - today.weekday()) % 7
+        if days_until_next_monday == 0:
+            days_until_next_monday = 7
+        start_date = today + datetime.timedelta(days=days_until_next_monday)
+        end_date = start_date + datetime.timedelta(days=6, hours=23, minutes=59, seconds=59)
         
         filtered = []
         for e in events:

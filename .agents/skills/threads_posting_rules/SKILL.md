@@ -51,26 +51,24 @@ This project automates the curation and posting of Taiwan music event informatio
 
 5. **Scheduling Logic（排程邏輯）**:
    - Target: **下一個完整日曆週（週一到週日）**
-   - Both workflows (StreetVoice on Mon/Thu and Supplemental on Mon/Thu) target the SAME week window, so Discord notifications are consistent.
+   - 統一排程: `digest_weekly.yml`（每週一 10:00 執行，UTC 02:00），覆蓋同一完整週。
    - Window calculation: `next Monday = today + (7 - weekday) % 7 days` (if today is Monday, use next next Monday so it's always a future full week)
    - End date: `start + 6 days 23:59:59`
 
-6. **Radar Watchlist**:
-   - `config.yaml` → `radar.watch_keywords` contains popular artists & festivals to monitor daily.
-   - `detect_trending.py` reads this list and queries KKTIX search API per keyword.
-   - This catches events on organizer subdomains that don't appear in the main KKTIX events page.
-   - To add new artists: edit `config.yaml` `radar.watch_keywords` list.
+6. **Radar Watchlist (暫停中)**:
+   - 每日 Radar 排程已先停用重構（因當天售票活動效益低）。
+   - `config.yaml` → `radar.watch_keywords` 保留作為熱門關鍵字清單，供爬蟲搜尋擴充使用。
 
 7. **Event Coverage Sources**:
    | Platform | Purpose | Notes |
    |----------|---------|-------|
-   | StreetVoice | Discovery (indie/live) | Runs first, others exclude its events |
-   | KKTIX | Major concerts | Main page + keyword search for subdomains |
-   | iNDIEVOX | Indie concerts | |
-   | tixCraft | Large concerts | |
+   | StreetVoice | Discovery (indie/live) | Runs first to capture indie performers & details |
+   | KKTIX | Major concerts & subdomains | Official Atom feed (fast & Cloudflare-immune) |
+   | iNDIEVOX | Indie concerts | Table view scraping |
+   | tixCraft | Large concerts | Strict music filtering |
    | TicketPlus | Concerts | |
-   | Accupass | Music festivals, concerts | URL: `?c=music` (all price types) |
 
-8. **Deployment**:
-   - Scheduled via GitHub Actions (`digest_streetvoice.yml` and `digest_supplemental.yml`).
-   - If workflows change, ensure environment variables and dependencies are properly cached and maintained.
+8. **Deployment & Transition**:
+   - 核心排程: `digest_weekly.yml`（單一工作流程整合全平台，天然去重與資料融合）。
+   - 過渡備用: `digest_streetvoice.yml` 保留備用，待新工作流程穩定後再 sunset。
+   - 舊補充排程: `digest_supplemental.yml` 已關閉 cron 排程以防止重複洗版。
