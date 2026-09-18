@@ -12,6 +12,7 @@ from typing import List, Dict, Tuple
 from datetime import datetime, timedelta
 import re
 from src.utils.text_cleaners import clean_event_title, format_short_date
+from src.processor.curator_formatter import CuratorFormatter
 
 class DigestBuilder:
     def __init__(self, config: Dict):
@@ -311,13 +312,68 @@ class DigestBuilder:
         return sorted_grouped
 
     def _generate_cover_text(self, start: datetime, end: datetime, count: int, events: List[Dict]) -> str:
-        date_str = f"{start.strftime('%m/%d')} ({self._get_weekday_zh(start.strftime('%Y-%m-%d'))}) - {end.strftime('%m/%d')} ({self._get_weekday_zh(end.strftime('%Y-%m-%d'))})"
-        # Fixed cover text template to save AI tokens (User request)
-        return (
-            f"音樂活動懶人包 ({date_str})\n\n"
-            f"下週共有 {count} 場演出！\n"
-            "詳細資訊請看下方整理 👇"
+        free_count = sum(1 for e in events if CuratorFormatter.format_price_badge(e) == "免費")
+        hot_count = sum(1 for e in events if e.get('is_hot'))
+        return CuratorFormatter.format_upgraded_cover_text(
+            start_date=start,
+            end_date=end,
+            event_count=count,
+            free_count=free_count,
+            hot_count=hot_count
         )
+
+    def find_candidate_spotlights(self, events: List[Dict], limit: int = 5) -> List[Dict]:
+        """
+        自動篩選具備爆款潛力的活動（例如：免費音樂節、知名音樂祭、卡司豐富的大專場），
+        包裝成單場 Spotlight 貼文格式。
+        """
+        candidates = []
+        for e in events:
+            is_free = CuratorFormatter.format_price_badge(e) == "免費"
+            is_hot = e.get('is_hot', False)
+            perfs = e.get('performers') or []
+            has_multiple_artists = len(perfs) >= 2 or "音樂節" in (e.get('name') or '') or "音樂祭" in (e.get('name') or '')
+            has_image = bool(e.get('image_url') and str(e.get('image_url')).startswith('http'))
+            
+            score = 0
+            if is_hot:
+                score += 5
+            if is_free:
+                score += 4
+            if has_multiple_artists:
+                score += 3
+            if has_image:
+                score += 2
+
+            if score >= 5:
+                candidates.append((score, e))
+
+        candidates.sort(key=lambda x: x[0], reverse=True)
+        return [CuratorFormatter.format_spotlight_post(c[1]) for c in candidates[:limit]]
+
+    def find_candidate_curator_picks(self, events: List[Dict], limit: int = 3) -> List[Dict]:
+        """
+        篩選適合獨立樂團專場推薦的場次（Livehouse、StreetVoice 獨立新血）。
+        """
+        candidates = []
+        for e in events:
+            platform = e.get('platform') or e.get('ticket_platform') or ''
+            venue = e.get('venue_name') or ''
+            # 優先挑選特色 Livehouse
+            indie_venues = ["revolver", "the wall", "河岸留言", "pipe", "legacy", "百樂門", "live warehouse", "瓦窟"]
+            is_indie_venue = any(v in venue.lower() for v in indie_venues)
+            
+            if is_indie_venue or platform in ['streetvoice', 'indievox']:
+                candidates.append(e)
+
+        selected = candidates[:limit]
+        posts = []
+        for e in selected:
+            name = e.get('name') or ''
+            venue = e.get('venue_name') or ''
+            default_note = f"這場在 {venue} 的現場絕對值得一去！樂手現場爆發力與現場氛圍保證值回票價，推薦喜歡探索獨立新聲的朋友別錯過。"
+            posts.append(CuratorFormatter.format_curator_pick_post(e, default_note))
+        return posts
 
 
     def _format_event_line_concise(self, event: Dict) -> str:

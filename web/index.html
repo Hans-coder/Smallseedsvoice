@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>你的聽團小聲音 | 全台 Livehouse 展演空間與音樂祭探索地圖</title>
+  <meta name="description" content="全台獨立音樂、Livehouse 展演空間演出與免費音樂祭即時探索。依 Legacy、The Wall、Revolver、駁二等場地一鍵篩選！" />
+
+  <!-- Google Fonts: Plus Jakarta Sans & Noto Sans TC -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-dark: #0a0c10;
+      --bg-card: rgba(22, 27, 34, 0.75);
+      --bg-card-hover: rgba(30, 38, 48, 0.9);
+      --border-color: rgba(255, 255, 255, 0.08);
+      --border-glow: rgba(99, 102, 241, 0.3);
+      --primary: #6366f1;
+      --primary-glow: #818cf8;
+      --accent-free: #10b981;
+      --accent-free-glow: rgba(16, 185, 129, 0.25);
+      --accent-hot: #f59e0b;
+      --accent-heart: #f43f5e;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-sub: #64748b;
+      --glass-blur: blur(16px);
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --shadow-card: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: 'Plus Jakarta Sans', 'Noto Sans TC', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      background-image: 
+        radial-gradient(circle at 15% 15%, rgba(99, 102, 241, 0.12) 0%, transparent 40%),
+        radial-gradient(circle at 85% 30%, rgba(244, 63, 94, 0.1) 0%, transparent 40%),
+        radial-gradient(circle at 50% 80%, rgba(16, 185, 129, 0.08) 0%, transparent 50%);
+      background-attachment: fixed;
+    }
+
+    /* Top Navigation */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      background: rgba(10, 12, 16, 0.85);
+      border-bottom: 1px solid var(--border-color);
+      padding: 14px 20px;
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .brand-badge {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #6366f1, #ec4899);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+    }
+
+    .brand-text h1 {
+      font-size: 1.15rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      background: linear-gradient(to right, #ffffff, #cbd5e1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .brand-text p {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .threads-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: 9999px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #fff;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .threads-btn:hover {
+      background: #fff;
+      color: #000;
+      transform: translateY(-2px);
+    }
+
+    /* Main Container */
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px 20px 80px;
+    }
+
+    /* Hero Banner */
+    .hero-section {
+      text-align: center;
+      padding: 30px 10px 40px;
+    }
+
+    .hero-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: rgba(99, 102, 241, 0.15);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      color: var(--primary-glow);
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+
+    .hero-title {
+      font-size: clamp(1.8rem, 4vw, 2.7rem);
+      font-weight: 900;
+      line-height: 1.25;
+      margin-bottom: 12px;
+      letter-spacing: -0.03em;
+    }
+
+    .hero-title span {
+      background: linear-gradient(135deg, #a5b4fc, #f472b6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-desc {
+      font-size: 1rem;
+      color: var(--text-muted);
+      max-width: 640px;
+      margin: 0 auto 24px;
+    }
+
+    /* Search & Stats Bar */
+    .controls-container {
+      background: rgba(18, 22, 29, 0.7);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 18px 20px;
+      margin-bottom: 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .search-row {
+      display: flex;
+      gap: 12px;
+    }
+
+    .search-input-wrapper {
+      position: relative;
+      flex: 1;
+    }
+
+    .search-input-wrapper input {
+      width: 100%;
+      background: rgba(10, 12, 16, 0.7);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 12px 16px 12px 42px;
+      color: #fff;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .search-input-wrapper input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1.1rem;
+      color: var(--text-sub);
+    }
+
+    /* Quick Filter Chips */
+    .filter-chips {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      scrollbar-width: none;
+    }
+
+    .filter-chips::-webkit-scrollbar {
+      display: none;
+    }
+
+    .chip {
+      padding: 8px 16px;
+      border-radius: 999px;
+      border: 1px solid var(--border-color);
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      font-weight: 600;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .chip:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+    }
+
+    .chip.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary-glow);
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+    }
+
+    .chip.active-free {
+      background: var(--accent-free);
+      border-color: var(--accent-free);
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+    }
+
+    /* Venue Explorer Section */
+    .venue-section {
+      margin-bottom: 34px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .section-header h2 {
+      font-size: 1.25rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .venues-scroll {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      scrollbar-width: thin;
+    }
+
+    .venue-card {
+      flex: 0 0 auto;
+      min-width: 150px;
+      padding: 14px 16px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      text-align: left;
+    }
+
+    .venue-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--primary-glow);
+      background: var(--bg-card-hover);
+    }
+
+    .venue-card.selected {
+      border-color: var(--primary);
+      background: rgba(99, 102, 241, 0.15);
+      box-shadow: 0 0 0 2px var(--primary);
+    }
+
+    .venue-card-name {
+      font-size: 0.9rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .venue-card-city {
+      font-size: 0.75rem;
+      color: var(--text-sub);
+    }
+
+    .venue-card-count {
+      display: inline-block;
+      margin-top: 8px;
+      padding: 2px 8px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--primary-glow);
+    }
+
+    /* Events Grid */
+    .events-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
+    }
+
+    .event-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: var(--shadow-card);
+    }
+
+    .event-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(255, 255, 255, 0.2);
+      box-shadow: 0 16px 36px -10px rgba(0, 0, 0, 0.7);
+    }
+
+    .card-img-wrapper {
+      position: relative;
+      width: 100%;
+      height: 180px;
+      background: #1e2430;
+      overflow: hidden;
+    }
+
+    .card-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+
+    .event-card:hover .card-img {
+      transform: scale(1.05);
+    }
+
+    .card-img-fallback {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #1e1b4b, #312e81);
+      color: var(--primary-glow);
+      font-size: 2.5rem;
+    }
+
+    .price-pill {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      backdrop-filter: blur(8px);
+      letter-spacing: 0.02em;
+    }
+
+    .price-pill.free {
+      background: rgba(16, 185, 129, 0.9);
+      color: #fff;
+      box-shadow: 0 2px 10px rgba(16, 185, 129, 0.5);
+    }
+
+    .price-pill.paid {
+      background: rgba(0, 0, 0, 0.65);
+      color: #e2e8f0;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .date-pill {
+      position: absolute;
+      bottom: 12px;
+      left: 12px;
+      padding: 4px 10px;
+      border-radius: 8px;
+      background: rgba(0, 0, 0, 0.75);
+      color: #fff;
+      font-size: 0.8rem;
+      font-weight: 700;
+      backdrop-filter: blur(8px);
+    }
+
+    .card-body {
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .card-venue {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .card-title {
+      font-size: 1.05rem;
+      font-weight: 800;
+      line-height: 1.4;
+      margin-bottom: 10px;
+      color: #fff;
+    }
+
+    .performers-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 16px;
+      flex: 1;
+    }
+
+    .artist-tag {
+      padding: 2px 8px;
+      border-radius: 6px;
+      background: rgba(244, 63, 94, 0.12);
+      border: 1px solid rgba(244, 63, 94, 0.25);
+      color: #fb7185;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: auto;
+    }
+
+    .btn-ticket {
+      flex: 1;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      background: var(--primary);
+      color: #fff;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-align: center;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+
+    .btn-ticket:hover {
+      background: var(--primary-glow);
+    }
+
+    .btn-copy {
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+    }
+
+    .btn-copy:hover {
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #1e293b;
+      color: #fff;
+      padding: 12px 24px;
+      border-radius: 999px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      border: 1px solid var(--primary);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 1000;
+      pointer-events: none;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Header -->
+  <header>
+    <div class="nav-container">
+      <a href="#" class="brand-group" id="reset-home">
+        <div class="brand-badge">🎧</div>
+        <div class="brand-text">
+          <h1>你的聽團小聲音</h1>
+          <p>全台 Livehouse 展演空間與音樂祭地圖</p>
+        </div>
+      </a>
+      <a href="https://www.threads.net/@sky_silp" target="_blank" rel="noopener" class="threads-btn">
+        <span>追蹤 Threads</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.5 13.5c-.83.83-2.17 1.25-4 1.25-2.08 0-3.66-.58-4.75-1.75C6.66 13.83 6.12 12.08 6.12 9.75c0-2.33.54-4.08 1.63-5.25C8.84 3.33 10.42 2.75 12.5 2.75c1.83 0 3.17.42 4 1.25.83.83 1.25 2.17 1.25 4v1.5h-2.5v-1.5c0-.83-.17-1.33-.5-1.5-.33-.17-.83-.25-1.5-.25-.83 0-1.5.25-2 .75-.5.5-.75 1.42-.75 2.75s.25 2.25.75 2.75c.5.5 1.17.75 2 .75.67 0 1.17-.08 1.5-.25.33-.17.5-.67.5-1.5v-1.5h2.5v1.5c0 1.83-.42 3.17-1.25 4z"/></svg>
+      </a>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero Banner -->
+    <section class="hero-section">
+      <div class="hero-pill">✨ 2026 全台最新聽團日曆</div>
+      <h2 class="hero-title">探索你身邊的 <span>Livehouse 現場</span></h2>
+      <p class="hero-desc">不必在文字流水帳裡大海撈針。依展演空間、免費場次或卡司名單秒查本週演出！</p>
+    </section>
+
+    <!-- Search & Filters -->
+    <section class="controls-container">
+      <div class="search-row">
+        <div class="search-input-wrapper">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="search-input" placeholder="搜尋樂團、卡司、活動名稱或場地（例如：美秀集團、Legacy、免費）..." />
+        </div>
+      </div>
+
+      <!-- Quick Filter Chips -->
+      <div class="filter-chips">
+        <button class="chip active" data-filter="all">全部演出 (<span id="count-all">0</span>)</button>
+        <button class="chip" data-filter="free">✨ 完全免費 (<span id="count-free">0</span>)</button>
+        <button class="chip" data-filter="hot">🔥 熱門焦點 / 音樂節 (<span id="count-hot">0</span>)</button>
+        <button class="chip" data-filter="region-north">雙北與北部</button>
+        <button class="chip" data-filter="region-central">中部</button>
+        <button class="chip" data-filter="region-south">南部</button>
+      </div>
+    </section>
+
+    <!-- Top Venues Explorer -->
+    <section class="venue-section">
+      <div class="section-header">
+        <h2>🏛️ 依照展演空間探索</h2>
+        <span style="font-size: 0.8rem; color: var(--text-sub);">點擊空間即時篩選</span>
+      </div>
+      <div class="venues-scroll" id="venues-container">
+        <!-- Rendered by JS -->
+      </div>
+    </section>
+
+    <!-- Event Cards Grid -->
+    <section>
+      <div class="section-header">
+        <h2 id="grid-title">🎸 近期音樂活動 (載入中...)</h2>
+      </div>
+      <div class="events-grid" id="events-grid">
+        <!-- Rendered by JS -->
+      </div>
+      <div class="empty-state" id="empty-state" style="display: none;">
+        <h3>查無符合條件的活動 😢</h3>
+        <p style="margin-top: 8px;">試著清除關鍵字或選擇其他展演空間！</p>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast">已複製演出資訊與標記好友格式！</div>
+
+  <script>
+    let allEvents = [];
+    let topVenues = [];
+    let activeFilter = 'all';
+    let selectedVenueId = null;
+    let searchQuery = '';
+
+    const weekdayMap = ['週日', '週一', '週二', '週三', '週四', '週五', '週六'];
+
+    async function loadData() {
+      try {
+        const res = await fetch('data/events.json');
+        const data = await res.json();
+        allEvents = data.events || [];
+        topVenues = data.top_venues || [];
+
+        // Update counts
+        document.getElementById('count-all').textContent = data.total_events || allEvents.length;
+        document.getElementById('count-free').textContent = data.total_free || 0;
+        document.getElementById('count-hot').textContent = data.total_hot || 0;
+
+        renderVenues();
+        renderEvents();
+      } catch (err) {
+        console.error('Failed to load events data:', err);
+        document.getElementById('grid-title').textContent = '⚠️ 無法載入活動資料，請確認 data/events.json';
+      }
+    }
+
+    function renderVenues() {
+      const container = document.getElementById('venues-container');
+      container.innerHTML = '';
+
+      topVenues.forEach(v => {
+        const card = document.createElement('div');
+        card.className = `venue-card ${selectedVenueId === v.id ? 'selected' : ''}`;
+        card.onclick = () => toggleVenue(v.id);
+        card.innerHTML = `
+          <div class="venue-card-name">${v.name}</div>
+          <div class="venue-card-city">${v.city || '展演空間'}</div>
+          <span class="venue-card-count">${v.count} 場演出</span>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function toggleVenue(venueId) {
+      if (selectedVenueId === venueId) {
+        selectedVenueId = null;
+      } else {
+        selectedVenueId = venueId;
+      }
+      renderVenues();
+      renderEvents();
+    }
+
+    function renderEvents() {
+      const grid = document.getElementById('events-grid');
+      const emptyState = document.getElementById('empty-state');
+      const title = document.getElementById('grid-title');
+
+      let filtered = allEvents.filter(e => {
+        // Venue filter
+        if (selectedVenueId && e.venue_id !== selectedVenueId) {
+          return false;
+        }
+
+        // Quick filter
+        if (activeFilter === 'free' && !e.is_free) return false;
+        if (activeFilter === 'hot' && !e.is_hot) return false;
+        if (activeFilter === 'region-north' && e.region !== '雙北與北部') return false;
+        if (activeFilter === 'region-central' && e.region !== '中部') return false;
+        if (activeFilter === 'region-south' && e.region !== '南部') return false;
+
+        // Search query
+        if (searchQuery) {
+          const q = searchQuery.toLowerCase();
+          const titleMatch = (e.title || '').toLowerCase().includes(q);
+          const venueMatch = (e.venue || '').toLowerCase().includes(q);
+          const cityMatch = (e.city || '').toLowerCase().includes(q);
+          const perfsMatch = (e.performers || []).some(p => p.toLowerCase().includes(q));
+          return titleMatch || venueMatch || cityMatch || perfsMatch;
+        }
+
+        return true;
+      });
+
+      title.textContent = `🎸 本期活動（共 ${filtered.length} 場）`;
+
+      if (filtered.length === 0) {
+        grid.innerHTML = '';
+        emptyState.style.display = 'block';
+        return;
+      }
+
+      emptyState.style.display = 'none';
+      grid.innerHTML = filtered.map(e => {
+        let dateDisplay = e.date;
+        if (e.date) {
+          const dt = new Date(e.date);
+          if (!isNaN(dt)) {
+            dateDisplay = `${e.date} (${weekdayMap[dt.getDay()]})`;
+          }
+        }
+
+        const priceBadgeClass = e.is_free ? 'free' : 'paid';
+        const priceBadgeText = e.is_free ? '✨ 免費入場' : (e.price || '售票');
+
+        const imageHtml = e.image_url 
+          ? `<img src="${e.image_url}" alt="${e.title}" class="card-img" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\\'card-img-fallback\\'>🎸</div>'">`
+          : `<div class="card-img-fallback">🎸</div>`;
+
+        const performersHtml = (e.performers && e.performers.length > 0)
+          ? e.performers.slice(0, 6).map(p => `<span class="artist-tag">♥︎ ${p}</span>`).join('')
+          : '';
+
+        return `
+          <div class="event-card">
+            <div class="card-img-wrapper">
+              ${imageHtml}
+              <span class="price-pill ${priceBadgeClass}">${priceBadgeText}</span>
+              <span class="date-pill">${dateDisplay}</span>
+            </div>
+            <div class="card-body">
+              <div class="card-venue">
+                <span>📍</span>
+                <span>[${e.city}] ${e.venue}</span>
+              </div>
+              <h3 class="card-title">${e.title}</h3>
+              <div class="performers-tags">
+                ${performersHtml}
+              </div>
+              <div class="card-actions">
+                ${e.ticket_url ? `<a href="${e.ticket_url}" target="_blank" rel="noopener" class="btn-ticket">🎟️ 前往購票 / 官方</a>` : ''}
+                <button class="btn-copy" onclick="copyEventShare('${encodeURIComponent(JSON.stringify(e))}')" title="複製標記好友文字">
+                  📋 複製
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function copyEventShare(encodedJson) {
+      try {
+        const e = JSON.parse(decodeURIComponent(encodedJson));
+        const performersText = (e.performers && e.performers.length) ? e.performers.map(p => `♥︎${p}`).join(' ') : '';
+        const text = `⚑ ${e.date} 《${e.title}》（${e.is_free ? '免費' : '售票'}）\n`
+          + (performersText ? `➤ 卡司：${performersText}\n` : '')
+          + `❑ 地點：[${e.city}] ${e.venue} ❑\n`
+          + `💬 快 @ 你的聽團朋友一起衝！現場見 🔥\n`
+          + `🔗 完整展演空間地圖：https://threads.net/@sky_silp`;
+
+        navigator.clipboard.writeText(text).then(() => {
+          showToast('已複製演出資訊與標記格式！可直接貼到 Threads 💬');
+        });
+      } catch (err) {
+        console.error('Copy failed:', err);
+      }
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2500);
+    }
+
+    // Setup Event Listeners
+    document.querySelectorAll('.chip').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.chip').forEach(c => c.classList.remove('active', 'active-free'));
+        if (btn.dataset.filter === 'free') {
+          btn.classList.add('active-free');
+        } else {
+          btn.classList.add('active');
+        }
+        activeFilter = btn.dataset.filter;
+        renderEvents();
+      });
+    });
+
+    document.getElementById('search-input').addEventListener('input', (e) => {
+      searchQuery = e.target.value.trim();
+      renderEvents();
+    });
+
+    document.getElementById('reset-home').addEventListener('click', (e) => {
+      e.preventDefault();
+      selectedVenueId = null;
+      searchQuery = '';
+      activeFilter = 'all';
+      document.getElementById('search-input').value = '';
+      document.querySelectorAll('.chip').forEach(c => c.classList.remove('active', 'active-free'));
+      document.querySelector('.chip[data-filter="all"]').classList.add('active');
+      renderVenues();
+      renderEvents();
+    });
+
+    // Initial load
+    loadData();
+  </script>
+</body>
+</html>

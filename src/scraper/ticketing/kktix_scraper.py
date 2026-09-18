@@ -154,6 +154,10 @@ class KktixScraper(BaseScraper):
                 return None
 
             name = clean_event_title(title)
+            if not name:
+                name = title.strip()
+            if not name:
+                return None
 
             # Date & Time from published (ISO format: 2026-09-04T14:00:00+08:00)
             date_iso = pub_text[:10] if pub_text else None

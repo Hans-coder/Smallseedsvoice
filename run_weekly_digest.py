@@ -1,16 +1,24 @@
-import logging
+import argparse
 import datetime
+import json
 import os
-import yaml
 from pathlib import Path
+
+import yaml
+from dotenv import load_dotenv
+
+from src.processor.digest_builder import DigestBuilder
 from src.scraper.instagram_scraper import InstagramScraper
 from src.scraper.ticketing.kktix_scraper import KktixScraper
-from src.processor.digest_builder import DigestBuilder
 from src.threads.threads_poster import ThreadsPoster
-from src.utils.logger import setup_logger
 from src.utils.error_handler import log_scraping_error
-from src.utils.text_cleaners import get_event_hash, refine_image_url, is_same_event, merge_event_details
-from dotenv import load_dotenv
+from src.utils.logger import setup_logger
+from src.utils.text_cleaners import (
+    get_event_hash,
+    is_same_event,
+    merge_event_details,
+    refine_image_url,
+)
 
 # Load environment variables from .env file
 load_dotenv()
@@ -74,15 +82,9 @@ def is_hot_event(event: dict) -> bool:
         
     # 如果是從 IG 抓的，檢查來源帳號是否為知名音樂節
     source_account = event.get('source_account')
-    if source_account in ['emerge_fest', 'megaportfest', 'ultrataiwan', 'springwave_asia']:
-        return True
-        
-    return False
+    return source_account in ['emerge_fest', 'megaportfest', 'ultrataiwan', 'springwave_asia']
 
 def main():
-    import argparse
-    import json
-    
     parser = argparse.ArgumentParser(description='Weekly Digest Pipeline')
     parser.add_argument('--step', type=str, choices=['scrape', 'process', 'post', 'all'], default='all', help='Pipeline step to execute')
     parser.add_argument('--source', type=str, choices=['instagram', 'kktix', 'indievox', 'ticketplus', 'tixcraft', 'streetvoice', 'all'], default='all', help='Specific source to scrape')
@@ -227,7 +229,7 @@ def main():
                 log_scraping_error("Instagram", e)
 
         if not events:
-            logger.warning(f"No events found from any source. Writing empty list to prevent stale data usage.")
+            logger.warning("No events found from any source. Writing empty list to prevent stale data usage.")
             with open("data/digest_raw.json", "w", encoding="utf-8") as f:
                 json.dump([], f, indent=4, ensure_ascii=False)
             return
@@ -341,7 +343,7 @@ def main():
         try:
             posts = builder.build_digest(events, start_date, end_date)
         except Exception as e:
-            logger.error(f"DigestBuilder failed: {e}", exc_info=True)
+            logger.exception(f"DigestBuilder failed: {e}")
             return
         
         # Save updated raw events back (now containing AI-extracted performers)
@@ -361,6 +363,22 @@ def main():
         with open("data/digest_posts.json", "w", encoding="utf-8") as f:
             json.dump(posts, f, indent=4, ensure_ascii=False)
         logger.info("Saved posts to data/digest_posts.json")
+
+        # Auto-generate candidate spotlight posts (Mode A: 单場焦點爆款)
+        try:
+            spotlights = builder.find_candidate_spotlights(events, limit=8)
+            with open("data/spotlight_posts.json", "w", encoding="utf-8") as f:
+                json.dump(spotlights, f, indent=4, ensure_ascii=False)
+            logger.info(f"Generated {len(spotlights)} candidate spotlight posts in data/spotlight_posts.json")
+        except Exception as e:
+            logger.warning(f"Failed to generate spotlight candidates: {e}")
+
+        # Auto-update web data for the venue explorer
+        try:
+            from scripts.build_web_data import build_data
+            build_data()
+        except Exception as e:
+            logger.warning(f"Failed to auto-update web data: {e}")
 
     # --- Step 3: Post ---
     if args.step in ['post', 'all']:

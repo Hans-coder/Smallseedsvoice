@@ -25,11 +25,11 @@ except ImportError:
     pass
 
 try:
-    from flask import Flask, request, jsonify
+    from flask import Flask, request, jsonify, send_from_directory
 except ImportError:
     print("安裝 Flask 中...")
     os.system(f"{sys.executable} -m pip install flask")
-    from flask import Flask, request, jsonify
+    from flask import Flask, request, jsonify, send_from_directory
 
 app = Flask(__name__)
 PORT = 5055
@@ -162,6 +162,44 @@ def api_status():
         "has_threads_token": has_token,
         "posts_file_exists": POSTS_FILE.exists(),
     })
+
+
+@app.route("/web/")
+@app.route("/web/<path:filename>")
+def serve_web(filename="index.html"):
+    web_dir = Path(__file__).parent.parent / "web"
+    return send_from_directory(str(web_dir), filename)
+
+
+@app.route("/api/candidates/spotlights", methods=["GET"])
+def api_get_spotlights():
+    raw_file = Path("data/digest_raw.json")
+    if not raw_file.exists():
+        return jsonify([])
+    try:
+        events = json.loads(raw_file.read_text(encoding="utf-8"))
+        from src.processor.digest_builder import DigestBuilder
+        builder = DigestBuilder({})
+        spotlights = builder.find_candidate_spotlights(events, limit=8)
+        return jsonify(spotlights)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/candidates/picks", methods=["GET"])
+def api_get_picks():
+    raw_file = Path("data/digest_raw.json")
+    if not raw_file.exists():
+        return jsonify([])
+    try:
+        events = json.loads(raw_file.read_text(encoding="utf-8"))
+        from src.processor.digest_builder import DigestBuilder
+        builder = DigestBuilder({})
+        picks = builder.find_candidate_curator_picks(events, limit=5)
+        return jsonify(picks)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 
 # ─────────────────────────────────────────────────────────────
@@ -397,9 +435,17 @@ HTML_PAGE = """<!DOCTYPE html>
 <div class="header">
   <div class="header-top">
     <h1>🎵 Smallseeds Digest 貼文管理</h1>
-    <span class="badge" id="postCountBadge">{post_count} 篇</span>
+    <div style="display:flex; align-items:center; gap:8px;">
+      <a href="/web/" target="_blank" style="color:#818cf8; text-decoration:none; font-size:0.8rem; font-weight:700; padding:5px 12px; background:rgba(99,102,241,0.15); border:1px solid rgba(99,102,241,0.3); border-radius:999px;">🗺️ 展演空間網站 ↗</a>
+      <span class="badge" id="postCountBadge">{post_count} 篇</span>
+    </div>
   </div>
   <div class="meta">資料來源：{source} ｜ 更新時間：{generated_time}</div>
+  <div style="display:flex; gap:8px; margin-top:10px; overflow-x:auto;">
+    <button class="chip" onclick="loadMode('digest')" id="tabDigest" style="cursor:pointer; background:var(--primary); color:#fff;">📋 每週週報串</button>
+    <button class="chip" onclick="loadMode('spotlights')" id="tabSpotlights" style="cursor:pointer;">🔥 單場爆款焦點 (8場)</button>
+    <button class="chip" onclick="loadMode('picks')" id="tabPicks" style="cursor:pointer;">🎧 小聲音私心推</button>
+  </div>
 </div>
 
 <div class="status-bar">
@@ -629,6 +675,47 @@ async function executePublish() {{
     showToast('❌ 發布連線失敗: ' + e, 'err');
   }}
 }}
+
+async function loadMode(mode) {{
+  const tabs = ['tabDigest', 'tabSpotlights', 'tabPicks'];
+  tabs.forEach(t => {{
+    const el = document.getElementById(t);
+    if (el) {{
+      el.style.background = 'var(--surface)';
+      el.style.color = 'var(--text)';
+    }}
+  }});
+
+  if (mode === 'digest') {{
+    const el = document.getElementById('tabDigest');
+    if (el) {{ el.style.background = 'var(--primary)'; el.style.color = '#fff'; }}
+    try {{
+      const r = await fetch('/api/posts');
+      posts = await r.json();
+      render();
+      showToast('📋 已切換至每週週報串', 'ok');
+    }} catch(e) {{ showToast('載入失敗: ' + e, 'err'); }}
+  }} else if (mode === 'spotlights') {{
+    const el = document.getElementById('tabSpotlights');
+    if (el) {{ el.style.background = 'var(--primary)'; el.style.color = '#fff'; }}
+    try {{
+      const r = await fetch('/api/candidates/spotlights');
+      posts = await r.json();
+      render();
+      showToast('🔥 已載入單場焦點爆款貼文（可直接編輯發布）', 'ok');
+    }} catch(e) {{ showToast('載入失敗: ' + e, 'err'); }}
+  }} else if (mode === 'picks') {{
+    const el = document.getElementById('tabPicks');
+    if (el) {{ el.style.background = 'var(--primary)'; el.style.color = '#fff'; }}
+    try {{
+      const r = await fetch('/api/candidates/picks');
+      posts = await r.json();
+      render();
+      showToast('🎧 已載入小聲音私心推貼文', 'ok');
+    }} catch(e) {{ showToast('載入失敗: ' + e, 'err'); }}
+  }}
+}}
+
 
 function showToast(msg, type) {{
   const el = document.getElementById('toast');
