@@ -27,8 +27,9 @@ wheels/
 .env
 .env.local
 
-# 數據文件
-data/
+# 數據文件 (僅忽略根目錄 data/)
+/data/
+!web/data/
 *.db
 *.sqlite
 *.sqlite3

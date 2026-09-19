@@ -9,6 +9,8 @@ on:
 jobs:
   digest-weekly:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout code
@@ -57,6 +59,14 @@ jobs:
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: python run_weekly_digest.py --step process
+
+      # ── 自動同步更新展演空間 Web 資料庫至 GitHub Pages ──────
+      - name: Commit and push updated web data
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add web/data/events.json
+          git diff --staged --quiet || (git commit -m "chore(data): auto-update livehouse web events [skip ci]" && git push)
 
       # ── 生成社群視覺圖卡 ─────────────────────────────────────────
       - name: Generate Social Media Cards
