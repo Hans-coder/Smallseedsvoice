@@ -15,21 +15,21 @@ from typing import Dict, List
 
 # 知名展演空間正規化對照表 (Venue Mapping)
 KNOWN_VENUES = [
-    {"id": "legacy_tpe", "name": "Legacy Taipei", "keywords": ["legacy taipei", "傳 音樂展演空間", "華山legacy"], "city": "台北市"},
-    {"id": "legacy_mini", "name": "Legacy mini", "keywords": ["legacy mini"], "city": "台北市"},
-    {"id": "legacy_tc", "name": "Legacy Taichung", "keywords": ["legacy taichung", "台中legacy", "傳 音樂展演空間 台中"], "city": "台中市"},
-    {"id": "the_wall", "name": "The Wall Live House", "keywords": ["the wall", "這牆"], "city": "台北市"},
-    {"id": "revolver", "name": "Revolver", "keywords": ["revolver"], "city": "台北市"},
-    {"id": "riverside", "name": "河岸留言", "keywords": ["河岸留言", "西門紅樓展演館", "公館河岸"], "city": "台北市"},
-    {"id": "pipe", "name": "PIPE Live Music", "keywords": ["pipe live music", "水管音樂"], "city": "台北市"},
-    {"id": "zepp", "name": "Zepp New Taipei", "keywords": ["zepp new taipei", "zepp"], "city": "新北市"},
-    {"id": "live_warehouse", "name": "駁二 LIVE WAREHOUSE", "keywords": ["live warehouse", "駁二"], "city": "高雄市"},
-    {"id": "paramount", "name": "百樂門酒館", "keywords": ["百樂門酒館", "paramount bar"], "city": "高雄市"},
-    {"id": "kpm", "name": "高流 (高雄流行音樂中心)", "keywords": ["高流", "高雄流行音樂中心", "鯨魚堤岸", "海音館"], "city": "高雄市"},
-    {"id": "taipei_arena", "name": "台北小巨蛋 / 北流", "keywords": ["小巨蛋", "北流", "臺北流行音樂中心", "台北流行音樂中心"], "city": "台北市"},
-    {"id": "clapper", "name": "Clapper Studio", "keywords": ["clapper studio", "三創"], "city": "台北市"},
-    {"id": "corridor", "name": "迴響音樂藝文展演空間", "keywords": ["迴響音樂", "sound live house"], "city": "台中市"},
-    {"id": "tiehua", "name": "鐵花村", "keywords": ["鐵花村"], "city": "台東縣"},
+    {"id": "the_wall", "name": "The Wall Live House", "keywords": ["the wall", "這牆"], "city": "台北市", "tagline": "公館地下傳奇搖滾基地", "vibe": "地下殿堂"},
+    {"id": "revolver", "name": "Revolver", "keywords": ["revolver"], "city": "台北市", "tagline": "中正・英式街頭酒館與龐克音牆", "vibe": "街頭躁動"},
+    {"id": "legacy_tpe", "name": "Legacy Taipei", "keywords": ["legacy taipei", "傳 音樂展演空間", "華山legacy"], "city": "台北市", "tagline": "華山旗艦中型專場空間", "vibe": "專場指標"},
+    {"id": "legacy_mini", "name": "Legacy mini", "keywords": ["legacy mini"], "city": "台北市", "tagline": "西門不插電私密近距離舞台", "vibe": "不插電微風"},
+    {"id": "legacy_tc", "name": "Legacy Taichung", "keywords": ["legacy taichung", "台中legacy", "傳 音樂展演空間 台中"], "city": "台中市", "tagline": "台中專場旗艦地標", "vibe": "中部核心"},
+    {"id": "riverside", "name": "河岸留言", "keywords": ["河岸留言", "西門紅樓展演館", "公館河岸"], "city": "台北市", "tagline": "西門紅樓・創作音樂的孵化搖籃", "vibe": "老字號經典"},
+    {"id": "pipe", "name": "PIPE Live Music", "keywords": ["pipe live music", "水管音樂"], "city": "台北市", "tagline": "公館水岸・自來水抽水機房派對", "vibe": "水岸低頻"},
+    {"id": "zepp", "name": "Zepp New Taipei", "keywords": ["zepp new taipei", "zepp"], "city": "新北市", "tagline": "新莊宏匯・日系頂規音場專場", "vibe": "頂級音場"},
+    {"id": "live_warehouse", "name": "駁二 LIVE WAREHOUSE", "keywords": ["live warehouse", "駁二"], "city": "高雄市", "tagline": "高雄港邊倉庫・南方聽團大本營", "vibe": "港都浪潮"},
+    {"id": "paramount", "name": "百樂門酒館", "keywords": ["百樂門酒館", "paramount bar"], "city": "高雄市", "tagline": "高雄熱血獨立龐克小酒館", "vibe": "南方地下核心"},
+    {"id": "kpm", "name": "高流 (高雄流行音樂中心)", "keywords": ["高流", "高雄流行音樂中心", "鯨魚堤岸", "海音館"], "city": "高雄市", "tagline": "真愛碼頭・國際港灣音樂地標", "vibe": "港灣地標"},
+    {"id": "taipei_arena", "name": "台北小巨蛋 / 北流", "keywords": ["小巨蛋", "北流", "臺北流行音樂中心", "台北流行音樂中心"], "city": "台北市", "tagline": "大型萬人體育館與流行音樂中心", "vibe": "殿堂大場"},
+    {"id": "clapper", "name": "Clapper Studio", "keywords": ["clapper studio", "三創"], "city": "台北市", "tagline": "三創生活・科技聲光展演館", "vibe": "科技聲光"},
+    {"id": "corridor", "name": "迴響音樂藝文展演空間", "keywords": ["迴響音樂", "sound live house"], "city": "台中市", "tagline": "台中老字號獨立搖滾溫床", "vibe": "台中搖滾現場"},
+    {"id": "tiehua", "name": "鐵花村", "keywords": ["鐵花村"], "city": "台東縣", "tagline": "台東慢市集與草地原聲聚落", "vibe": "東岸原聲"},
 ]
 
 def normalize_venue(venue_raw: str, location_raw: str) -> Dict[str, str]:
@@ -37,11 +37,17 @@ def normalize_venue(venue_raw: str, location_raw: str) -> Dict[str, str]:
     for v in KNOWN_VENUES:
         for kw in v["keywords"]:
             if kw.lower() in combined:
-                return {"venue_id": v["id"], "venue_display": v["name"], "city": v["city"]}
+                return {
+                    "venue_id": v["id"],
+                    "venue_display": v["name"],
+                    "city": v["city"],
+                    "tagline": v.get("tagline", ""),
+                    "vibe": v.get("vibe", "")
+                }
     
     # 預設提取
     clean_v = venue_raw.strip() if venue_raw and venue_raw not in ["Unknown", "See Details", "未提供"] else location_raw.strip()
-    return {"venue_id": "other", "venue_display": clean_v or "全台展演空間", "city": ""}
+    return {"venue_id": "other", "venue_display": clean_v or "全台展演空間", "city": "", "tagline": "", "vibe": ""}
 
 def get_region(city: str) -> str:
     if any(c in city for c in ["台北", "新北", "基隆", "桃園", "宜蘭"]):
@@ -135,7 +141,14 @@ def build_data():
         vname = venue_info["venue_display"]
         if vid != "other":
             if vid not in venues_counter:
-                venues_counter[vid] = {"id": vid, "name": vname, "city": city, "count": 0}
+                venues_counter[vid] = {
+                    "id": vid,
+                    "name": vname,
+                    "city": city,
+                    "tagline": venue_info.get("tagline", ""),
+                    "vibe": venue_info.get("vibe", ""),
+                    "count": 0
+                }
             venues_counter[vid]["count"] += 1
 
     # 排序：優先由近到遠

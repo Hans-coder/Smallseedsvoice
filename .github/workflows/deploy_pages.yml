@@ -6,6 +6,10 @@ on:
     paths:
       - "web/**"
       - ".github/workflows/deploy_pages.yml"
+  workflow_run:
+    workflows: ["Digest - Weekly (每週音樂活動整合週報)"]
+    types:
+      - completed
   workflow_dispatch:
 
 # 設定 GitHub Pages 所需之權限

@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-17 03:17:31",
+  "updated_at": "2026-09-27 19:14:28",
   "total_events": 220,
   "total_free": 50,
   "total_hot": 17,
@@ -8,78 +8,104 @@
       "id": "the_wall",
       "name": "The Wall Live House",
       "city": "台北市",
+      "tagline": "公館地下傳奇搖滾基地",
+      "vibe": "地下殿堂",
       "count": 19
     },
     {
       "id": "legacy_tpe",
       "name": "Legacy Taipei",
       "city": "臺北市",
+      "tagline": "華山旗艦中型專場空間",
+      "vibe": "專場指標",
       "count": 9
     },
     {
       "id": "kpm",
       "name": "高流 (高雄流行音樂中心)",
       "city": "高雄市",
+      "tagline": "真愛碼頭・國際港灣音樂地標",
+      "vibe": "港灣地標",
       "count": 9
     },
     {
       "id": "live_warehouse",
       "name": "駁二 LIVE WAREHOUSE",
       "city": "高雄市",
+      "tagline": "高雄港邊倉庫・南方聽團大本營",
+      "vibe": "港都浪潮",
       "count": 8
     },
     {
       "id": "riverside",
       "name": "河岸留言",
       "city": "台北市",
+      "tagline": "西門紅樓・創作音樂的孵化搖籃",
+      "vibe": "老字號經典",
       "count": 8
     },
     {
       "id": "taipei_arena",
       "name": "台北小巨蛋 / 北流",
       "city": "臺北市",
+      "tagline": "大型萬人體育館與流行音樂中心",
+      "vibe": "殿堂大場",
       "count": 7
     },
     {
       "id": "zepp",
       "name": "Zepp New Taipei",
       "city": "新北市",
+      "tagline": "新莊宏匯・日系頂規音場專場",
+      "vibe": "頂級音場",
       "count": 7
     },
     {
       "id": "clapper",
       "name": "Clapper Studio",
       "city": "台北市",
+      "tagline": "三創生活・科技聲光展演館",
+      "vibe": "科技聲光",
       "count": 6
     },
     {
       "id": "pipe",
       "name": "PIPE Live Music",
       "city": "臺北市",
+      "tagline": "公館水岸・自來水抽水機房派對",
+      "vibe": "水岸低頻",
       "count": 4
     },
     {
       "id": "revolver",
       "name": "Revolver",
       "city": "Unknown",
+      "tagline": "中正・英式街頭酒館與龐克音牆",
+      "vibe": "街頭躁動",
       "count": 3
     },
     {
       "id": "corridor",
       "name": "迴響音樂藝文展演空間",
       "city": "臺中市",
+      "tagline": "台中老字號獨立搖滾溫床",
+      "vibe": "台中搖滾現場",
       "count": 2
     },
     {
       "id": "legacy_tc",
       "name": "Legacy Taichung",
       "city": "台中市",
+      "tagline": "台中專場旗艦地標",
+      "vibe": "中部核心",
       "count": 1
     },
     {
       "id": "paramount",
       "name": "百樂門酒館",
       "city": "高雄市",
+      "tagline": "高雄熱血獨立龐克小酒館",
+      "vibe": "南方地下核心",
       "count": 1
     }
   ],

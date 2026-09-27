@@ -3,35 +3,54 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>你的聽團小聲音 | 全台 Livehouse 展演空間與音樂祭探索地圖</title>
-  <meta name="description" content="全台獨立音樂、Livehouse 展演空間演出與免費音樂祭即時探索。依 Legacy、The Wall、Revolver、駁二等場地一鍵篩選！" />
+  <title>聽團小聲音 | 台灣 Livehouse 現場與音樂祭指南</title>
+  <meta name="description" content="全台獨立音樂、Livehouse 展演空間演出、音樂祭即時探索。依日期、週末、展演空間一鍵檢索，專為聽團人設計的現場指南。" />
+  <meta property="og:title" content="聽團小聲音 | 台灣 Livehouse 現場與音樂祭指南" />
+  <meta property="og:description" content="專為聽團人設計：依展演空間、週末、免費場次秒查全台演出，一鍵加入行事曆與收藏。" />
+  <meta property="og:type" content="website" />
 
-  <!-- Google Fonts: Plus Jakarta Sans & Noto Sans TC -->
+  <!-- Google Fonts: Space Grotesk (Display), JetBrains Mono (Dates/Tickets), Noto Sans TC (Body) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700;800&family=Noto+Sans+TC:wght@400;500;700;900&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
 
   <style>
     :root {
-      --bg-dark: #0a0c10;
-      --bg-card: rgba(22, 27, 34, 0.75);
-      --bg-card-hover: rgba(30, 38, 48, 0.9);
-      --border-color: rgba(255, 255, 255, 0.08);
-      --border-glow: rgba(99, 102, 241, 0.3);
-      --primary: #6366f1;
-      --primary-glow: #818cf8;
+      --bg-base: #0d0e12;
+      --bg-surface: #14161d;
+      --bg-elevated: #1a1d26;
+      --bg-card: #161820;
+      --bg-card-hover: #1c1f2a;
+      
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-medium: rgba(255, 255, 255, 0.14);
+      --border-strong: rgba(255, 255, 255, 0.24);
+      --border-ticket: #282b36;
+
+      --accent-spotlight: #d4ff00; /* 舞台酸性黃/螢光綠 - 標誌性聽團強調色 */
+      --accent-spotlight-text: #0d0e12;
       --accent-free: #10b981;
-      --accent-free-glow: rgba(16, 185, 129, 0.25);
-      --accent-hot: #f59e0b;
-      --accent-heart: #f43f5e;
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
-      --text-sub: #64748b;
-      --glass-blur: blur(16px);
+      --accent-free-bg: rgba(16, 185, 129, 0.12);
+      --accent-hot: #ff3b30;
+      --accent-hot-bg: rgba(255, 59, 48, 0.12);
+      --accent-saved: #ffb703;
+
+      --text-main: #f4f3ed; /* 暖調非冷調，像實體宣傳單印刷紙感 */
+      --text-muted: #9ba1b0;
+      --text-sub: #676d7d;
+
+      --radius-xs: 4px;
       --radius-sm: 8px;
-      --radius-md: 14px;
-      --radius-lg: 20px;
-      --shadow-card: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      
+      --font-display: 'Space Grotesk', -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --font-sans: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, sans-serif;
+      
+      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
+      --shadow-card: 0 8px 24px -6px rgba(0, 0, 0, 0.6);
+      --shadow-hover: 0 16px 36px -8px rgba(0, 0, 0, 0.8);
     }
 
     * {
@@ -42,664 +61,1352 @@
     }
 
     body {
-      background-color: var(--bg-dark);
+      background-color: var(--bg-base);
       color: var(--text-main);
-      font-family: 'Plus Jakarta Sans', 'Noto Sans TC', sans-serif;
+      font-family: var(--font-sans);
       min-height: 100vh;
+      line-height: 1.5;
       overflow-x: hidden;
       background-image: 
-        radial-gradient(circle at 15% 15%, rgba(99, 102, 241, 0.12) 0%, transparent 40%),
-        radial-gradient(circle at 85% 30%, rgba(244, 63, 94, 0.1) 0%, transparent 40%),
-        radial-gradient(circle at 50% 80%, rgba(16, 185, 129, 0.08) 0%, transparent 50%);
-      background-attachment: fixed;
+        radial-gradient(ellipse 80% 50% at 50% -20px, rgba(212, 255, 0, 0.04), transparent 70%),
+        linear-gradient(to bottom, transparent 90%, rgba(0,0,0,0.5) 100%);
     }
 
-    /* Top Navigation */
+    /* Top Utility / Announcement Bar */
+    .top-meta-bar {
+      border-bottom: 1px solid var(--border-subtle);
+      background: rgba(13, 14, 18, 0.95);
+      padding: 6px 16px;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--text-sub);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    .top-meta-bar .status-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent-spotlight);
+      box-shadow: 0 0 6px var(--accent-spotlight);
+      display: inline-block;
+    }
+
+    /* Main Navigation */
     header {
       position: sticky;
       top: 0;
       z-index: 100;
-      backdrop-filter: var(--glass-blur);
-      -webkit-backdrop-filter: var(--glass-blur);
-      background: rgba(10, 12, 16, 0.85);
-      border-bottom: 1px solid var(--border-color);
-      padding: 14px 20px;
+      background: rgba(13, 14, 18, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-subtle);
     }
 
     .nav-container {
-      max-width: 1200px;
+      max-width: 1280px;
       margin: 0 auto;
+      padding: 12px 20px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 16px;
     }
 
-    .brand-group {
+    .brand-block {
       display: flex;
       align-items: center;
       gap: 12px;
       text-decoration: none;
       color: inherit;
+      cursor: pointer;
     }
 
-    .brand-badge {
-      width: 40px;
-      height: 40px;
-      border-radius: 12px;
-      background: linear-gradient(135deg, #6366f1, #ec4899);
+    .brand-stamp {
+      font-family: var(--font-mono);
+      font-weight: 800;
+      font-size: 0.85rem;
+      background: var(--accent-spotlight);
+      color: var(--accent-spotlight-text);
+      padding: 4px 8px;
+      border-radius: var(--radius-xs);
+      letter-spacing: -0.02em;
+      text-transform: uppercase;
+      box-shadow: 0 2px 8px rgba(212, 255, 0, 0.25);
+    }
+
+    .brand-titles {
       display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
-      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+      flex-direction: column;
     }
 
-    .brand-text h1 {
+    .brand-title {
+      font-family: var(--font-display);
       font-size: 1.15rem;
       font-weight: 800;
       letter-spacing: -0.02em;
-      background: linear-gradient(to right, #ffffff, #cbd5e1);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .brand-text p {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-    }
-
-    .threads-btn {
-      display: inline-flex;
+      color: var(--text-main);
+      display: flex;
       align-items: center;
-      gap: 8px;
-      padding: 8px 16px;
-      border-radius: 9999px;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      color: #fff;
-      font-size: 0.85rem;
-      font-weight: 600;
-      text-decoration: none;
-      transition: all 0.2s ease;
+      gap: 6px;
     }
 
-    .threads-btn:hover {
-      background: #fff;
-      color: #000;
-      transform: translateY(-2px);
+    .brand-subtitle {
+      font-size: 0.72rem;
+      color: var(--text-sub);
+      font-family: var(--font-mono);
+      letter-spacing: 0.02em;
     }
 
-    /* Main Container */
-    main {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 24px 20px 80px;
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
 
-    /* Hero Banner */
-    .hero-section {
-      text-align: center;
-      padding: 30px 10px 40px;
-    }
-
-    .hero-pill {
+    .nav-btn {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 6px 14px;
-      border-radius: 999px;
-      background: rgba(99, 102, 241, 0.15);
-      border: 1px solid rgba(99, 102, 241, 0.3);
-      color: var(--primary-glow);
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
       font-size: 0.8rem;
       font-weight: 600;
-      margin-bottom: 16px;
-    }
-
-    .hero-title {
-      font-size: clamp(1.8rem, 4vw, 2.7rem);
-      font-weight: 900;
-      line-height: 1.25;
-      margin-bottom: 12px;
-      letter-spacing: -0.03em;
-    }
-
-    .hero-title span {
-      background: linear-gradient(135deg, #a5b4fc, #f472b6);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .hero-desc {
-      font-size: 1rem;
+      text-decoration: none;
+      transition: all 0.15s ease;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-surface);
       color: var(--text-muted);
-      max-width: 640px;
-      margin: 0 auto 24px;
+      cursor: pointer;
     }
 
-    /* Search & Stats Bar */
-    .controls-container {
-      background: rgba(18, 22, 29, 0.7);
-      backdrop-filter: var(--glass-blur);
-      -webkit-backdrop-filter: var(--glass-blur);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-lg);
-      padding: 18px 20px;
-      margin-bottom: 30px;
+    .nav-btn:hover {
+      background: var(--bg-elevated);
+      color: var(--text-main);
+      border-color: var(--border-medium);
+    }
+
+    .nav-btn.threads-link {
+      background: var(--text-main);
+      color: var(--bg-base);
+      border-color: var(--text-main);
+    }
+
+    .nav-btn.threads-link:hover {
+      background: #fff;
+      transform: translateY(-1px);
+    }
+
+    /* Main Content Layout */
+    main {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 24px 20px 100px;
+    }
+
+    /* Editorial Hero Section */
+    .hero-editorial {
+      padding: 24px 0 28px;
+      border-bottom: 1px solid var(--border-subtle);
+      margin-bottom: 24px;
       display: flex;
       flex-direction: column;
-      gap: 16px;
-    }
-
-    .search-row {
-      display: flex;
       gap: 12px;
     }
 
-    .search-input-wrapper {
+    .hero-top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .hero-badge-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .issue-tag {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--accent-spotlight);
+      background: rgba(212, 255, 0, 0.08);
+      border: 1px solid rgba(212, 255, 0, 0.2);
+      padding: 2px 8px;
+      border-radius: var(--radius-xs);
+      text-transform: uppercase;
+    }
+
+    .hero-heading {
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 4.5vw, 2.8rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      color: var(--text-main);
+    }
+
+    .hero-heading span.spotlight-text {
+      color: var(--accent-spotlight);
+      text-decoration: underline;
+      text-decoration-thickness: 3px;
+      text-underline-offset: 4px;
+    }
+
+    .hero-curation-text {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      max-width: 720px;
+      line-height: 1.6;
+    }
+
+    /* Search & Filter Station */
+    .control-station {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      margin-bottom: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .search-bar-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .search-box {
       position: relative;
       flex: 1;
     }
 
-    .search-input-wrapper input {
+    .search-box input {
       width: 100%;
-      background: rgba(10, 12, 16, 0.7);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-md);
-      padding: 12px 16px 12px 42px;
-      color: #fff;
-      font-size: 0.95rem;
+      background: var(--bg-base);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 11px 14px 11px 38px;
+      font-family: var(--font-sans);
+      font-size: 0.92rem;
+      color: var(--text-main);
       outline: none;
-      transition: border-color 0.2s;
+      transition: all 0.15s ease;
     }
 
-    .search-input-wrapper input:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+    .search-box input:focus {
+      border-color: var(--accent-spotlight);
+      background: var(--bg-surface);
+      box-shadow: 0 0 0 2px rgba(212, 255, 0, 0.15);
     }
 
-    .search-icon {
-      position: absolute;
-      left: 14px;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 1.1rem;
+    .search-box input::placeholder {
       color: var(--text-sub);
     }
 
-    /* Quick Filter Chips */
-    .filter-chips {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      overflow-x: auto;
-      padding-bottom: 4px;
-      scrollbar-width: none;
+    .search-icon-svg {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px;
+      height: 16px;
+      color: var(--text-sub);
+      pointer-events: none;
     }
 
-    .filter-chips::-webkit-scrollbar {
+    .clear-search-btn {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--text-sub);
+      cursor: pointer;
+      font-size: 0.8rem;
+      padding: 4px;
       display: none;
     }
 
-    .chip {
-      padding: 8px 16px;
-      border-radius: 999px;
-      border: 1px solid var(--border-color);
-      background: rgba(255, 255, 255, 0.04);
+    .clear-search-btn:hover {
+      color: var(--text-main);
+    }
+
+    /* Filter Chips Row */
+    .filter-group-container {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      border-top: 1px solid var(--border-subtle);
+      padding-top: 14px;
+    }
+
+    .primary-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .filter-chip {
+      appearance: none;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-base);
       color: var(--text-muted);
-      font-size: 0.85rem;
+      padding: 6px 12px;
+      border-radius: var(--radius-xs);
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
       font-weight: 600;
-      white-space: nowrap;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      user-select: none;
     }
 
-    .chip:hover {
-      background: rgba(255, 255, 255, 0.08);
-      color: #fff;
+    .filter-chip:hover {
+      background: var(--bg-elevated);
+      color: var(--text-main);
+      border-color: var(--border-medium);
     }
 
-    .chip.active {
-      background: var(--primary);
-      color: #fff;
-      border-color: var(--primary-glow);
-      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+    .filter-chip.active {
+      background: var(--text-main);
+      color: var(--bg-base);
+      border-color: var(--text-main);
+      font-weight: 700;
     }
 
-    .chip.active-free {
+    .filter-chip.chip-weekend.active {
+      background: var(--accent-spotlight);
+      color: var(--accent-spotlight-text);
+      border-color: var(--accent-spotlight);
+    }
+
+    .filter-chip.chip-free.active {
       background: var(--accent-free);
-      border-color: var(--accent-free);
       color: #fff;
-      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+      border-color: var(--accent-free);
     }
 
-    /* Venue Explorer Section */
-    .venue-section {
-      margin-bottom: 34px;
+    .filter-chip.chip-saved.active {
+      background: var(--accent-saved);
+      color: #000;
+      border-color: var(--accent-saved);
     }
 
-    .section-header {
+    .chip-counter {
+      font-size: 0.7rem;
+      opacity: 0.85;
+      font-weight: 700;
+    }
+
+    /* View Switcher Controls */
+    .view-controls {
+      display: inline-flex;
+      background: var(--bg-base);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-xs);
+      padding: 2px;
+      gap: 2px;
+    }
+
+    .view-toggle-btn {
+      background: none;
+      border: none;
+      color: var(--text-sub);
+      padding: 5px 10px;
+      border-radius: 2px;
+      font-size: 0.75rem;
+      font-family: var(--font-mono);
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.15s ease;
+    }
+
+    .view-toggle-btn:hover {
+      color: var(--text-main);
+    }
+
+    .view-toggle-btn.active {
+      background: var(--bg-elevated);
+      color: var(--accent-spotlight);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Venue Tape / Horizontal Strip */
+    .venue-showcase-section {
+      margin-bottom: 28px;
+    }
+
+    .sub-section-title {
+      font-family: var(--font-display);
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 14px;
     }
 
-    .section-header h2 {
-      font-size: 1.25rem;
-      font-weight: 800;
+    .venue-scroll-strip {
       display: flex;
-      align-items: center;
       gap: 8px;
-    }
-
-    .venues-scroll {
-      display: flex;
-      gap: 12px;
       overflow-x: auto;
       padding-bottom: 8px;
       scrollbar-width: thin;
+      scrollbar-color: var(--border-ticket) transparent;
     }
 
-    .venue-card {
+    .venue-scroll-strip::-webkit-scrollbar {
+      height: 4px;
+    }
+
+    .venue-scroll-strip::-webkit-scrollbar-thumb {
+      background: var(--border-ticket);
+      border-radius: 4px;
+    }
+
+    .venue-badge-card {
       flex: 0 0 auto;
-      min-width: 150px;
-      padding: 14px 16px;
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
       cursor: pointer;
-      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-      text-align: left;
+      transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 170px;
     }
 
-    .venue-card:hover {
-      transform: translateY(-3px);
-      border-color: var(--primary-glow);
-      background: var(--bg-card-hover);
+    .venue-badge-card:hover {
+      border-color: var(--border-medium);
+      background: var(--bg-elevated);
+      transform: translateY(-2px);
     }
 
-    .venue-card.selected {
-      border-color: var(--primary);
-      background: rgba(99, 102, 241, 0.15);
-      box-shadow: 0 0 0 2px var(--primary);
+    .venue-badge-card.active {
+      border-color: var(--accent-spotlight);
+      background: rgba(212, 255, 0, 0.05);
     }
 
-    .venue-card-name {
-      font-size: 0.9rem;
+    .venue-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .venue-name {
+      font-size: 0.88rem;
       font-weight: 700;
-      margin-bottom: 4px;
+      color: var(--text-main);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
-    .venue-card-city {
-      font-size: 0.75rem;
+    .venue-badge-card.active .venue-name {
+      color: var(--accent-spotlight);
+    }
+
+    .venue-count-tag {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text-muted);
+      padding: 1px 6px;
+      border-radius: 3px;
+    }
+
+    .venue-tagline {
+      font-size: 0.72rem;
+      color: var(--text-sub);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Grid Title & Active Filter Bar */
+    .results-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .results-count-title {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .active-filter-indicator {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
       color: var(--text-sub);
     }
 
-    .venue-card-count {
-      display: inline-block;
-      margin-top: 8px;
-      padding: 2px 8px;
-      background: rgba(255, 255, 255, 0.08);
-      border-radius: 999px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      color: var(--primary-glow);
-    }
-
-    /* Events Grid */
-    .events-grid {
+    /* ========================================================
+       VIEW MODE 1: POSTER GRID VIEW (海報卡片模式)
+       ======================================================== */
+    .events-grid-view {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 20px;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 22px;
     }
 
-    .event-card {
+    .ticket-card {
       background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-ticket);
+      border-radius: var(--radius-md);
       overflow: hidden;
       display: flex;
       flex-direction: column;
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
       box-shadow: var(--shadow-card);
     }
 
-    .event-card:hover {
+    .ticket-card:hover {
+      border-color: var(--border-strong);
       transform: translateY(-4px);
-      border-color: rgba(255, 255, 255, 0.2);
-      box-shadow: 0 16px 36px -10px rgba(0, 0, 0, 0.7);
+      box-shadow: var(--shadow-hover);
+      background: var(--bg-card-hover);
     }
 
-    .card-img-wrapper {
+    .ticket-card.is-hot-event {
+      border-color: rgba(255, 59, 48, 0.35);
+    }
+
+    /* Flyer Cover Header */
+    .card-flyer-header {
       position: relative;
       width: 100%;
-      height: 180px;
-      background: #1e2430;
+      height: 190px;
+      background: #181a22;
       overflow: hidden;
     }
 
-    .card-img {
+    .card-flyer-img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      transition: transform 0.4s ease;
+      transition: transform 0.35s ease;
+      filter: brightness(0.95);
     }
 
-    .event-card:hover .card-img {
-      transform: scale(1.05);
+    .ticket-card:hover .card-flyer-img {
+      transform: scale(1.03);
+      filter: brightness(1.02);
     }
 
-    .card-img-fallback {
+    .card-flyer-fallback {
       width: 100%;
       height: 100%;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      background: linear-gradient(135deg, #1e1b4b, #312e81);
-      color: var(--primary-glow);
-      font-size: 2.5rem;
+      background: #161822;
+      color: var(--text-sub);
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      letter-spacing: 0.05em;
+      gap: 6px;
     }
 
-    .price-pill {
+    /* Ticket Stamp Overlay */
+    .ticket-stamp-price {
       position: absolute;
       top: 12px;
       right: 12px;
-      padding: 4px 12px;
-      border-radius: 999px;
-      font-size: 0.75rem;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
       font-weight: 700;
+      padding: 3px 8px;
+      border-radius: var(--radius-xs);
+      background: rgba(13, 14, 18, 0.85);
       backdrop-filter: blur(8px);
+      border: 1px solid var(--border-medium);
+      color: var(--text-main);
+      text-transform: uppercase;
       letter-spacing: 0.02em;
     }
 
-    .price-pill.free {
-      background: rgba(16, 185, 129, 0.9);
+    .ticket-stamp-price.free {
+      background: var(--accent-free);
       color: #fff;
-      box-shadow: 0 2px 10px rgba(16, 185, 129, 0.5);
+      border-color: var(--accent-free);
     }
 
-    .price-pill.paid {
-      background: rgba(0, 0, 0, 0.65);
-      color: #e2e8f0;
-      border: 1px solid rgba(255, 255, 255, 0.15);
-    }
-
-    .date-pill {
+    .ticket-stamp-date {
       position: absolute;
-      bottom: 12px;
+      bottom: 10px;
       left: 12px;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      font-weight: 800;
+      background: rgba(13, 14, 18, 0.9);
+      border: 1px solid var(--border-medium);
+      color: var(--text-main);
       padding: 4px 10px;
-      border-radius: 8px;
-      background: rgba(0, 0, 0, 0.75);
-      color: #fff;
-      font-size: 0.8rem;
-      font-weight: 700;
-      backdrop-filter: blur(8px);
+      border-radius: var(--radius-xs);
+      letter-spacing: -0.01em;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
     }
 
-    .card-body {
-      padding: 18px;
+    .ticket-stamp-date.is-weekend {
+      border-color: var(--accent-spotlight);
+      color: var(--accent-spotlight);
+    }
+
+    /* Ticket Card Body */
+    .ticket-card-body {
+      padding: 16px 18px 18px;
       display: flex;
       flex-direction: column;
       flex: 1;
+      gap: 10px;
     }
 
-    .card-venue {
+    .venue-line {
       display: flex;
       align-items: center;
       gap: 6px;
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      margin-bottom: 6px;
-    }
-
-    .card-title {
-      font-size: 1.05rem;
-      font-weight: 800;
-      line-height: 1.4;
-      margin-bottom: 10px;
-      color: #fff;
-    }
-
-    .performers-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-bottom: 16px;
-      flex: 1;
-    }
-
-    .artist-tag {
-      padding: 2px 8px;
-      border-radius: 6px;
-      background: rgba(244, 63, 94, 0.12);
-      border: 1px solid rgba(244, 63, 94, 0.25);
-      color: #fb7185;
+      font-family: var(--font-mono);
       font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .venue-city-pill {
+      background: rgba(255, 255, 255, 0.07);
+      color: var(--text-main);
+      padding: 1px 6px;
+      border-radius: 3px;
+      font-size: 0.68rem;
       font-weight: 600;
     }
 
-    .card-actions {
+    .card-gig-title {
+      font-size: 1.05rem;
+      font-weight: 800;
+      line-height: 1.35;
+      color: var(--text-main);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      letter-spacing: -0.01em;
+    }
+
+    /* Artist / Lineup Chips */
+    .lineup-strip {
       display: flex;
-      gap: 8px;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 2px;
+      margin-bottom: 8px;
+      flex: 1;
+    }
+
+    .artist-chip {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      padding: 2px 7px;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .artist-chip:hover {
+      background: rgba(212, 255, 0, 0.1);
+      color: var(--accent-spotlight);
+      border-color: rgba(212, 255, 0, 0.3);
+    }
+
+    /* Ticket Footer & Actions */
+    .ticket-card-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding-top: 12px;
+      border-top: 1px dashed var(--border-ticket);
       margin-top: auto;
     }
 
-    .btn-ticket {
+    .btn-ticket-primary {
       flex: 1;
-      padding: 10px 14px;
-      border-radius: var(--radius-sm);
-      background: var(--primary);
-      color: #fff;
-      font-size: 0.85rem;
+      padding: 9px 12px;
+      border-radius: var(--radius-xs);
+      background: var(--text-main);
+      color: var(--bg-base);
+      font-size: 0.8rem;
       font-weight: 700;
-      text-align: center;
       text-decoration: none;
-      transition: background 0.2s;
+      text-align: center;
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
     }
 
-    .btn-ticket:hover {
-      background: var(--primary-glow);
+    .btn-ticket-primary:hover {
+      background: var(--accent-spotlight);
+      color: var(--accent-spotlight-text);
     }
 
-    .btn-copy {
-      padding: 10px 12px;
-      border-radius: var(--radius-sm);
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid var(--border-color);
+    .action-icon-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-xs);
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
       color: var(--text-muted);
       cursor: pointer;
-      font-size: 0.85rem;
-      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+      flex-shrink: 0;
     }
 
-    .btn-copy:hover {
-      background: rgba(255, 255, 255, 0.15);
-      color: #fff;
+    .action-icon-btn:hover {
+      background: var(--bg-elevated);
+      color: var(--text-main);
+      border-color: var(--border-medium);
     }
 
-    /* Toast Notification */
-    .toast {
-      position: fixed;
-      bottom: 24px;
-      left: 50%;
-      transform: translateX(-50%) translateY(100px);
-      background: #1e293b;
-      color: #fff;
-      padding: 12px 24px;
-      border-radius: 999px;
-      font-size: 0.9rem;
+    .action-icon-btn.is-saved {
+      color: var(--accent-saved);
+      border-color: var(--accent-saved);
+      background: rgba(255, 183, 3, 0.1);
+    }
+
+    /* ========================================================
+       VIEW MODE 2: TIMELINE / SCHEDULE VIEW (時間軸模式)
+       ======================================================== */
+    .events-timeline-view {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .timeline-date-group {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-ticket);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    }
+
+    .timeline-date-header {
+      background: var(--bg-elevated);
+      padding: 12px 18px;
+      border-bottom: 1px solid var(--border-ticket);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .timeline-date-title {
+      font-family: var(--font-mono);
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .timeline-date-title.is-weekend {
+      color: var(--accent-spotlight);
+    }
+
+    .timeline-count-badge {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--text-sub);
+    }
+
+    .timeline-item-list {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .timeline-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border-subtle);
+      transition: background 0.15s ease;
+    }
+
+    .timeline-row:last-child {
+      border-bottom: none;
+    }
+
+    .timeline-row:hover {
+      background: var(--bg-card-hover);
+    }
+
+    .timeline-time-col {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--text-sub);
+      width: 55px;
+      flex-shrink: 0;
       font-weight: 600;
-      border: 1px solid var(--primary);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-      z-index: 1000;
-      pointer-events: none;
     }
 
-    .toast.show {
-      transform: translateX(-50%) translateY(0);
+    .timeline-thumb-col {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-xs);
+      overflow: hidden;
+      flex-shrink: 0;
+      background: #1e222d;
+    }
+
+    .timeline-thumb-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .timeline-info-col {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .timeline-venue-meta {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--text-sub);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .timeline-event-name {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .timeline-performers-row {
+      display: flex;
+      gap: 4px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    .timeline-price-col {
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    .timeline-actions-col {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
     }
 
     /* Empty state */
-    .empty-state {
+    .empty-results {
       text-align: center;
       padding: 60px 20px;
+      background: var(--bg-surface);
+      border: 1px dashed var(--border-ticket);
+      border-radius: var(--radius-md);
+      margin-top: 10px;
+    }
+
+    .empty-results h3 {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      margin-bottom: 6px;
+      color: var(--text-main);
+    }
+
+    .empty-results p {
+      font-size: 0.85rem;
       color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    .btn-reset-filters {
+      background: var(--accent-spotlight);
+      color: var(--accent-spotlight-text);
+      border: none;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 0.8rem;
+      padding: 8px 16px;
+      border-radius: var(--radius-xs);
+      cursor: pointer;
+    }
+
+    /* Toast Notification (Snappy & Minimal) */
+    .toast-pill {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: #1d212c;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: var(--radius-xs);
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      font-weight: 600;
+      border: 1px solid var(--accent-spotlight);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 1000;
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .toast-pill.show {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border-subtle);
+      padding: 40px 20px;
+      background: var(--bg-base);
+      margin-top: 60px;
+    }
+
+    .footer-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .footer-left {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .footer-left p {
+      font-size: 0.8rem;
+      color: var(--text-sub);
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 14px;
+    }
+
+    .footer-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.82rem;
+      font-family: var(--font-mono);
+    }
+
+    .footer-links a:hover {
+      color: var(--accent-spotlight);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .nav-container {
+        padding: 10px 14px;
+      }
+      .brand-title {
+        font-size: 1rem;
+      }
+      main {
+        padding: 16px 14px 80px;
+      }
+      .hero-editorial {
+        padding: 16px 0 20px;
+      }
+      .events-grid-view {
+        grid-template-columns: 1fr;
+      }
+      .timeline-row {
+        gap: 10px;
+        padding: 12px 14px;
+      }
+      .timeline-thumb-col {
+        display: none;
+      }
+      .timeline-time-col {
+        width: 44px;
+        font-size: 0.72rem;
+      }
     }
   </style>
 </head>
 <body>
 
-  <!-- Top Header -->
+  <!-- Top Metadata Bar -->
+  <div class="top-meta-bar">
+    <div class="status-indicator">
+      <span class="status-dot"></span>
+      <span>全台 LIVEHOUSE & 音樂祭資料庫已就緒</span>
+    </div>
+    <div id="meta-update-time">資料更新：載入中...</div>
+  </div>
+
+  <!-- Header -->
   <header>
     <div class="nav-container">
-      <a href="#" class="brand-group" id="reset-home">
-        <div class="brand-badge">🎧</div>
-        <div class="brand-text">
-          <h1>你的聽團小聲音</h1>
-          <p>全台 Livehouse 展演空間與音樂祭地圖</p>
+      <div class="brand-block" id="nav-brand-reset" title="重設所有篩選並回首頁">
+        <span class="brand-stamp">GIG</span>
+        <div class="brand-titles">
+          <h1 class="brand-title">聽團小聲音</h1>
+          <span class="brand-subtitle">TAIWAN INDIE LIVE GUIDE</span>
         </div>
-      </a>
-      <a href="https://www.threads.net/@sky_silp" target="_blank" rel="noopener" class="threads-btn">
-        <span>追蹤 Threads</span>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.5 13.5c-.83.83-2.17 1.25-4 1.25-2.08 0-3.66-.58-4.75-1.75C6.66 13.83 6.12 12.08 6.12 9.75c0-2.33.54-4.08 1.63-5.25C8.84 3.33 10.42 2.75 12.5 2.75c1.83 0 3.17.42 4 1.25.83.83 1.25 2.17 1.25 4v1.5h-2.5v-1.5c0-.83-.17-1.33-.5-1.5-.33-.17-.83-.25-1.5-.25-.83 0-1.5.25-2 .75-.5.5-.75 1.42-.75 2.75s.25 2.25.75 2.75c.5.5 1.17.75 2 .75.67 0 1.17-.08 1.5-.25.33-.17.5-.67.5-1.5v-1.5h2.5v1.5c0 1.83-.42 3.17-1.25 4z"/></svg>
-      </a>
+      </div>
+
+      <div class="header-actions">
+        <button class="nav-btn" id="btn-toggle-saved" title="查看我儲存的想衝場次">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <span>想衝 (<span id="saved-counter-nav">0</span>)</span>
+        </button>
+
+        <a href="https://www.threads.net/@sky_silp" target="_blank" rel="noopener" class="nav-btn threads-link">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.5 13.5c-.83.83-2.17 1.25-4 1.25-2.08 0-3.66-.58-4.75-1.75C6.66 13.83 6.12 12.08 6.12 9.75c0-2.33.54-4.08 1.63-5.25C8.84 3.33 10.42 2.75 12.5 2.75c1.83 0 3.17.42 4 1.25.83.83 1.25 2.17 1.25 4v1.5h-2.5v-1.5c0-.83-.17-1.33-.5-1.5-.33-.17-.83-.25-1.5-.25-.83 0-1.5.25-2 .75-.5.5-.75 1.42-.75 2.75s.25 2.25.75 2.75c.5.5 1.17.75 2 .75.67 0 1.17-.08 1.5-.25.33-.17.5-.67.5-1.5v-1.5h2.5v1.5c0 1.83-.42 3.17-1.25 4z"/></svg>
+          <span>@sky_silp</span>
+        </a>
+      </div>
     </div>
   </header>
 
   <main>
-    <!-- Hero Banner -->
-    <section class="hero-section">
-      <div class="hero-pill">✨ 2026 全台最新聽團日曆</div>
-      <h2 class="hero-title">探索你身邊的 <span>Livehouse 現場</span></h2>
-      <p class="hero-desc">不必在文字流水帳裡大海撈針。依展演空間、免費場次或卡司名單秒查本週演出！</p>
+    <!-- Editorial Curation Hero -->
+    <section class="hero-editorial">
+      <div class="hero-top-row">
+        <div class="hero-badge-row">
+          <span class="issue-tag">LIVEHOUSE CURATION</span>
+          <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-sub);">// 週報整合現場索引</span>
+        </div>
+      </div>
+      <h2 class="hero-heading">探索身邊的 <span class="spotlight-text">現場音浪</span></h2>
+      <p class="hero-curation-text">
+        告別社群上雜亂的純文字流水帳。無論是週末想去 Revolver 喝杯生啤聽龐克、在 The Wall 沉入地下音牆，或是衝一場熱血戶外音樂祭，一鍵依日期、場館與卡司秒查！
+      </p>
     </section>
 
-    <!-- Search & Filters -->
-    <section class="controls-container">
-      <div class="search-row">
-        <div class="search-input-wrapper">
-          <span class="search-icon">🔍</span>
-          <input type="text" id="search-input" placeholder="搜尋樂團、卡司、活動名稱或場地（例如：美秀集團、Legacy、免費）..." />
+    <!-- Search & Filter Station -->
+    <section class="control-station">
+      <!-- Search Input -->
+      <div class="search-bar-row">
+        <div class="search-box">
+          <svg class="search-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="search-input" placeholder="快速搜尋樂團、卡司名單、場館或關鍵字（如：美秀集團、Legacy、免費）..." autocomplete="off" />
+          <button class="clear-search-btn" id="btn-clear-search">✕</button>
         </div>
       </div>
 
-      <!-- Quick Filter Chips -->
-      <div class="filter-chips">
-        <button class="chip active" data-filter="all">全部演出 (<span id="count-all">0</span>)</button>
-        <button class="chip" data-filter="free">✨ 完全免費 (<span id="count-free">0</span>)</button>
-        <button class="chip" data-filter="hot">🔥 熱門焦點 / 音樂節 (<span id="count-hot">0</span>)</button>
-        <button class="chip" data-filter="region-north">雙北與北部</button>
-        <button class="chip" data-filter="region-central">中部</button>
-        <button class="chip" data-filter="region-south">南部</button>
+      <!-- Filter Controls & View Switcher -->
+      <div class="filter-group-container">
+        <!-- Category & Quick Time Filters -->
+        <div class="primary-filters">
+          <button class="filter-chip active" data-filter="all">
+            全部 (<span class="chip-counter" id="count-all">0</span>)
+          </button>
+          <button class="filter-chip chip-weekend" data-filter="weekend" title="只看週五、週六、週日場次">
+            ⚡ 本週末衝哪場 (<span class="chip-counter" id="count-weekend">0</span>)
+          </button>
+          <button class="filter-chip chip-free" data-filter="free">
+            ✨ 完全免費 (<span class="chip-counter" id="count-free">0</span>)
+          </button>
+          <button class="filter-chip" data-filter="hot">
+            🔥 音樂節 / 焦點 (<span class="chip-counter" id="count-hot">0</span>)
+          </button>
+          <button class="filter-chip chip-saved" data-filter="saved" id="chip-filter-saved">
+            ⭐ 想衝清單 (<span class="chip-counter" id="count-saved">0</span>)
+          </button>
+          <button class="filter-chip" data-filter="region-north">雙北/北部</button>
+          <button class="filter-chip" data-filter="region-central">中部</button>
+          <button class="filter-chip" data-filter="region-south">南部</button>
+        </div>
+
+        <!-- View Switcher (Poster Grid vs Timeline Schedule) -->
+        <div class="view-controls">
+          <button class="view-toggle-btn active" id="btn-view-grid" title="海報畫廊視角">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M3 3h8v8H3V3zm10 0h8v8h-8V3zM3 13h8v8H3v-8zm10 0h8v8h-8v-8z"/></svg>
+            <span>畫廊</span>
+          </button>
+          <button class="view-toggle-btn" id="btn-view-timeline" title="時間軸日程視角">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M3 4h18v2H3V4zm0 7h18v2H3v-2zm0 7h18v2H3v-2z"/></svg>
+            <span>時間軸</span>
+          </button>
+        </div>
       </div>
     </section>
 
-    <!-- Top Venues Explorer -->
-    <section class="venue-section">
-      <div class="section-header">
-        <h2>🏛️ 依照展演空間探索</h2>
-        <span style="font-size: 0.8rem; color: var(--text-sub);">點擊空間即時篩選</span>
+    <!-- Venue Explorer Strip -->
+    <section class="venue-showcase-section">
+      <div class="sub-section-title">
+        <span>依知名展演空間鎖定</span>
+        <span id="venue-reset-indicator" style="display: none; font-size: 0.72rem; color: var(--accent-spotlight); cursor: pointer;">[清除場館篩選]</span>
       </div>
-      <div class="venues-scroll" id="venues-container">
+      <div class="venue-scroll-strip" id="venue-strip-container">
         <!-- Rendered by JS -->
       </div>
     </section>
 
-    <!-- Event Cards Grid -->
+    <!-- Results Status Header -->
     <section>
-      <div class="section-header">
-        <h2 id="grid-title">🎸 近期音樂活動 (載入中...)</h2>
+      <div class="results-header">
+        <h3 class="results-count-title" id="results-headline">全台音樂演出現場</h3>
+        <div class="active-filter-indicator" id="filter-status-desc">目前顯示：全部演出</div>
       </div>
-      <div class="events-grid" id="events-grid">
+
+      <!-- Container: Poster Grid View -->
+      <div class="events-grid-view" id="view-grid-container">
         <!-- Rendered by JS -->
       </div>
-      <div class="empty-state" id="empty-state" style="display: none;">
-        <h3>查無符合條件的活動 😢</h3>
-        <p style="margin-top: 8px;">試著清除關鍵字或選擇其他展演空間！</p>
+
+      <!-- Container: Timeline View (Hidden by default) -->
+      <div class="events-timeline-view" id="view-timeline-container" style="display: none;">
+        <!-- Rendered by JS -->
+      </div>
+
+      <!-- Empty State -->
+      <div class="empty-results" id="empty-results-box" style="display: none;">
+        <h3>查無符合篩選的現場活動</h3>
+        <p>可以試著放寬搜尋關鍵字、切換其他展演空間或取消特定標籤。</p>
+        <button class="btn-reset-filters" id="btn-reset-all">重設所有條件</button>
       </div>
     </section>
   </main>
 
-  <div class="toast" id="toast">已複製演出資訊與標記好友格式！</div>
+  <!-- Snappy Toast -->
+  <div class="toast-pill" id="toast-pill">已複製演出資訊與標記格式</div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-left">
+        <strong style="color: var(--text-main); font-family: var(--font-display);">聽團小聲音 · 台灣 Livehouse 現場指南</strong>
+        <p>串接 StreetVoice、KKTIX、iNDIEVOX、tixCraft 等全台售票與獨立音樂數據，每週即時更新。</p>
+      </div>
+      <div class="footer-links">
+        <a href="https://www.threads.net/@sky_silp" target="_blank" rel="noopener">Threads 策展</a>
+        <a href="https://github.com/Hans-coder/Smallseedsvoice" target="_blank" rel="noopener">GitHub</a>
+      </div>
+    </div>
+  </footer>
 
   <script>
+    // State Management
     let allEvents = [];
     let topVenues = [];
     let activeFilter = 'all';
     let selectedVenueId = null;
     let searchQuery = '';
+    let currentViewMode = 'grid'; // 'grid' | 'timeline'
+    let savedEventIds = new Set();
 
-    const weekdayMap = ['週日', '週一', '週二', '週三', '週四', '週五', '週六'];
+    const weekdayShort = ['週日', '週一', '週二', '週三', '週四', '週五', '週六'];
 
-    async function loadData() {
+    // Culture Vibe Dictionary for Venues
+    const venueCultureMap = {
+      'the_wall': { tagline: '公館地下傳奇基地', vibe: '地下搖滾聖地' },
+      'revolver': { tagline: '中正・英式街頭酒館', vibe: '生啤與龐克音牆' },
+      'legacy_tpe': { tagline: '華山旗艦專場空間', vibe: '專場指標' },
+      'legacy_mini': { tagline: '西門精緻不插電空間', vibe: '私密近距離' },
+      'legacy_tc': { tagline: '台中專場地標', vibe: '中部核心' },
+      'riverside': { tagline: '西門紅樓・創作搖籃', vibe: '經典傳承' },
+      'pipe': { tagline: '公館水岸・抽水機房', vibe: '水岸派對' },
+      'zepp': { tagline: '新莊宏匯・日系頂規', vibe: '頂級音場' },
+      'live_warehouse': { tagline: '高雄港邊倉庫', vibe: '南方聽團基地' },
+      'paramount': { tagline: '高雄獨立龐克酒館', vibe: '南方地下核心' },
+      'kpm': { tagline: '真愛碼頭・國際港灣', vibe: '高流海音館' },
+      'taipei_arena': { tagline: '萬人體育館與北流', vibe: '殿堂級舞台' },
+      'clapper': { tagline: '三創生活・科技聲光', vibe: '中型展演館' },
+      'corridor': { tagline: '台中老字號獨立搖滾', vibe: '台中現場' },
+      'tiehua': { tagline: '台東慢市集與草地', vibe: '東岸原聲' }
+    };
+
+    // Load Saved from LocalStorage
+    function initSavedState() {
       try {
-        const res = await fetch('data/events.json');
+        const stored = localStorage.getItem('smallseeds_saved_events');
+        if (stored) {
+          savedEventIds = new Set(JSON.parse(stored));
+        }
+      } catch (err) {
+        console.warn('LocalStorage error:', err);
+      }
+      updateSavedCounters();
+    }
+
+    function toggleSaveEvent(eventId, ev) {
+      if (ev) ev.stopPropagation();
+      if (savedEventIds.has(eventId)) {
+        savedEventIds.delete(eventId);
+        showToast('已從想衝清單移除');
+      } else {
+        savedEventIds.add(eventId);
+        showToast('已加入想衝清單 ⭐');
+      }
+      try {
+        localStorage.setItem('smallseeds_saved_events', JSON.stringify([...savedEventIds]));
+      } catch (err) {}
+      updateSavedCounters();
+      renderActiveView();
+    }
+
+    function updateSavedCounters() {
+      const count = savedEventIds.size;
+      const navEl = document.getElementById('saved-counter-nav');
+      const chipEl = document.getElementById('count-saved');
+      if (navEl) navEl.textContent = count;
+      if (chipEl) chipEl.textContent = count;
+    }
+
+    // Helper: Is Date a Weekend (Fri, Sat, Sun)?
+    function isWeekendDate(dateStr) {
+      if (!dateStr) return false;
+      const dt = new Date(dateStr.replace(/-/g, '/'));
+      if (isNaN(dt.getTime())) return false;
+      const day = dt.getDay();
+      return day === 5 || day === 6 || day === 0; // Friday, Saturday, Sunday
+    }
+
+    // Fetch and Initialize Data
+    async function loadData() {
+      initSavedState();
+      try {
+        const res = await fetch('data/events.json?v=' + Date.now());
         const data = await res.json();
         allEvents = data.events || [];
         topVenues = data.top_venues || [];
 
-        // Update counts
-        document.getElementById('count-all').textContent = data.total_events || allEvents.length;
-        document.getElementById('count-free').textContent = data.total_free || 0;
-        document.getElementById('count-hot').textContent = data.total_hot || 0;
+        // Meta stats
+        const updateTimeEl = document.getElementById('meta-update-time');
+        if (data.updated_at && updateTimeEl) {
+          updateTimeEl.textContent = `資料更新：${data.updated_at.split(' ')[0]}`;
+        }
 
-        renderVenues();
-        renderEvents();
+        // Count totals
+        const totalWeekend = allEvents.filter(e => isWeekendDate(e.date)).length;
+        document.getElementById('count-all').textContent = allEvents.length;
+        document.getElementById('count-weekend').textContent = totalWeekend;
+        document.getElementById('count-free').textContent = data.total_free || allEvents.filter(e => e.is_free).length;
+        document.getElementById('count-hot').textContent = data.total_hot || allEvents.filter(e => e.is_hot).length;
+
+        renderVenueStrip();
+        renderActiveView();
       } catch (err) {
         console.error('Failed to load events data:', err);
-        document.getElementById('grid-title').textContent = '⚠️ 無法載入活動資料，請確認 data/events.json';
+        document.getElementById('results-headline').textContent = '⚠️ 無法載入活動資料，請稍後重試';
       }
     }
 
-    function renderVenues() {
-      const container = document.getElementById('venues-container');
+    // Render Venue Quick Strip
+    function renderVenueStrip() {
+      const container = document.getElementById('venue-strip-container');
       container.innerHTML = '';
 
       topVenues.forEach(v => {
+        const culture = venueCultureMap[v.id] || { tagline: v.tagline || `${v.city || ''} 展演空間`, vibe: v.vibe || '' };
         const card = document.createElement('div');
-        card.className = `venue-card ${selectedVenueId === v.id ? 'selected' : ''}`;
-        card.onclick = () => toggleVenue(v.id);
+        card.className = `venue-badge-card ${selectedVenueId === v.id ? 'active' : ''}`;
+        card.onclick = () => toggleVenueFilter(v.id);
         card.innerHTML = `
-          <div class="venue-card-name">${v.name}</div>
-          <div class="venue-card-city">${v.city || '展演空間'}</div>
-          <span class="venue-card-count">${v.count} 場演出</span>
+          <div class="venue-header-row">
+            <span class="venue-name">${v.name}</span>
+            <span class="venue-count-tag">${v.count}</span>
+          </div>
+          <span class="venue-tagline">${culture.tagline}</span>
         `;
         container.appendChild(card);
       });
     }
 
-    function toggleVenue(venueId) {
+    function toggleVenueFilter(venueId) {
       if (selectedVenueId === venueId) {
         selectedVenueId = null;
+        document.getElementById('venue-reset-indicator').style.display = 'none';
       } else {
         selectedVenueId = venueId;
+        document.getElementById('venue-reset-indicator').style.display = 'inline';
       }
-      renderVenues();
-      renderEvents();
+      renderVenueStrip();
+      renderActiveView();
     }
 
-    function renderEvents() {
-      const grid = document.getElementById('events-grid');
-      const emptyState = document.getElementById('empty-state');
-      const title = document.getElementById('grid-title');
-
-      let filtered = allEvents.filter(e => {
+    // Filter Logic
+    function getFilteredEvents() {
+      return allEvents.filter(e => {
         // Venue filter
         if (selectedVenueId && e.venue_id !== selectedVenueId) {
           return false;
         }
 
-        // Quick filter
+        // Quick Category Filters
+        if (activeFilter === 'weekend' && !isWeekendDate(e.date)) return false;
         if (activeFilter === 'free' && !e.is_free) return false;
         if (activeFilter === 'hot' && !e.is_hot) return false;
+        if (activeFilter === 'saved' && !savedEventIds.has(e.id)) return false;
         if (activeFilter === 'region-north' && e.region !== '雙北與北部') return false;
         if (activeFilter === 'region-central' && e.region !== '中部') return false;
         if (activeFilter === 'region-south' && e.region !== '南部') return false;
@@ -716,56 +1423,116 @@
 
         return true;
       });
+    }
 
-      title.textContent = `🎸 本期活動（共 ${filtered.length} 場）`;
+    // Main Render Switcher
+    function renderActiveView() {
+      const filtered = getFilteredEvents();
+      const emptyBox = document.getElementById('empty-results-box');
+      const gridContainer = document.getElementById('view-grid-container');
+      const timelineContainer = document.getElementById('view-timeline-container');
+      const headline = document.getElementById('results-headline');
+      const desc = document.getElementById('filter-status-desc');
+
+      // Update status copy
+      let filterName = '全部演出';
+      if (activeFilter === 'weekend') filterName = '⚡ 本週末場次 (五/六/日)';
+      else if (activeFilter === 'free') filterName = '✨ 免費入場專區';
+      else if (activeFilter === 'hot') filterName = '🔥 音樂節與焦點專場';
+      else if (activeFilter === 'saved') filterName = '⭐ 我的想衝清單';
+      else if (activeFilter.startsWith('region-')) filterName = '📍 區域篩選';
+      if (selectedVenueId) {
+        const vObj = topVenues.find(v => v.id === selectedVenueId);
+        filterName += ` · ${vObj ? vObj.name : '指定場館'}`;
+      }
+      if (searchQuery) {
+        filterName += ` · 包含關鍵字「${searchQuery}」`;
+      }
+
+      headline.textContent = `音樂現場（共 ${filtered.length} 場）`;
+      desc.textContent = `目前顯示：${filterName}`;
 
       if (filtered.length === 0) {
-        grid.innerHTML = '';
-        emptyState.style.display = 'block';
+        gridContainer.style.display = 'none';
+        timelineContainer.style.display = 'none';
+        emptyBox.style.display = 'block';
         return;
       }
 
-      emptyState.style.display = 'none';
-      grid.innerHTML = filtered.map(e => {
-        let dateDisplay = e.date;
+      emptyBox.style.display = 'none';
+
+      if (currentViewMode === 'grid') {
+        gridContainer.style.display = 'grid';
+        timelineContainer.style.display = 'none';
+        renderGridView(filtered);
+      } else {
+        gridContainer.style.display = 'none';
+        timelineContainer.style.display = 'flex';
+        renderTimelineView(filtered);
+      }
+    }
+
+    // Render 1: Poster Grid View
+    function renderGridView(events) {
+      const grid = document.getElementById('view-grid-container');
+      grid.innerHTML = events.map(e => {
+        const isWeekend = isWeekendDate(e.date);
+        const isSaved = savedEventIds.has(e.id);
+        
+        let dateFormatted = e.date;
         if (e.date) {
-          const dt = new Date(e.date);
-          if (!isNaN(dt)) {
-            dateDisplay = `${e.date} (${weekdayMap[dt.getDay()]})`;
+          const dt = new Date(e.date.replace(/-/g, '/'));
+          if (!isNaN(dt.getTime())) {
+            dateFormatted = `${e.date} · ${weekdayShort[dt.getDay()]}`;
           }
         }
 
         const priceBadgeClass = e.is_free ? 'free' : 'paid';
-        const priceBadgeText = e.is_free ? '✨ 免費入場' : (e.price || '售票');
+        const priceBadgeText = e.is_free ? 'FREE ENTRY' : (e.price || '售票');
 
         const imageHtml = e.image_url 
-          ? `<img src="${e.image_url}" alt="${e.title}" class="card-img" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\\'card-img-fallback\\'>🎸</div>'">`
-          : `<div class="card-img-fallback">🎸</div>`;
+          ? `<img src="${e.image_url}" alt="${e.title}" class="card-flyer-img" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\\'card-flyer-fallback\\'><span>LIVE MUSIC</span><span style=\\'font-size:0.65rem\\'>${e.venue}</span></div>'">`
+          : `<div class="card-flyer-fallback"><span>LIVE MUSIC</span><span style="font-size:0.65rem">${e.venue}</span></div>`;
 
         const performersHtml = (e.performers && e.performers.length > 0)
-          ? e.performers.slice(0, 6).map(p => `<span class="artist-tag">♥︎ ${p}</span>`).join('')
+          ? e.performers.slice(0, 5).map(p => `<span class="artist-chip" onclick="searchPerformer('${p}', event)">${p}</span>`).join('')
           : '';
 
+        const hotClass = e.is_hot ? 'is-hot-event' : '';
+
         return `
-          <div class="event-card">
-            <div class="card-img-wrapper">
+          <div class="ticket-card ${hotClass}">
+            <div class="card-flyer-header">
               ${imageHtml}
-              <span class="price-pill ${priceBadgeClass}">${priceBadgeText}</span>
-              <span class="date-pill">${dateDisplay}</span>
+              <span class="ticket-stamp-price ${priceBadgeClass}">${priceBadgeText}</span>
+              <span class="ticket-stamp-date ${isWeekend ? 'is-weekend' : ''}">${dateFormatted}</span>
             </div>
-            <div class="card-body">
-              <div class="card-venue">
-                <span>📍</span>
-                <span>[${e.city}] ${e.venue}</span>
+            <div class="ticket-card-body">
+              <div class="venue-line">
+                <span class="venue-city-pill">${e.city || '全台'}</span>
+                <span>${e.venue}</span>
               </div>
-              <h3 class="card-title">${e.title}</h3>
-              <div class="performers-tags">
+              <h4 class="card-gig-title" title="${e.title}">${e.title}</h4>
+              <div class="lineup-strip">
                 ${performersHtml}
               </div>
-              <div class="card-actions">
-                ${e.ticket_url ? `<a href="${e.ticket_url}" target="_blank" rel="noopener" class="btn-ticket">🎟️ 前往購票 / 官方</a>` : ''}
-                <button class="btn-copy" onclick="copyEventShare('${encodeURIComponent(JSON.stringify(e))}')" title="複製標記好友文字">
-                  📋 複製
+              <div class="ticket-card-actions">
+                ${e.ticket_url ? `
+                  <a href="${e.ticket_url}" target="_blank" rel="noopener" class="btn-ticket-primary">
+                    <span>購票 / 官方詳情</span>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17l9.2-9.2M17 17V8H8"/></svg>
+                  </a>
+                ` : `
+                  <span class="btn-ticket-primary" style="opacity:0.6; cursor:default;">現場入場</span>
+                `}
+                <button class="action-icon-btn ${isSaved ? 'is-saved' : ''}" onclick="toggleSaveEvent('${e.id}', event)" title="${isSaved ? '已收藏' : '加入想衝清單'}">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="${isSaved ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                </button>
+                <button class="action-icon-btn" onclick="addToCalendar('${encodeURIComponent(JSON.stringify(e))}', event)" title="加到行事曆 (Google / iCal)">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                </button>
+                <button class="action-icon-btn" onclick="copyEventShare('${encodeURIComponent(JSON.stringify(e))}', event)" title="複製標記好友文字">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
                 </button>
               </div>
             </div>
@@ -774,18 +1541,140 @@
       }).join('');
     }
 
-    function copyEventShare(encodedJson) {
+    // Render 2: Timeline Schedule View (Grouped by Date)
+    function renderTimelineView(events) {
+      const container = document.getElementById('view-timeline-container');
+      
+      // Group by Date
+      const groups = {};
+      events.forEach(e => {
+        const d = e.date || '未定日期';
+        if (!groups[d]) groups[d] = [];
+        groups[d].push(e);
+      });
+
+      const sortedDates = Object.keys(groups).sort();
+
+      container.innerHTML = sortedDates.map(dateKey => {
+        const dateEvents = groups[dateKey];
+        const isWeekend = isWeekendDate(dateKey);
+        
+        let headerLabel = dateKey;
+        if (dateKey !== '未定日期') {
+          const dt = new Date(dateKey.replace(/-/g, '/'));
+          if (!isNaN(dt.getTime())) {
+            headerLabel = `${dateKey} (${weekdayShort[dt.getDay()]})`;
+          }
+        }
+
+        const rowsHtml = dateEvents.map(e => {
+          const isSaved = savedEventIds.has(e.id);
+          const thumbHtml = e.image_url 
+            ? `<img src="${e.image_url}" class="timeline-thumb-img" loading="lazy" onerror="this.style.display='none'">` 
+            : '';
+          const performersText = (e.performers && e.performers.length) ? e.performers.slice(0, 4).join(' · ') : '';
+
+          return `
+            <div class="timeline-row">
+              <div class="timeline-time-col">${e.time || '19:30'}</div>
+              <div class="timeline-thumb-col">${thumbHtml}</div>
+              <div class="timeline-info-col">
+                <div class="timeline-venue-meta">
+                  <span class="venue-city-pill">${e.city || '全台'}</span>
+                  <span>${e.venue}</span>
+                  ${e.is_free ? '<span style="color:var(--accent-free); font-weight:700;">[免費]</span>' : ''}
+                </div>
+                <div class="timeline-event-name" title="${e.title}">${e.title}</div>
+                ${performersText ? `<div class="timeline-performers-row">${performersText}</div>` : ''}
+              </div>
+              <div class="timeline-price-col">
+                <span style="font-family:var(--font-mono); font-size:0.75rem; color:var(--text-muted);">${e.is_free ? '免費' : (e.price || '售票')}</span>
+              </div>
+              <div class="timeline-actions-col">
+                ${e.ticket_url ? `
+                  <a href="${e.ticket_url}" target="_blank" rel="noopener" class="action-icon-btn" title="前往購票">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17l9.2-9.2M17 17V8H8"/></svg>
+                  </a>
+                ` : ''}
+                <button class="action-icon-btn ${isSaved ? 'is-saved' : ''}" onclick="toggleSaveEvent('${e.id}', event)" title="收藏">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="${isSaved ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                </button>
+                <button class="action-icon-btn" onclick="addToCalendar('${encodeURIComponent(JSON.stringify(e))}', event)" title="加到日曆">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/></svg>
+                </button>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        return `
+          <div class="timeline-date-group">
+            <div class="timeline-date-header">
+              <div class="timeline-date-title ${isWeekend ? 'is-weekend' : ''}">
+                <span>${headerLabel}</span>
+                ${isWeekend ? '<span style="font-size:0.7rem; background:rgba(212,255,0,0.1); padding:2px 6px; border-radius:3px;">WEEKEND</span>' : ''}
+              </div>
+              <span class="timeline-count-badge">${dateEvents.length} 場演出</span>
+            </div>
+            <div class="timeline-item-list">
+              ${rowsHtml}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Helper: Search By Artist
+    function searchPerformer(artistName, ev) {
+      if (ev) ev.stopPropagation();
+      document.getElementById('search-input').value = artistName;
+      searchQuery = artistName;
+      document.getElementById('btn-clear-search').style.display = 'block';
+      renderActiveView();
+      window.scrollTo({ top: 280, behavior: 'smooth' });
+    }
+
+    // Add to Google Calendar / .ics File
+    function addToCalendar(encodedJson, ev) {
+      if (ev) ev.stopPropagation();
+      try {
+        const e = JSON.parse(decodeURIComponent(encodedJson));
+        const dateStr = (e.date || '').replace(/-/g, '');
+        if (!dateStr || dateStr.length !== 8) {
+          showToast('此活動日期格式不支援自動日曆加入');
+          return;
+        }
+
+        // Format: YYYYMMDD
+        const startIso = `${dateStr}T113000Z`; // Default UTC approximation
+        const endIso = `${dateStr}T143000Z`;
+        const title = encodeURIComponent(`[聽團] ${e.title}`);
+        const location = encodeURIComponent(`${e.venue} (${e.city})`);
+        const details = encodeURIComponent(`活動資訊：${e.title}\n場地：${e.venue}\n售票/官方連結：${e.ticket_url || '無'}\n來源：聽團小聲音`);
+
+        // Direct Google Calendar Web Link
+        const gcalUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${startIso}/${endIso}&details=${details}&location=${location}`;
+        window.open(gcalUrl, '_blank');
+        showToast('已開啟 Google 日曆建立行程 📅');
+      } catch (err) {
+        console.error('Add to calendar error:', err);
+      }
+    }
+
+    // Copy formatted text for Threads / Friends
+    function copyEventShare(encodedJson, ev) {
+      if (ev) ev.stopPropagation();
       try {
         const e = JSON.parse(decodeURIComponent(encodedJson));
         const performersText = (e.performers && e.performers.length) ? e.performers.map(p => `♥︎${p}`).join(' ') : '';
-        const text = `⚑ ${e.date} 《${e.title}》（${e.is_free ? '免費' : '售票'}）\n`
+        const text = `⚑ ${e.date} 《${e.title}》（${e.is_free ? '免費入場' : '售票'}）\n`
           + (performersText ? `➤ 卡司：${performersText}\n` : '')
-          + `❑ 地點：[${e.city}] ${e.venue} ❑\n`
-          + `💬 快 @ 你的聽團朋友一起衝！現場見 🔥\n`
-          + `🔗 完整展演空間地圖：https://threads.net/@sky_silp`;
+          + `❑ 地點：[${e.city}] ${e.venue}\n`
+          + `💬 快標記聽團朋朋一起衝現場！\n`
+          + `🔗 完整聽團地圖與購票：https://hans-coder.github.io/Smallseedsvoice/`;
 
         navigator.clipboard.writeText(text).then(() => {
-          showToast('已複製演出資訊與標記格式！可直接貼到 Threads 💬');
+          showToast('已複製演出資訊與標記格式！可直接貼上 Threads / LINE 💬');
         });
       } catch (err) {
         console.error('Copy failed:', err);
@@ -793,44 +1682,103 @@
     }
 
     function showToast(msg) {
-      const toast = document.getElementById('toast');
+      const toast = document.getElementById('toast-pill');
       toast.textContent = msg;
       toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 2500);
+      setTimeout(() => toast.classList.remove('show'), 2400);
     }
 
-    // Setup Event Listeners
-    document.querySelectorAll('.chip').forEach(btn => {
+    // Event Listeners Setup
+    document.querySelectorAll('.filter-chip').forEach(btn => {
       btn.addEventListener('click', () => {
-        document.querySelectorAll('.chip').forEach(c => c.classList.remove('active', 'active-free'));
-        if (btn.dataset.filter === 'free') {
-          btn.classList.add('active-free');
-        } else {
-          btn.classList.add('active');
-        }
+        document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+        btn.classList.add('active');
         activeFilter = btn.dataset.filter;
-        renderEvents();
+        renderActiveView();
       });
     });
 
-    document.getElementById('search-input').addEventListener('input', (e) => {
-      searchQuery = e.target.value.trim();
-      renderEvents();
+    // View Switcher Buttons
+    document.getElementById('btn-view-grid').addEventListener('click', () => {
+      currentViewMode = 'grid';
+      document.getElementById('btn-view-grid').classList.add('active');
+      document.getElementById('btn-view-timeline').classList.remove('active');
+      renderActiveView();
     });
 
-    document.getElementById('reset-home').addEventListener('click', (e) => {
-      e.preventDefault();
+    document.getElementById('btn-view-timeline').addEventListener('click', () => {
+      currentViewMode = 'timeline';
+      document.getElementById('btn-view-timeline').classList.add('active');
+      document.getElementById('btn-view-grid').classList.remove('active');
+      renderActiveView();
+    });
+
+    // Search Listeners
+    const searchInput = document.getElementById('search-input');
+    const clearBtn = document.getElementById('btn-clear-search');
+
+    searchInput.addEventListener('input', (e) => {
+      searchQuery = e.target.value.trim();
+      clearBtn.style.display = searchQuery ? 'block' : 'none';
+      renderActiveView();
+    });
+
+    clearBtn.addEventListener('click', () => {
+      searchInput.value = '';
+      searchQuery = '';
+      clearBtn.style.display = 'none';
+      renderActiveView();
+    });
+
+    // Reset Handlers
+    function resetAllFilters() {
       selectedVenueId = null;
       searchQuery = '';
       activeFilter = 'all';
-      document.getElementById('search-input').value = '';
-      document.querySelectorAll('.chip').forEach(c => c.classList.remove('active', 'active-free'));
-      document.querySelector('.chip[data-filter="all"]').classList.add('active');
-      renderVenues();
-      renderEvents();
+      searchInput.value = '';
+      clearBtn.style.display = 'none';
+      document.getElementById('venue-reset-indicator').style.display = 'none';
+      document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+      document.querySelector('.filter-chip[data-filter="all"]').classList.add('active');
+      renderVenueStrip();
+      renderActiveView();
+    }
+
+    document.getElementById('nav-brand-reset').addEventListener('click', (e) => {
+      e.preventDefault();
+      resetAllFilters();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     });
 
-    // Initial load
+    document.getElementById('venue-reset-indicator').addEventListener('click', () => {
+      selectedVenueId = null;
+      document.getElementById('venue-reset-indicator').style.display = 'none';
+      renderVenueStrip();
+      renderActiveView();
+    });
+
+    document.getElementById('btn-reset-all').addEventListener('click', resetAllFilters);
+
+    document.getElementById('btn-toggle-saved').addEventListener('click', () => {
+      document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+      const savedChip = document.getElementById('chip-filter-saved');
+      savedChip.classList.add('active');
+      activeFilter = 'saved';
+      renderActiveView();
+      window.scrollTo({ top: 260, behavior: 'smooth' });
+    });
+
+    // Keyboard Shortcuts (/ to search, Esc to clear)
+    window.addEventListener('keydown', (e) => {
+      if (e.key === '/' && document.activeElement !== searchInput) {
+        e.preventDefault();
+        searchInput.focus();
+      } else if (e.key === 'Escape' && document.activeElement === searchInput) {
+        searchInput.blur();
+      }
+    });
+
+    // Run Initial Load
     loadData();
   </script>
 </body>
