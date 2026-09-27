@@ -24,7 +24,7 @@ This project automates the curation and posting of Taiwan music event informatio
    專案擺脫冰冷機器人純文字流水帳，採用**三維策展發文矩陣**：
 
    - **模式 A：單場爆款焦點 (Spotlight Post)**（重點衝流量與收藏數）：
-     針對「免費音樂祭」、「大型焦點演出」發布單篇精緻圖文（參考 `@sky_silp` 格式）。
+     針對「免費音樂祭」、「大型焦點演出」發布單篇精緻圖文（參考 `@smallseedsvoice` 格式）。
      ```text
      ⚑ 2026/10/02㊄ 18:00 《浪人祭前夜祭》（免費）
 
