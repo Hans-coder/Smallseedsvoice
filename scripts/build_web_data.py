@@ -171,5 +171,31 @@ def build_data():
 
     print(f"成功輸出 Web 資料庫: {out_file} (共 {len(normalized_events)} 場活動，{len(top_venues)} 個知名展演空間)")
 
+    # 同步輸出每週 Threads 串文貼文庫至 web/data/digest_posts.json (供遠端行動後台使用)
+    posts_path = Path("data/digest_posts.json")
+    out_posts = out_dir / "digest_posts.json"
+    if posts_path.exists():
+        try:
+            with open(posts_path, "r", encoding="utf-8") as f:
+                posts_data = json.load(f)
+            with open(out_posts, "w", encoding="utf-8") as f:
+                json.dump(posts_data, f, ensure_ascii=False, indent=2)
+            print(f"成功輸出 Web 貼文草稿庫: {out_posts} (共 {len(posts_data)} 則貼文)")
+        except Exception as e:
+            print(f"輸出 Web 貼文草稿庫失敗: {e}")
+
+    # 同步輸出單場焦點候選至 web/data/spotlight_posts.json
+    spotlights_path = Path("data/spotlight_posts.json")
+    out_spotlights = out_dir / "spotlight_posts.json"
+    if spotlights_path.exists():
+        try:
+            with open(spotlights_path, "r", encoding="utf-8") as f:
+                spotlights_data = json.load(f)
+            with open(out_spotlights, "w", encoding="utf-8") as f:
+                json.dump(spotlights_data, f, ensure_ascii=False, indent=2)
+            print(f"成功輸出 Web 焦點候選庫: {out_spotlights}")
+        except Exception as e:
+            print(f"輸出 Web 焦點候選庫失敗: {e}")
+
 if __name__ == "__main__":
     build_data()

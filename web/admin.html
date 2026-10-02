@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>聽團小聲音 | 策展發文行動管理後台</title>
+  <meta name="robots" content="noindex, nofollow" />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700;800&family=Noto+Sans+TC:wght@400;500;700;900&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-base: #0a0b0e;
+      --bg-surface: #12141b;
+      --bg-elevated: #181b24;
+      --bg-card: #151821;
+      --bg-card-hover: #1c202d;
+
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-medium: rgba(255, 255, 255, 0.14);
+      --border-strong: rgba(255, 255, 255, 0.25);
+      --border-ticket: #262936;
+
+      --accent-spotlight: #d4ff00; /* 酸性螢光黃 */
+      --accent-spotlight-text: #0a0b0e;
+      --accent-free: #10b981;
+      --accent-hot: #ff3b30;
+      --accent-threads: #ffffff;
+
+      --text-main: #f4f3ed;
+      --text-muted: #9ba1b0;
+      --text-sub: #676d7d;
+
+      --radius-xs: 4px;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+
+      --font-display: 'Space Grotesk', -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --font-sans: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      line-height: 1.5;
+      padding-bottom: 80px;
+    }
+
+    /* Security Gate (Passcode Overlay) */
+    #security-gate {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 11, 14, 0.98);
+      backdrop-filter: blur(20px);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .passcode-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-medium);
+      border-radius: var(--radius-md);
+      padding: 28px 24px;
+      width: 100%;
+      max-width: 360px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+    }
+
+    .passcode-stamp {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      background: var(--accent-spotlight);
+      color: var(--accent-spotlight-text);
+      padding: 3px 8px;
+      border-radius: var(--radius-xs);
+      font-weight: 800;
+      align-self: center;
+    }
+
+    .passcode-title {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .passcode-desc {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    .passcode-input {
+      background: var(--bg-base);
+      border: 1px solid var(--border-medium);
+      color: var(--text-main);
+      font-family: var(--font-mono);
+      font-size: 1.1rem;
+      text-align: center;
+      padding: 12px;
+      border-radius: var(--radius-sm);
+      outline: none;
+      letter-spacing: 0.2em;
+    }
+
+    .passcode-input:focus {
+      border-color: var(--accent-spotlight);
+      box-shadow: 0 0 0 2px rgba(212, 255, 0, 0.2);
+    }
+
+    .btn-unlock {
+      background: var(--accent-spotlight);
+      color: var(--accent-spotlight-text);
+      font-family: var(--font-mono);
+      font-weight: 800;
+      font-size: 0.9rem;
+      padding: 12px;
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: transform 0.15s ease;
+    }
+
+    .btn-unlock:active {
+      transform: scale(0.98);
+    }
+
+    .error-msg {
+      color: var(--accent-hot);
+      font-size: 0.78rem;
+      font-family: var(--font-mono);
+      display: none;
+    }
+
+    /* Top Sticky Navigation */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(10, 11, 14, 0.94);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 12px 18px;
+    }
+
+    .nav-inner {
+      max-width: 960px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .admin-badge {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      font-weight: 800;
+      background: var(--accent-spotlight);
+      color: var(--accent-spotlight-text);
+      padding: 3px 6px;
+      border-radius: var(--radius-xs);
+    }
+
+    .admin-title-wrap {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .admin-title {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .admin-sub {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: var(--text-sub);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-btn {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 6px 10px;
+      border-radius: var(--radius-xs);
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-surface);
+      color: var(--text-muted);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+    }
+
+    .nav-btn:hover {
+      background: var(--bg-elevated);
+      color: var(--text-main);
+    }
+
+    /* Main Container */
+    main {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 18px 16px 60px;
+    }
+
+    /* Meta Info Ribbon */
+    .info-ribbon {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 12px 16px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+    }
+
+    .ribbon-status {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--accent-spotlight);
+    }
+
+    .pulse-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent-spotlight);
+      box-shadow: 0 0 8px var(--accent-spotlight);
+    }
+
+    .ribbon-time {
+      color: var(--text-sub);
+    }
+
+    /* Mode Navigation Tabs */
+    .mode-tab-bar {
+      display: flex;
+      gap: 6px;
+      border-bottom: 1px solid var(--border-ticket);
+      margin-bottom: 20px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+    }
+
+    .mode-tab {
+      background: none;
+      border: none;
+      color: var(--text-sub);
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      font-weight: 700;
+      padding: 8px 14px;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      white-space: nowrap;
+      transition: all 0.15s ease;
+    }
+
+    .mode-tab:hover {
+      color: var(--text-main);
+    }
+
+    .mode-tab.active {
+      color: var(--accent-spotlight);
+      border-bottom-color: var(--accent-spotlight);
+    }
+
+    /* Thread Post Cards */
+    .threads-container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .thread-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-ticket);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .thread-header {
+      background: var(--bg-elevated);
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border-ticket);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .thread-seq {
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      font-weight: 800;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .seq-tag {
+      background: rgba(212, 255, 0, 0.1);
+      color: var(--accent-spotlight);
+      padding: 2px 6px;
+      border-radius: var(--radius-xs);
+      font-size: 0.72rem;
+    }
+
+    .char-gauge {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--text-sub);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .char-gauge.warning {
+      color: #f59e0b;
+    }
+
+    .char-gauge.danger {
+      color: var(--accent-hot);
+      font-weight: 800;
+    }
+
+    /* Text Editor Area */
+    .thread-body {
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .thread-textarea {
+      width: 100%;
+      min-height: 180px;
+      background: var(--bg-base);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 12px;
+      font-family: var(--font-mono);
+      font-size: 0.88rem;
+      color: var(--text-main);
+      line-height: 1.6;
+      resize: vertical;
+      outline: none;
+    }
+
+    .thread-textarea:focus {
+      border-color: var(--accent-spotlight);
+    }
+
+    /* Images Strip */
+    .thread-images-section {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .images-label {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--text-sub);
+    }
+
+    .images-scroll-row {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+    }
+
+    .thread-img-thumb {
+      width: 72px;
+      height: 72px;
+      border-radius: var(--radius-xs);
+      object-fit: cover;
+      border: 1px solid var(--border-subtle);
+      flex-shrink: 0;
+      cursor: pointer;
+      transition: transform 0.15s ease;
+    }
+
+    .thread-img-thumb:hover {
+      transform: scale(1.05);
+      border-color: var(--accent-spotlight);
+    }
+
+    /* Action Buttons Footer */
+    .thread-footer {
+      background: var(--bg-surface);
+      border-top: 1px dashed var(--border-ticket);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .action-btn-group {
+      display: flex;
+      gap: 6px;
+      width: 100%;
+    }
+
+    .btn-copy-post {
+      flex: 1;
+      background: var(--accent-spotlight);
+      color: var(--accent-spotlight-text);
+      border: none;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      font-weight: 800;
+      padding: 10px 14px;
+      border-radius: var(--radius-xs);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: transform 0.1s ease;
+    }
+
+    .btn-copy-post:active {
+      transform: scale(0.98);
+    }
+
+    .btn-open-threads {
+      background: var(--text-main);
+      color: var(--bg-base);
+      border: none;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      font-weight: 800;
+      padding: 10px 14px;
+      border-radius: var(--radius-xs);
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .btn-open-threads:hover {
+      background: #fff;
+    }
+
+    /* Mode B & C: Spotlight Cards */
+    .spotlights-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+    }
+
+    .spotlight-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-ticket);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .spotlight-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .spotlight-meta {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .spotlight-preview-text {
+      background: var(--bg-base);
+      padding: 10px;
+      border-radius: var(--radius-xs);
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      white-space: pre-wrap;
+      line-height: 1.5;
+      max-height: 160px;
+      overflow-y: auto;
+    }
+
+    /* Toast Notification */
+    .toast-pill {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: #1c202d;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: var(--radius-xs);
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      font-weight: 600;
+      border: 1px solid var(--accent-spotlight);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 10000;
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .toast-pill.show {
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Security Gate Modal -->
+  <div id="security-gate">
+    <div class="passcode-card">
+      <span class="passcode-stamp">ADMIN LOCK</span>
+      <h2 class="passcode-title">聽團小聲音 · 策展後台</h2>
+      <p class="passcode-desc">此頁面為管理員專屬，請輸入通行密碼以預覽每週貼文草稿並進行發布。</p>
+      <input type="password" id="input-passcode" class="passcode-input" placeholder="••••••••" autocomplete="current-password" autofocus />
+      <div id="passcode-error" class="error-msg">通行密碼錯誤，請重新輸入</div>
+      <button class="btn-unlock" id="btn-unlock">解鎖進入後台</button>
+      <div style="font-size: 0.7rem; color: var(--text-sub); font-family: var(--font-mono);">
+        預設通行密碼：smallseeds2026
+      </div>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header>
+    <div class="nav-inner">
+      <div class="brand-section">
+        <span class="admin-badge">ADMIN</span>
+        <div class="admin-title-wrap">
+          <div class="admin-title">小聲音發文後台</div>
+          <span class="admin-sub">CURATOR CONSOLE // MOBILE</span>
+        </div>
+      </div>
+
+      <div class="nav-actions">
+        <a href="index.html" class="nav-btn" title="返回前台探索網站">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          <span>前台</span>
+        </a>
+        <button class="nav-btn" id="btn-lock-session" title="鎖定登出">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Meta Ribbon -->
+    <div class="info-ribbon">
+      <div class="ribbon-status">
+        <span class="pulse-dot"></span>
+        <span id="ribbon-status-text">週報貼文庫已同步</span>
+      </div>
+      <div class="ribbon-time" id="ribbon-timestamp">最新更新：載入中...</div>
+    </div>
+
+    <!-- Mode Selector Tabs -->
+    <div class="mode-tab-bar">
+      <button class="mode-tab active" data-mode="digest" id="tab-digest">
+        🎸 每週週報串文 (<span id="count-digest-posts">0</span>)
+      </button>
+      <button class="mode-tab" data-mode="spotlight" id="tab-spotlight">
+        🎯 單場爆款焦點 (<span id="count-spotlight-posts">0</span>)
+      </button>
+      <button class="mode-tab" data-mode="guide" id="tab-guide">
+        💡 發文 SOP 與 Threads 指南
+      </button>
+    </div>
+
+    <!-- View: Digest Mode -->
+    <section id="view-digest" class="threads-container">
+      <!-- Injected by JS -->
+    </section>
+
+    <!-- View: Spotlight Mode -->
+    <section id="view-spotlight" class="spotlights-grid" style="display: none;">
+      <!-- Injected by JS -->
+    </section>
+
+    <!-- View: Guide Mode -->
+    <section id="view-guide" style="display: none; background: var(--bg-card); border: 1px solid var(--border-ticket); border-radius: var(--radius-md); padding: 20px;">
+      <h3 style="font-family: var(--font-display); font-size: 1.1rem; margin-bottom: 12px; color: var(--accent-spotlight);">Threads 聽團發文演算法秘訣</h3>
+      <ul style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.8; padding-left: 20px;">
+        <li><strong>首篇 Cover 決定爆款機率</strong>：亮點統計（例如「下週全台 45 場現場、8 場完全免費」）置頂，結尾引導「看下方串文」。</li>
+        <li><strong>字數極限控制在 480 字以內</strong>：Threads 官方上限為 500 字元，超過會發送失敗。本後台提供即時字數條檢測。</li>
+        <li><strong>互動誘餌</strong>：拒絕「歡迎按讚分享」，改為「標記每次都喊沒錢的朋友」、「二選一表態哪場見」。</li>
+        <li><strong>圖片必須為公開連結</strong>：串文中的海報圖片已由系統自動清洗為公開 CDN 連結。</li>
+      </ul>
+    </section>
+  </main>
+
+  <!-- Snappy Toast -->
+  <div class="toast-pill" id="toast-pill">已複製貼文內容</div>
+
+  <script>
+    // Config
+    const DEFAULT_PASSCODE = 'smallseeds2026';
+    const PASSCODE_STORAGE_KEY = 'smallseeds_admin_passcode';
+    let digestPosts = [];
+    let spotlightEvents = [];
+    let activeMode = 'digest';
+
+    // Check Authentication
+    function verifyPasscode(input) {
+      return input.trim() === DEFAULT_PASSCODE;
+    }
+
+    function checkAuthOnLoad() {
+      // Check URL query param or hash (#smallseeds2026 or ?key=smallseeds2026)
+      const urlParams = new URLSearchParams(window.location.search);
+      const urlKey = urlParams.get('key') || window.location.hash.replace('#', '');
+      if (urlKey && verifyPasscode(urlKey)) {
+        sessionStorage.setItem(PASSCODE_STORAGE_KEY, 'unlocked');
+      }
+
+      if (sessionStorage.getItem(PASSCODE_STORAGE_KEY) === 'unlocked') {
+        document.getElementById('security-gate').style.display = 'none';
+        initAdminData();
+      }
+    }
+
+    document.getElementById('btn-unlock').addEventListener('click', () => {
+      const input = document.getElementById('input-passcode').value;
+      if (verifyPasscode(input)) {
+        sessionStorage.setItem(PASSCODE_STORAGE_KEY, 'unlocked');
+        document.getElementById('security-gate').style.display = 'none';
+        initAdminData();
+      } else {
+        document.getElementById('passcode-error').style.display = 'block';
+      }
+    });
+
+    document.getElementById('input-passcode').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        document.getElementById('btn-unlock').click();
+      }
+    });
+
+    document.getElementById('btn-lock-session').addEventListener('click', () => {
+      sessionStorage.removeItem(PASSCODE_STORAGE_KEY);
+      window.location.reload();
+    });
+
+    // Load Data
+    async function initAdminData() {
+      try {
+        // Load Weekly Posts
+        const resPosts = await fetch('data/digest_posts.json?v=' + Date.now());
+        digestPosts = await resPosts.json();
+      } catch (err) {
+        console.warn('No digest_posts.json found, will check draft or events:', err);
+        digestPosts = [];
+      }
+
+      try {
+        // Load Events for Spotlights
+        const resEvents = await fetch('data/events.json?v=' + Date.now());
+        const eventsData = await resEvents.json();
+        const allEv = eventsData.events || [];
+        spotlightEvents = allEv.filter(e => e.is_free || e.is_hot).slice(0, 10);
+        document.getElementById('ribbon-timestamp').textContent = `最新資料：${eventsData.updated_at || '本週最新'}`;
+      } catch (err) {
+        console.warn('Events data load error:', err);
+      }
+
+      // Check Local Draft
+      const savedDraft = localStorage.getItem('smallseeds_mobile_draft_digest');
+      if (savedDraft) {
+        try {
+          const draftObj = JSON.parse(savedDraft);
+          if (Array.isArray(draftObj) && draftObj.length > 0) {
+            digestPosts = draftObj;
+            document.getElementById('ribbon-status-text').textContent = '已載入手機本地草稿（自訂編輯中）';
+          }
+        } catch (e) {}
+      }
+
+      document.getElementById('count-digest-posts').textContent = digestPosts.length;
+      document.getElementById('count-spotlight-posts').textContent = spotlightEvents.length;
+
+      renderDigestPosts();
+      renderSpotlights();
+    }
+
+    // Render Digest Posts
+    function renderDigestPosts() {
+      const container = document.getElementById('view-digest');
+      if (!digestPosts || digestPosts.length === 0) {
+        container.innerHTML = `
+          <div style="text-align:center; padding: 40px; color: var(--text-muted); background: var(--bg-card); border-radius: var(--radius-md); border: 1px dashed var(--border-ticket);">
+            <p>目前尚無本週生成的 digest_posts.json 串文資料。</p>
+            <p style="font-size:0.75rem; margin-top: 6px;">請確認 GitHub Actions 每週排程是否已執行，或在本地運行 run_weekly_digest.py 產生！</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = digestPosts.map((post, idx) => {
+        const text = post.text || '';
+        const charCount = text.length;
+        const images = post.images || [];
+
+        let gaugeClass = '';
+        if (charCount > 480) gaugeClass = 'danger';
+        else if (charCount > 430) gaugeClass = 'warning';
+
+        const imagesHtml = images.map(img => `
+          <img src="${img}" class="thread-img-thumb" loading="lazy" onclick="window.open('${img}', '_blank')" title="點擊檢視原圖">
+        `).join('');
+
+        return `
+          <div class="thread-card" id="card-post-${idx}">
+            <div class="thread-header">
+              <div class="thread-seq">
+                <span class="seq-tag">POST #${idx + 1}</span>
+                <span>${idx === 0 ? '【首篇 Cover】' : `【串文續篇 ${idx}/${digestPosts.length - 1}】`}</span>
+              </div>
+              <div class="char-gauge ${gaugeClass}" id="gauge-${idx}">
+                <span>${charCount}/500 字</span>
+              </div>
+            </div>
+
+            <div class="thread-body">
+              <textarea class="thread-textarea" id="textarea-${idx}" oninput="handleTextChange(${idx}, this.value)">${escapeHtml(text)}</textarea>
+
+              ${images.length > 0 ? `
+                <div class="thread-images-section">
+                  <span class="images-label">附圖 (${images.length} 張，點擊可放大)：</span>
+                  <div class="images-scroll-row">
+                    ${imagesHtml}
+                  </div>
+                </div>
+              ` : ''}
+            </div>
+
+            <div class="thread-footer">
+              <div class="action-btn-group">
+                <button class="btn-copy-post" onclick="copyPostText(${idx})">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                  <span>一鍵複製此篇</span>
+                </button>
+                <a href="https://www.threads.net/" target="_blank" rel="noopener" class="btn-open-threads">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.5 13.5c-.83.83-2.17 1.25-4 1.25-2.08 0-3.66-.58-4.75-1.75C6.66 13.83 6.12 12.08 6.12 9.75c0-2.33.54-4.08 1.63-5.25C8.84 3.33 10.42 2.75 12.5 2.75c1.83 0 3.17.42 4 1.25.83.83 1.25 2.17 1.25 4v1.5h-2.5v-1.5c0-.83-.17-1.33-.5-1.5-.33-.17-.83-.25-1.5-.25-.83 0-1.5.25-2 .75-.5.5-.75 1.42-.75 2.75s.25 2.25.75 2.75c.5.5 1.17.75 2 .75.67 0 1.17-.08 1.5-.25.33-.17.5-.67.5-1.5v-1.5h2.5v1.5c0 1.83-.42 3.17-1.25 4z"/></svg>
+                  <span>開啟 Threads</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Render Spotlights
+    function renderSpotlights() {
+      const container = document.getElementById('view-spotlight');
+      container.innerHTML = spotlightEvents.map(e => {
+        const performersText = (e.performers && e.performers.length) ? e.performers.slice(0, 5).map(p => `♥︎${p}`).join(' ') : '';
+        const postText = `⚑ ${e.date} 《${e.title}》（${e.is_free ? '免費入場' : '售票'}）\n\n`
+          + (performersText ? `➤ 卡司陣容：\n${performersText}\n\n` : '')
+          + `❑ 地點：[${e.city}] ${e.venue} ❑\n`
+          + `▶ 售票/官方：${e.ticket_platform || '官方售票'}\n\n`
+          + `💬 標記那個每次都喊沒錢聽團的朋友快衝 👥\n`
+          + `🔗 完整展演空間地圖：https://hans-coder.github.io/Smallseedsvoice/\n`
+          + `👉 追蹤 Threads：@smallseedsvoice`;
+
+        return `
+          <div class="spotlight-card">
+            <h4 class="spotlight-title">${e.title}</h4>
+            <div class="spotlight-meta">📅 ${e.date} · [${e.city}] ${e.venue}</div>
+            <pre class="spotlight-preview-text">${escapeHtml(postText)}</pre>
+            <button class="btn-copy-post" onclick="copyCustomText('${encodeURIComponent(postText)}')">
+              📋 複製單場爆款文案
+            </button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Edit Handler
+    function handleTextChange(idx, val) {
+      if (digestPosts[idx]) {
+        digestPosts[idx].text = val;
+        const count = val.length;
+        const gauge = document.getElementById(`gauge-${idx}`);
+        gauge.textContent = `${count}/500 字`;
+        gauge.className = `char-gauge ${count > 480 ? 'danger' : (count > 430 ? 'warning' : '')}`;
+        // Save to LocalStorage
+        try {
+          localStorage.setItem('smallseeds_mobile_draft_digest', JSON.stringify(digestPosts));
+        } catch (e) {}
+      }
+    }
+
+    // Copy Handlers
+    function copyPostText(idx) {
+      if (!digestPosts[idx]) return;
+      const text = digestPosts[idx].text || '';
+      navigator.clipboard.writeText(text).then(() => {
+        showToast(`已複製第 #${idx + 1} 則貼文！可直接貼到 Threads 💬`);
+      });
+    }
+
+    function copyCustomText(encodedText) {
+      const text = decodeURIComponent(encodedText);
+      navigator.clipboard.writeText(text).then(() => {
+        showToast('已複製單場爆款貼文文案！💬');
+      });
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast-pill');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2500);
+    }
+
+    function escapeHtml(str) {
+      return (str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    // Tab Navigation
+    document.querySelectorAll('.mode-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        const mode = tab.dataset.mode;
+        document.getElementById('view-digest').style.display = mode === 'digest' ? 'flex' : 'none';
+        document.getElementById('view-spotlight').style.display = mode === 'spotlight' ? 'grid' : 'none';
+        document.getElementById('view-guide').style.display = mode === 'guide' ? 'block' : 'none';
+      });
+    });
+
+    // Run On Load
+    checkAuthOnLoad();
+  </script>
+</body>
+</html>
