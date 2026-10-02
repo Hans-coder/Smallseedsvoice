@@ -7,7 +7,7 @@ on:
       - "web/**"
       - ".github/workflows/deploy_pages.yml"
   workflow_run:
-    workflows: ["Digest - Weekly (每週音樂活動整合週報)"]
+    workflows: ["Digest - Daily & Weekly (全台音樂活動每日同步與週報)", "Digest - Weekly (每週音樂活動整合週報)"]
     types:
       - completed
   workflow_dispatch:
