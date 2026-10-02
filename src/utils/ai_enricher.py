@@ -14,7 +14,7 @@ class AIEnricher:
         self.api_key = api_key or os.getenv("GEMINI_API_KEY")
         if self.api_key:
             self.client = genai.Client(api_key=self.api_key)
-            self.model = 'gemini-flash-latest'
+            self.model = 'gemini-2.5-flash'
         else:
             self.client = None
             self.model = None
@@ -33,7 +33,7 @@ class AIEnricher:
                 err_msg = str(e)
                 # 處理 429 (Rate Limit) 與 503 (Service Unavailable)
                 if "429" in err_msg or "503" in err_msg or "RESOURCE_EXHAUSTED" in err_msg or "UNAVAILABLE" in err_msg:
-                    wait_time = (i + 1) * 30 # 指數型增加等待時間
+                    wait_time = (i + 1) * 5
                     logger.warning(f"AI Service Error ({err_msg}). Retrying in {wait_time}s... (Attempt {i+1}/{max_retries})")
                     time.sleep(wait_time)
                 else:

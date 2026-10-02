@@ -312,13 +312,16 @@ class KktixScraper(BaseScraper):
                     tbody = table.find('tbody')
                     if tbody:
                         rows = tbody.find_all('tr')
-                        if rows:
-                            cols = rows[0].find_all('td')
+                        tier_prices = []
+                        for row in rows:
+                            cols = row.find_all('td')
                             if len(cols) > idx:
                                 raw_p = cols[idx].get_text(strip=True)
                                 if raw_p and len(raw_p) < 60:
-                                    price = raw_p
-                                    break
+                                    tier_prices.append(raw_p)
+                        if tier_prices:
+                            price = " / ".join(tier_prices)
+                            break
 
             if not price:
                 full_text = soup.get_text()
@@ -326,9 +329,11 @@ class KktixScraper(BaseScraper):
                 if any(k in full_text for k in free_keywords):
                     price = "0"
                 else:
-                    match_p = re.search(r'(?:票價|售價)[:：\s]+(TWD\$?[\d,]+|\$[\d,]+|\d+\s*元|免費)', full_text)
+                    match_p = re.findall(r'(?:TWD\$?[\d,]+|\$[\d,]+|\d+\s*元|免費)', full_text)
                     if match_p:
-                        price = match_p.group(1).strip()
+                        # 收集前幾個出現的有效金額
+                        valid_matches = [m.strip() for m in match_p[:5] if m.strip()]
+                        price = " / ".join(valid_matches)
             
             # Extract high-res image from og:image
             og_img = soup.find('meta', property='og:image')

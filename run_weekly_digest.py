@@ -340,29 +340,23 @@ def main():
         
         # Initialize Builder with AI enrichment enabled
         builder = DigestBuilder(config={"ai_enrichment": True}) 
+        posts = []
         try:
             posts = builder.build_digest(events, start_date, end_date)
         except Exception as e:
             logger.exception(f"DigestBuilder failed: {e}")
-            return
         
         # Save updated raw events back (now containing AI-extracted performers)
         with open("data/digest_raw.json", "w", encoding="utf-8") as f:
             json.dump(events, f, indent=4, ensure_ascii=False)
 
-        if not posts:
-            logger.warning("No posts generated after processing.")
-            # Ensure we don't leave stale posts file
+        if posts:
+            logger.info(f"Generated {len(posts)} threads posts.")
             with open("data/digest_posts.json", "w", encoding="utf-8") as f:
-                json.dump([], f, indent=4, ensure_ascii=False)
-            return
-
-        logger.info(f"Generated {len(posts)} threads posts.")
-        
-        # Save processed posts
-        with open("data/digest_posts.json", "w", encoding="utf-8") as f:
-            json.dump(posts, f, indent=4, ensure_ascii=False)
-        logger.info("Saved posts to data/digest_posts.json")
+                json.dump(posts, f, indent=4, ensure_ascii=False)
+            logger.info("Saved posts to data/digest_posts.json")
+        else:
+            logger.warning("No posts generated after processing.")
 
         # Auto-generate candidate spotlight posts (Mode A: 单場焦點爆款)
         try:
@@ -373,7 +367,7 @@ def main():
         except Exception as e:
             logger.warning(f"Failed to generate spotlight candidates: {e}")
 
-        # Auto-update web data for the venue explorer
+        # Auto-update web data for the venue explorer (ALWAYS executed)
         try:
             from scripts.build_web_data import build_data
             build_data()
