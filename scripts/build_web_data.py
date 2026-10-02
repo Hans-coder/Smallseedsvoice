@@ -84,6 +84,14 @@ def format_price_range(raw_price: str) -> str:
     elif "jpy" in s.lower() or "日圓" in s or "日幣" in s:
         currency = "JP¥"
 
+    # 排除身心障礙、愛心票、輪椅等法定半價優惠字樣，避免誤把半價當成全票最低價
+    # 注意：絕對不可用逗號 split，因為逗號是千分位符號 (如 5,680)
+    if "/" in s or "、" in s or "|" in s or "\n" in s:
+        parts = re.split(r"[/、|\n]", s)
+        valid_parts = [p for p in parts if not any(k in p for k in ["愛心", "身障", "身心障礙", "輪椅", "陪同"])]
+        if valid_parts:
+            s = " / ".join(valid_parts)
+
     # 清除小數點與零頭 (如 .0 或 .00)
     cleaned = re.sub(r"\.\d+", "", s)
     # 提取所有代表票價的數值
@@ -98,8 +106,8 @@ def format_price_range(raw_price: str) -> str:
         except ValueError:
             pass
 
-    if not numbers:
-        return s if len(s) <= 20 else "售票"
+    if not numbers or s.strip() in ['2024', '2025', '2026', '2027', '2028']:
+        return "售票"
 
     min_p = min(numbers)
     max_p = max(numbers)

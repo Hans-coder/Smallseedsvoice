@@ -314,6 +314,10 @@ class KktixScraper(BaseScraper):
                         rows = tbody.find_all('tr')
                         tier_prices = []
                         for row in rows:
+                            row_text = row.get_text(strip=True)
+                            # 排除愛心票、身心障礙、輪椅、陪同席等法定半價優惠票種，保留一般大眾票價
+                            if any(k in row_text for k in ["愛心", "身障", "身心障礙", "輪椅", "陪同"]):
+                                continue
                             cols = row.find_all('td')
                             if len(cols) > idx:
                                 raw_p = cols[idx].get_text(strip=True)
@@ -329,11 +333,10 @@ class KktixScraper(BaseScraper):
                 if any(k in full_text for k in free_keywords):
                     price = "0"
                 else:
-                    match_p = re.findall(r'(?:TWD\$?[\d,]+|\$[\d,]+|\d+\s*元|免費)', full_text)
-                    if match_p:
-                        # 收集前幾個出現的有效金額
-                        valid_matches = [m.strip() for m in match_p[:5] if m.strip()]
-                        price = " / ".join(valid_matches)
+                    # 精準比對「票價」附近的金額，避免抓到 ATM 訂單上限 $30,000 等雜訊
+                    price_line_match = re.search(r'(?:票價|售價|門票|票券)[^0-9\n]{0,25}((?:NT\$?|TWD\$?|\$)?\s*[\d,]+(?:\s*元)?)', full_text)
+                    if price_line_match:
+                        price = price_line_match.group(1).strip()
             
             # Extract high-res image from og:image
             og_img = soup.find('meta', property='og:image')
