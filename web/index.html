@@ -1347,18 +1347,69 @@
           updateTimeEl.textContent = `資料更新：${data.updated_at.split(' ')[0]}`;
         }
 
-        // Count totals
-        const totalWeekend = allEvents.filter(e => isWeekendDate(e.date)).length;
-        document.getElementById('count-all').textContent = allEvents.length;
+        // Count totals (excluding events ended over 1 week ago)
+        const activeEventsList = allEvents.filter(e => !isEndedOverOneWeek(e.date));
+        const totalWeekend = activeEventsList.filter(e => isWeekendDate(e.date)).length;
+        document.getElementById('count-all').textContent = activeEventsList.length;
         document.getElementById('count-weekend').textContent = totalWeekend;
-        document.getElementById('count-free').textContent = data.total_free || allEvents.filter(e => e.is_free).length;
-        document.getElementById('count-hot').textContent = data.total_hot || allEvents.filter(e => e.is_hot).length;
+        document.getElementById('count-free').textContent = activeEventsList.filter(e => e.is_free).length;
+        document.getElementById('count-hot').textContent = activeEventsList.filter(e => e.is_hot).length;
 
         renderVenueStrip();
         renderActiveView();
       } catch (err) {
         console.error('Failed to load events data:', err);
         document.getElementById('results-headline').textContent = '⚠️ 無法載入活動資料，請稍後重試';
+      }
+    }
+
+    // Helper: Check if event ended more than 7 days ago
+    function isEndedOverOneWeek(dateStr) {
+      if (!dateStr) return false;
+      const dt = new Date(dateStr.replace(/-/g, '/'));
+      if (isNaN(dt.getTime())) return false;
+      dt.setHours(23, 59, 59, 999);
+      const oneWeekAgo = new Date();
+      oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+      oneWeekAgo.setHours(0, 0, 0, 0);
+      return dt < oneWeekAgo;
+    }
+
+    // Helper: Format Price Range (Lowest to Highest)
+    function formatPriceDisplay(priceStr, isFree) {
+      if (isFree) return 'FREE ENTRY';
+      if (!priceStr || priceStr === 'None' || priceStr === 'null') return '售票';
+      const s = String(priceStr).trim();
+      if (['0', '0元', '免費', 'free', '免費入場'].includes(s.toLowerCase())) return 'FREE ENTRY';
+
+      let currency = 'NT$';
+      if (s.toLowerCase().includes('hkd') || s.includes('港幣')) currency = 'HK$';
+      else if (s.toLowerCase().includes('usd') || s.includes('美元')) currency = 'US$';
+      else if (s.toLowerCase().includes('jpy') || s.includes('日圓')) currency = 'JP¥';
+
+      const cleaned = s.replace(/\.\d+/g, '');
+      const rawMatches = cleaned.match(/\b\d{1,3}(?:,\d{3})+\b|\b\d{3,6}\b/g);
+      if (!rawMatches || rawMatches.length === 0) {
+        return s.length <= 18 ? s : '售票';
+      }
+
+      const nums = [];
+      rawMatches.forEach(m => {
+        const val = parseInt(m.replace(/,/g, ''), 10);
+        if (val >= 80 && val <= 99999 && ![2024, 2025, 2026, 2027].includes(val)) {
+          nums.push(val);
+        }
+      });
+
+      if (nums.length === 0) return s.length <= 18 ? s : '售票';
+
+      const minVal = Math.min(...nums);
+      const maxVal = Math.max(...nums);
+
+      if (minVal === maxVal) {
+        return `${currency} ${minVal.toLocaleString()}`;
+      } else {
+        return `${currency} ${minVal.toLocaleString()} - ${maxVal.toLocaleString()}`;
       }
     }
 
@@ -1398,6 +1449,9 @@
     // Filter Logic
     function getFilteredEvents() {
       return allEvents.filter(e => {
+        // 排除結束超過一週的過期活動
+        if (isEndedOverOneWeek(e.date)) return false;
+
         // Venue filter
         if (selectedVenueId && e.venue_id !== selectedVenueId) {
           return false;
@@ -1489,7 +1543,7 @@
         }
 
         const priceBadgeClass = e.is_free ? 'free' : 'paid';
-        const priceBadgeText = e.is_free ? 'FREE ENTRY' : (e.price || '售票');
+        const priceBadgeText = formatPriceDisplay(e.price, e.is_free);
 
         const imageHtml = e.image_url 
           ? `<img src="${e.image_url}" alt="${e.title}" class="card-flyer-img" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\\'card-flyer-fallback\\'><span>LIVE MUSIC</span><span style=\\'font-size:0.65rem\\'>${e.venue}</span></div>'">`
@@ -1589,7 +1643,7 @@
                 ${performersText ? `<div class="timeline-performers-row">${performersText}</div>` : ''}
               </div>
               <div class="timeline-price-col">
-                <span style="font-family:var(--font-mono); font-size:0.75rem; color:var(--text-muted);">${e.is_free ? '免費' : (e.price || '售票')}</span>
+                <span style="font-family:var(--font-mono); font-size:0.75rem; color:var(--text-muted);">${formatPriceDisplay(e.price, e.is_free)}</span>
               </div>
               <div class="timeline-actions-col">
                 ${e.ticket_url ? `

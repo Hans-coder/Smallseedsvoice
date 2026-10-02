@@ -9,7 +9,7 @@ build_web_data.py
 import json
 import os
 import re
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Dict, List
 
@@ -68,6 +68,47 @@ def is_free_event(price_str: str) -> bool:
         return True
     return False
 
+def format_price_range(raw_price: str) -> str:
+    """將單一或多階梯票價正規化為最低至最高價格區間 (如 NT$ 800 - 2,400)"""
+    if not raw_price:
+        return "售票"
+    s = str(raw_price).strip()
+    if is_free_event(s):
+        return "免費"
+
+    currency = "NT$"
+    if "hkd" in s.lower() or "港幣" in s:
+        currency = "HK$"
+    elif "usd" in s.lower() or "美元" in s:
+        currency = "US$"
+    elif "jpy" in s.lower() or "日圓" in s or "日幣" in s:
+        currency = "JP¥"
+
+    # 清除小數點與零頭 (如 .0 或 .00)
+    cleaned = re.sub(r"\.\d+", "", s)
+    # 提取所有代表票價的數值
+    raw_nums = re.findall(r"\b\d{1,3}(?:,\d{3})+\b|\b\d{3,6}\b", cleaned)
+    numbers = []
+    for n in raw_nums:
+        try:
+            val = int(n.replace(",", ""))
+            # 排除非票價的年份或極端數字
+            if 80 <= val <= 99999 and val not in [2024, 2025, 2026, 2027]:
+                numbers.append(val)
+        except ValueError:
+            pass
+
+    if not numbers:
+        return s if len(s) <= 20 else "售票"
+
+    min_p = min(numbers)
+    max_p = max(numbers)
+
+    if min_p == max_p:
+        return f"{currency} {min_p:,}"
+    else:
+        return f"{currency} {min_p:,} - {max_p:,}"
+
 def clean_title(title: str) -> str:
     if not title:
         return "音樂演出活動"
@@ -105,11 +146,25 @@ def build_data():
         if not title or title.startswith("http"):
             continue
 
+        # 排除已結束超過一週（7天）的過期活動
+        if date_str:
+            clean_date_str = date_str.split(" ")[0].strip()
+            try:
+                ev_date = datetime.strptime(clean_date_str, "%Y-%m-%d").date()
+                cutoff_date = datetime.now().date() - timedelta(days=7)
+                if ev_date < cutoff_date:
+                    continue
+            except Exception:
+                pass
+
         venue_info = normalize_venue(e.get("venue_name", ""), e.get("location", ""))
         city = e.get("city") or venue_info["city"] or "台灣"
         region = get_region(city)
-        price = str(e.get("price", "")).strip()
-        is_free = is_free_event(price)
+        price_raw = str(e.get("price", "")).strip()
+        is_free = is_free_event(price_raw)
+        price_display = "免費" if is_free else format_price_range(price_raw)
+        if price_display == "免費":
+            is_free = True
 
         performers = e.get("performers") or []
         if isinstance(performers, str):
@@ -126,7 +181,7 @@ def build_data():
             "location": e.get("location") or venue_info["venue_display"],
             "city": city,
             "region": region,
-            "price": "免費" if is_free else (price if price else "售票"),
+            "price": price_display,
             "is_free": is_free,
             "is_hot": e.get("is_hot", False) or ("音樂祭" in title or "音樂節" in title),
             "performers": performers,
