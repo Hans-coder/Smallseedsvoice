@@ -578,9 +578,6 @@
       <input type="password" id="input-passcode" class="passcode-input" placeholder="••••••••" autocomplete="current-password" autofocus />
       <div id="passcode-error" class="error-msg">通行密碼錯誤，請重新輸入</div>
       <button class="btn-unlock" id="btn-unlock">解鎖進入後台</button>
-      <div style="font-size: 0.7rem; color: var(--text-sub); font-family: var(--font-mono);">
-        預設通行密碼：smallseeds2026
-      </div>
     </div>
   </div>
 
@@ -596,6 +593,10 @@
       </div>
 
       <div class="nav-actions">
+        <button class="nav-btn" id="btn-change-passcode" title="變更管理密碼">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-6 6l7-7m-7 7l-2-2m2 2l-4 4-2-2-4 4 2 2-4 4 2 2 4-4 2 2 4-4-2-2 4-4z"/></svg>
+          <span>改密碼</span>
+        </button>
         <a href="index.html" class="nav-btn" title="返回前台探索網站">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
           <span>前台</span>
@@ -656,23 +657,33 @@
   <div class="toast-pill" id="toast-pill">已複製貼文內容</div>
 
   <script>
-    // Config
-    const DEFAULT_PASSCODE = 'smallseeds2026';
+    // Secure Authentication: SHA-256 Hash Check (No plain-text password stored)
+    // Default password hash for 'smallseeds2026'
+    const DEFAULT_HASH = 'fb157bff1120f3dd7d0a4ea26e30b55891b68372788be6e00e03afaf909e1482';
+    const CUSTOM_HASH_KEY = 'smallseeds_custom_passcode_hash';
     const PASSCODE_STORAGE_KEY = 'smallseeds_admin_passcode';
     let digestPosts = [];
     let spotlightEvents = [];
     let activeMode = 'digest';
 
-    // Check Authentication
-    function verifyPasscode(input) {
-      return input.trim() === DEFAULT_PASSCODE;
+    async function sha256(str) {
+      const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
+      return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
     }
 
-    function checkAuthOnLoad() {
-      // Check URL query param or hash (#smallseeds2026 or ?key=smallseeds2026)
+    async function verifyPasscode(input) {
+      if (!input) return false;
+      const hashed = await sha256(input.trim());
+      const customHash = localStorage.getItem(CUSTOM_HASH_KEY);
+      const targetHash = customHash || DEFAULT_HASH;
+      return hashed === targetHash;
+    }
+
+    async function checkAuthOnLoad() {
+      // Check URL query param or hash (#yourpass or ?key=yourpass)
       const urlParams = new URLSearchParams(window.location.search);
       const urlKey = urlParams.get('key') || window.location.hash.replace('#', '');
-      if (urlKey && verifyPasscode(urlKey)) {
+      if (urlKey && (await verifyPasscode(urlKey))) {
         sessionStorage.setItem(PASSCODE_STORAGE_KEY, 'unlocked');
       }
 
@@ -682,9 +693,9 @@
       }
     }
 
-    document.getElementById('btn-unlock').addEventListener('click', () => {
+    document.getElementById('btn-unlock').addEventListener('click', async () => {
       const input = document.getElementById('input-passcode').value;
-      if (verifyPasscode(input)) {
+      if (await verifyPasscode(input)) {
         sessionStorage.setItem(PASSCODE_STORAGE_KEY, 'unlocked');
         document.getElementById('security-gate').style.display = 'none';
         initAdminData();
@@ -702,6 +713,18 @@
     document.getElementById('btn-lock-session').addEventListener('click', () => {
       sessionStorage.removeItem(PASSCODE_STORAGE_KEY);
       window.location.reload();
+    });
+
+    // Custom Change Password Handler
+    document.getElementById('btn-change-passcode').addEventListener('click', async () => {
+      const newPass = prompt("請輸入你要設定的新管理員通行密碼 (請妥善記住)：");
+      if (newPass && newPass.trim().length >= 6) {
+        const hashed = await sha256(newPass.trim());
+        localStorage.setItem(CUSTOM_HASH_KEY, hashed);
+        alert("管理密碼已成功變更！日後只有輸入此新密碼才能解鎖後台。");
+      } else if (newPass) {
+        alert("密碼長度建議至少 6 個字元以上。");
+      }
     });
 
     // Load Data
