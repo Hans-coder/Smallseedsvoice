@@ -3,6 +3,7 @@ import json
 import argparse
 import sys
 import datetime
+import re
 from pathlib import Path
 
 # Add project root to path
@@ -10,9 +11,12 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from src.utils.discord_notifier import DiscordNotifier
 from src.utils.logger import setup_logger
-from src.utils.text_cleaners import clean_event_title, format_short_date
 
 logger = setup_logger("discord_notification")
+
+VERCEL_ADMIN_URL = "https://smallseedsvoice.vercel.app/admin.html#smallseeds2026"
+VERCEL_WEB_URL = "https://smallseedsvoice.vercel.app"
+GH_PAGES_ADMIN_URL = "https://hans-coder.github.io/Smallseedsvoice/admin.html#smallseeds2026"
 
 def get_taipei_time():
     """獲取台北時間 (UTC+8)"""
@@ -20,67 +24,11 @@ def get_taipei_time():
     taipei_now = utc_now + datetime.timedelta(hours=8)
     return taipei_now.strftime('%Y-%m-%d %H:%M:%S')
 
-def parse_iso_date(date_str):
-    """Simple date string to weekday"""
-    if not date_str or date_str == "Unknown": return ""
-    try:
-        dt = datetime.datetime.strptime(date_str, "%Y-%m-%d")
-        weekdays = ['一', '二', '三', '四', '五', '六', '日']
-        return f" (週{weekdays[dt.weekday()]})"
-    except: return ""
-
-def format_raw_events_to_text(events, type_name):
-    """將原始活動資料轉換為簡體易讀的文字列表"""
-    if not events:
-        return "本次無抓取到符合條件的活動。"
-    
-    # 提取有 Spotlight 的活動
-    spotlights = [e.get('spotlight') for e in events if e.get('spotlight')]
-    
-    lines = [f"【{type_name} - 原始資料摘要】", ""]
-    
-    if spotlights:
-        lines.append("✨ **演出者特別介紹** ✨")
-        for s in spotlights:
-            performer = s.get('performer')
-            desc = s.get('description')
-            ig = s.get('ig_handle')
-            ig_str = f" (IG: @{ig})" if ig else ""
-            lines.append(f"🎸 **{performer}**{ig_str}")
-            lines.append(f"   💡 {desc}")
-        lines.append("-" * 20)
-        lines.append("")
-    elif any(e.get('name') or e.get('activity_name') for e in events[:5]):
-        # 本應有介紹但沒有，且有活動資料
-        lines.append("⚠️ **系統提醒：AI 額度用盡或回應異常，本次未生成特別介紹。**")
-        lines.append("-" * 20)
-        lines.append("")
-
-    lines.append("📅 **活動列表**")
-    for i, e in enumerate(events[:15], 1): # Limit to 15
-        raw_name = e.get('activity_name') or e.get('name') or "未知活動"
-        name = clean_event_title(raw_name)
-        
-        raw_date = e.get('date') or e.get('time') or "時間待定"
-        date = format_short_date(raw_date)
-        
-        venue = e.get('venue') or e.get('venue_name') or "地點待定"
-        wd = parse_iso_date(e.get('date'))
-        lines.append(f"{i}. {name}\n   {date}{wd} @ {venue}")
-    
-    if len(events) > 15:
-        lines.append(f"\n...以及其他 {len(events)-15} 場活動。")
-    
-    # Remove image resizing parameters for better quality (e.g. StreetVoice)
-    text = "\n".join(lines)
-    text = text.replace('?x-oss-process=image/resize,m_fill,h_152,w_290,limit_0/interlace,1/quality,q_95/format,jpg', '')
-    
-    return text
-
 def main():
     parser = argparse.ArgumentParser(description='Send notifications to Discord')
     parser.add_argument('--type', type=str, choices=['digest', 'radar', 'sale'], required=True)
-    parser.add_argument('--name', type=str, default='未定義排程', help='排程名稱')
+    parser.add_argument('--name', type=str, default='全台音樂活動自動更新', help='排程名稱')
+    parser.add_argument('--full', action='store_true', help='是否發送完整貼文全文 (預設為精簡通知模式)')
     args = parser.parse_args()
 
     webhook_url = os.getenv("DISCORD_WEBHOOK_URL")
@@ -90,129 +38,129 @@ def main():
 
     notifier = DiscordNotifier(webhook_url)
     exec_time = get_taipei_time()
-    header = f"🕒 **執行時間**: `{exec_time}` (台北)\n📋 **排程名稱**: `{args.name}`\n"
 
-    # --- Check for scraping errors ---
+    # --- 1. Check for scraping errors ---
+    error_msgs = []
     error_file = Path("data/scraping_errors.json")
     if error_file.exists():
         try:
             with open(error_file, 'r', encoding='utf-8') as f:
                 errors = json.load(f)
             if errors:
-                error_msgs = []
                 for e in errors:
-                    # Truncate traceback to avoid Discord 2000 char limit
-                    tb = e.get('traceback', '')[-300:] 
-                    error_msgs.append(f"**[{e.get('scraper')}]** {e.get('message')}\n```\n...{tb}\n```")
-                
-                header += "\n🚨 **系統爬蟲錯誤報告** 🚨\n" + "\n".join(error_msgs) + "\n"
-            # Cleanup
+                    error_msgs.append(f"• **[{e.get('scraper', '未知來源')}]** {e.get('message', '未知錯誤')}")
             error_file.unlink()
-        except: pass
+        except Exception as ex:
+            logger.warning(f"Error reading scraping_errors.json: {ex}")
 
-    # --- Determine Files and Source ---
-    posts = []
-    source_type = "post" # "post" or "raw"
-    
+    # --- 2. Load Data for Digest Alert ---
     if args.type == 'digest':
-        post_file = Path("data/digest_posts.json")
-        raw_file = Path("data/digest_raw.json")
-        title_prefix = "每週精選"
-    elif args.type == 'radar':
-        post_file = Path("data/radar_posts.json")
-        raw_file = Path("data/radar_events.json")
-        title_prefix = "樂團推薦 / 音樂人特別介紹"
-    else: # sale
-        post_file = Path("data/sale_posts.json")
-        raw_file = Path("data/official_events.json")
-        title_prefix = "售票情報鬧鐘"
+        # Load web events
+        events_file = Path("web/data/events.json")
+        events_data = {}
+        if events_file.exists():
+            try:
+                with open(events_file, 'r', encoding='utf-8') as f:
+                    events_data = json.load(f)
+            except Exception as e:
+                logger.warning(f"Error loading {events_file}: {e}")
 
-    # 優先使用處理後的貼文資料
-    if post_file.exists():
-        try:
-            with open(post_file, 'r', encoding='utf-8') as f:
-                posts = json.load(f)
-            if posts:
-                source_type = "post"
-        except Exception as e:
-            logger.error(f"Error reading {post_file}: {e}")
+        total_events = events_data.get('total_events', len(events_data.get('events', [])))
+        total_free = events_data.get('total_free', sum(1 for e in events_data.get('events', []) if e.get('is_free')))
+        total_hot = events_data.get('total_hot', sum(1 for e in events_data.get('events', []) if e.get('is_hot')))
+        top_venues = events_data.get('top_venues', [])
+        venue_count = len(top_venues)
 
-    # 若無貼文資料，則使用原始資料回退
-    if not posts and raw_file.exists():
-        try:
-            with open(raw_file, 'r', encoding='utf-8') as f:
-                raw_data = json.load(f)
-            if raw_data:
-                # 特別處理 Sale，只顯示未來 3 天開賣的
-                if args.type == 'sale':
-                    from datetime import timedelta
-                    today = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=8)
-                    upcoming = []
-                    for e in raw_data:
-                        try:
-                            sale_date = e.get('ticket_sale_date', '').split(' ')[0].replace('/', '-')
-                            if sale_date:
-                                sd = datetime.datetime.strptime(sale_date, "%Y-%m-%d")
-                                if today <= sd <= today + timedelta(days=3):
-                                    upcoming.append(e)
-                        except: continue
-                    raw_data = upcoming
+        # Load digest posts
+        posts_file = Path("web/data/digest_posts.json")
+        posts = []
+        if posts_file.exists():
+            try:
+                with open(posts_file, 'r', encoding='utf-8') as f:
+                    posts = json.load(f)
+            except Exception as e:
+                logger.warning(f"Error loading {posts_file}: {e}")
 
-                summary_text = format_raw_events_to_text(raw_data, title_prefix)
-                # 取得前幾張圖片作為預覽 (最多 5 張)
-                images = []
-                for e in raw_data:
-                    url = e.get('image_url')
-                    if url and url.startswith('http'):
-                        # Remove StreetVoice resizing if present
-                        url = url.split('?x-oss-process=')[0]
-                        if url not in images:
-                            images.append(url)
-                    if len(images) >= 5:
-                        break
-                
-                posts = [{"text": summary_text, "images": images}]
-                source_type = "raw"
-        except Exception as e:
-            logger.error(f"Error reading {raw_file}: {e}")
+        date_window = ""
+        if posts and isinstance(posts, list) and len(posts) > 0 and 'text' in posts[0]:
+            first_line = posts[0]['text'].split('\n')[0]
+            if '(' in first_line and ')' in first_line:
+                start_idx = first_line.find('(')
+                end_idx = first_line.rfind(')')
+                if start_idx != -1 and end_idx != -1 and end_idx > start_idx:
+                    date_window = first_line[start_idx+1:end_idx].strip()
 
-    # --- Sending Stage ---
-    if not posts:
-        logger.info(f"ℹ️ No data for {args.type}. Sending empty status.")
-        notifier.send_message(content=header + f"ℹ️ **更新報告**: 本次搜尋沒有發現新的活動資料。")
-        return
+        # Load spotlight posts
+        spotlights_file = Path("web/data/spotlight_posts.json")
+        spotlights = []
+        if spotlights_file.exists():
+            try:
+                with open(spotlights_file, 'r', encoding='utf-8') as f:
+                    spotlights = json.load(f)
+            except Exception as e:
+                logger.warning(f"Error loading {spotlights_file}: {e}")
 
-    # Send Header first
-    status_label = "Threads 貼文草稿" if source_type == "post" else "原始資料摘要"
-    notifier.send_message(content=header + f"📦 **更新報告**: 準備了 {len(posts)} 則{status_label}。")
+        # Top venue preview
+        top_venue_names = ", ".join([v.get('name', '') for v in top_venues[:4] if v.get('name')])
 
-    # Send Posts
-    for i, post in enumerate(posts, 1):
-        # 統一使用 send_standard_post
-        display_title = f"{title_prefix} - No.{i}" if len(posts) > 1 else title_prefix
-        notifier.send_standard_post(
-            title=display_title,
-            text=post.get('text', ''),
-            images=post.get('images', []) if not os.path.exists("artifacts/card_1.jpg") else []  # omit raw embeds if we have hi-res cards
-        )
-        logger.info(f"✅ {args.type} notification {i} sent.")
+        embed = {
+            "title": "🎧 【聽團小聲音】活動資料庫與發文後台已更新",
+            "description": "全台最新 Livehouse 音樂演出與 Threads 策展文案已完成同步，隨時可前往後台挑選發布！",
+            "color": 0xf59e0b if error_msgs else 0x10b981, # 綠色正常，橘色警示
+            "fields": [
+                {
+                    "name": "📊 活動資料庫狀態",
+                    "value": f"• 最新在線演出：`{total_events} 場` (含 {total_free} 場免費 / {total_hot} 場熱門)\n• 知名展演空間：`{venue_count} 個場館`" + (f" ({top_venue_names} 等)" if top_venue_names else ""),
+                    "inline": False
+                },
+                {
+                    "name": "📝 Threads 策展庫",
+                    "value": f"• 每週精選週報：`{len(posts)} 則串文草稿`" + (f" ({date_window})" if date_window else "") + f"\n• 單場爆款候選：`{len(spotlights)} 場焦點演出`",
+                    "inline": False
+                },
+                {
+                    "name": "⚡ 快速操作入口",
+                    "value": f"👉 [**開啟行動發文管理後台 (免密直達)**]({VERCEL_ADMIN_URL})\n🌐 [**查看前台活動地圖指南**]({VERCEL_WEB_URL})",
+                    "inline": False
+                }
+            ],
+            "footer": {
+                "text": f"排程：{args.name} | 台北時間 {exec_time}"
+            }
+        }
 
-    # Send Rendered Image Attachments
-    import glob
-    import time
-    rendered_cards = sorted(glob.glob("artifacts/card_*.jpg"))
-    if rendered_cards:
-        logger.info(f"📸 Sending {len(rendered_cards)} rendered image cards to Discord (one by one with 3s safe delay)...")
-        for i, c in enumerate(rendered_cards, 1):
-            card_filename = os.path.basename(c)
-            # Providing some text content prevents Discord from treating it as a suspicious empty message
-            success = notifier.send_file(c, content=f"📸 展演圖卡 ({i}/{len(rendered_cards)})")
-            if not success:
-                logger.error(f"❌ Skipping rest of images due to Discord rejection or rate limit.")
-                sys.exit(1)
-            time.sleep(3) # Very safe delay to completely bypass Discord Rate Limits
+        if error_msgs:
+            embed["fields"].append({
+                "name": "⚠️ 爬蟲錯誤提醒",
+                "value": "\n".join(error_msgs[:5]),
+                "inline": False
+            })
 
-    logger.info(f"✅ {args.type} notifications complete.")
+        success = notifier.send_message(embeds=[embed])
+        if success:
+            logger.info("✅ Discord clean alert notification sent successfully.")
+        else:
+            logger.error("❌ Failed to send Discord alert notification.")
+
+    else:
+        # Fallback or generic handling for other types (radar / sale)
+        embed = {
+            "title": f"🔔 【聽團小聲音】{args.name}更新通知",
+            "color": 0x10b981,
+            "description": f"已完成 `{args.type}` 排程資料更新！",
+            "fields": [
+                {
+                    "name": "📱 管理後台",
+                    "value": f"👉 [點此查看最新資料]({VERCEL_ADMIN_URL})",
+                    "inline": False
+                }
+            ],
+            "footer": {
+                "text": f"排程：{args.name} | 台北時間 {exec_time}"
+            }
+        }
+        notifier.send_message(embeds=[embed])
+        logger.info(f"✅ Discord {args.type} alert sent.")
 
 if __name__ == "__main__":
     main()

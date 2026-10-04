@@ -68,16 +68,11 @@ jobs:
           git add web/data/*.json
           git diff --staged --quiet || (git commit -m "chore(data): auto-update livehouse web events and digest posts" && git push)
 
-      # ── 生成社群視覺圖卡 ─────────────────────────────────────────
-      - name: Generate Social Media Cards
-        run: python scripts/create_social_cards.py --source digest --render
-        continue-on-error: true
-
-      # ── 送出 Discord 整合通知 ───────────────────────────────────
+      # ── 送出 Discord 整合通知 (極簡推播通知) ─────────────────────
       - name: Notify Discord
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
-        run: python scripts/notify_discord.py --type digest --name "每週音樂活動整合週報"
+        run: python scripts/notify_discord.py --type digest --name "全台音樂活動每日同步與週報"
 
       # ── 封存週報資料與圖卡 ─────────────────────────────────────
       - name: Archive Digest Data & Artifacts
