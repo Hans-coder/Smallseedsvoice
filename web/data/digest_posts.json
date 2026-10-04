@@ -6,6 +6,70 @@
       "https://assets.kktix.io/upload_images/590827/e4850e2017ede981_original.png",
       "https://assets.kktix.io/upload_images/589997/5c52315f18ff55c3_original.jpg",
       "https://assets.kktix.io/upload_images/584746/d68443bd4b43b9df_original.jpg"
+    ],
+    "events": [
+      {
+        "name": "AmbiO 1st LIVE IN",
+        "date": "2026-10-06",
+        "venue_name": "杰克音樂 Jack's studio",
+        "city": "臺北市",
+        "performers": [
+          "AmbiO"
+        ],
+        "image_url": "https://assets.kktix.io/upload_images/590163/7479475b197081df_original.jpg",
+        "ticket_platform": "KKTIX",
+        "ticket_url": "https://jackartzone.kktix.cc/events/ambiotaiwan2026",
+        "price": "0",
+        "is_hot": false,
+        "card_url": "cards/card_1.jpg"
+      },
+      {
+        "name": "TeddyLoid Special DJ Live in IEGP",
+        "date": "2026-10-09",
+        "venue_name": "MOONDOG",
+        "city": "臺北市",
+        "performers": [
+          "TeddyLoid"
+        ],
+        "image_url": "https://assets.kktix.io/upload_images/590827/e4850e2017ede981_original.png",
+        "ticket_platform": "KKTIX",
+        "ticket_url": "https://baodaorecords.kktix.cc/events/f2890e28",
+        "price": "TWD$2,500 / TWD$1,500",
+        "is_hot": false,
+        "card_url": "cards/card_2.jpg"
+      },
+      {
+        "name": "LEE MINHYUK  CONCERT <HEAT MAX> in TAIPEI",
+        "date": "2026-10-09",
+        "venue_name": "Clapper Studio展演廳",
+        "city": "台北市",
+        "performers": [],
+        "image_url": "https://assets.kktix.io/upload_images/589997/5c52315f18ff55c3_original.jpg",
+        "ticket_platform": "KKTIX",
+        "ticket_url": "https://oaklight.kktix.cc/events/b3abaace",
+        "price": "TWD$5,680 / TWD$4,280",
+        "is_hot": false,
+        "card_url": "cards/card_3.jpg"
+      },
+      {
+        "name": "《OUTSIDE THE GATE》 VOL.1",
+        "date": "2026-10-09",
+        "venue_name": "SEETY 新城視展演空間",
+        "city": "臺南市",
+        "performers": [],
+        "image_url": "https://assets.kktix.io/upload_images/584746/d68443bd4b43b9df_original.jpg",
+        "ticket_platform": "KKTIX",
+        "ticket_url": "https://seetytainanlive.kktix.cc/events/6458a781-copy-1",
+        "price": "TWD$600 / TWD$1,000 / TWD$450 / TWD$800",
+        "is_hot": false,
+        "card_url": "cards/card_4.jpg"
+      }
+    ],
+    "cards": [
+      "cards/card_1.jpg",
+      "cards/card_2.jpg",
+      "cards/card_3.jpg",
+      "cards/card_4.jpg"
     ]
   },
   {
@@ -19,6 +83,134 @@
       "https://assets.kktix.io/upload_images/590920/4f5e97517c6e4a24_original.jpg",
       "https://assets.kktix.io/upload_images/571660/8-3_PDF_fall_banner_original.jpg",
       "https://assets.kktix.io/upload_images/574893/%E4%B8%BB%E8%A6%96%E8%A6%BA-KKTIX_original.png"
+    ],
+    "events": [
+      {
+        "name": "LEE MINHYUK  CONCERT <HEAT MAX> in TAIPEI",
+        "date": "2026-10-10",
+        "venue_name": "Clapper Studio展演廳",
+        "city": "台北市",
+        "performers": [],
+        "image_url": "https://assets.kktix.io/upload_images/589998/42d12bdfc76f3732_original.jpg",
+        "ticket_platform": "KKTIX",
+        "ticket_url": "https://oaklight.kktix.cc/events/d870e7c6",
+        "price": "TWD$5,680 / TWD$4,280",
+        "is_hot": false,
+        "card_url": "cards/card_5.jpg"
+      },
+      {
+        "name": "音羽-otoha- OUR PLANET additional in TAIPEI",
+        "date": "2026-10-10",
+        "venue_name": "The Wall Live House",
+        "city": "台北市",
+        "performers": [
+          "音羽-otoha-"
+        ],
+        "image_url": "https://assets.kktix.io/upload_images/313965/%E9%9F%B3%E7%BE%BD-otoha-%E5%B0%88%E5%A0%B4-resize_1200x630_original.jpg",
+        "ticket_platform": "KKTIX",
+        "ticket_url": "https://emergelivehouse2.kktix.cc/events/e6fa4076",
+        "price": "TWD$1,880 / TWD$1,480",
+        "is_hot": false,
+        "card_url": "cards/card_6.jpg"
+      },
+      {
+        "name": "Takao Rock 打狗祭：Hi-ing 5 - 拍謝少年高流演唱會",
+        "date": "2026-10-10",
+        "venue_name": "高雄流行音樂中心 海音館",
+        "city": "高雄市",
+        "performers": [
+          "拍謝少年"
+        ],
+        "image_url": "https://assets.kktix.io/upload_images/562854/_Hi-ing_5_KKTIX_%E5%AE%98%E7%B6%B2_%E4%B9%9D%E5%AE%AE%E6%A0%BC_1200_630_original.jpg",
+        "ticket_platform": "KKTIX",
+        "ticket_url": "https://kpmc.kktix.cc/events/hi-ing5",
+        "price": "TWD$2,680 / TWD$2,600 / TWD$2,680 / TWD$2,480 / TWD$1,880 / TWD$980",
+        "is_hot": true,
+        "card_url": "cards/card_7.jpg"
+      },
+      {
+        "name": "Konomi Suzuki Asia Tour in Hong Kong",
+        "date": "2026-10-10",
+        "venue_name": "PORTAL",
+        "city": "Unknown",
+        "performers": [
+          "Konomi Suzuki"
+        ],
+        "image_url": "https://assets.kktix.io/upload_images/562890/1200x630__1__original.jpg",
+        "ticket_platform": "KKTIX",
+        "ticket_url": "https://edproduction.kktix.cc/events/konomi-suzuki-hk-2026",
+        "price": "HKD$1,012.0 / HKD$812.0",
+        "is_hot": false,
+        "card_url": "cards/card_8.jpg"
+      },
+      {
+        "name": "Shye 'Return' Live in Taipei",
+        "date": "2026-10-10",
+        "venue_name": "野地⽅Wild Lab",
+        "city": "臺北市",
+        "performers": [
+          "Shye"
+        ],
+        "image_url": "https://assets.kktix.io/upload_images/584797/913b3e7ff0b1826f_original.png",
+        "ticket_platform": "KKTIX",
+        "ticket_url": "https://timemachine.kktix.cc/events/c499c8fe",
+        "price": "TWD$800",
+        "is_hot": false,
+        "card_url": "cards/card_9.jpg"
+      },
+      {
+        "name": "邱冠瑜《凌晨三點的備忘錄》線上專場音樂會",
+        "date": "2026-10-10",
+        "venue_name": "Online Event",
+        "city": "Unknown",
+        "performers": [
+          "邱冠瑜"
+        ],
+        "image_url": "https://assets.kktix.io/upload_images/590920/4f5e97517c6e4a24_original.jpg",
+        "ticket_platform": "KKTIX",
+        "ticket_url": "https://yaoseen.kktix.cc/events/10102300",
+        "price": "免費",
+        "is_hot": false,
+        "card_url": "cards/card_10.jpg"
+      },
+      {
+        "name": "Ellery 呈獻 THE CUT - Fall Edition 秋季場",
+        "date": "2026-10-10",
+        "venue_name": "Comedy Plus 卡米地＋",
+        "city": "台北市",
+        "performers": [],
+        "image_url": "https://assets.kktix.io/upload_images/571660/8-3_PDF_fall_banner_original.jpg",
+        "ticket_platform": "KKTIX",
+        "ticket_url": "https://comedyclub.kktix.cc/events/thecutautumn",
+        "price": "$600 / $800 / $1200 / $600 / $800",
+        "is_hot": false,
+        "card_url": "cards/card_11.jpg"
+      },
+      {
+        "name": "康康SHOW-色·可餐",
+        "date": "2026-10-11",
+        "venue_name": "Billboard Live TAIPEI",
+        "city": "臺北市",
+        "performers": [
+          "康康"
+        ],
+        "image_url": "https://assets.kktix.io/upload_images/574893/%E4%B8%BB%E8%A6%96%E8%A6%BA-KKTIX_original.png",
+        "ticket_platform": "KKTIX",
+        "ticket_url": "https://billboardlivetp.kktix.cc/events/46ce60a8",
+        "price": "TWD$2,200 / TWD$3,500 / TWD$4,500 / TWD$10,000 / TWD$30,000",
+        "is_hot": false,
+        "card_url": "cards/card_12.jpg"
+      }
+    ],
+    "cards": [
+      "cards/card_5.jpg",
+      "cards/card_6.jpg",
+      "cards/card_7.jpg",
+      "cards/card_8.jpg",
+      "cards/card_9.jpg",
+      "cards/card_10.jpg",
+      "cards/card_11.jpg",
+      "cards/card_12.jpg"
     ]
   },
   {
@@ -26,6 +218,42 @@
     "images": [
       "https://assets.kktix.io/upload_images/575565/yosea_Banner1200x630_original.png",
       "https://assets.kktix.io/assets/kktix-og-image-d905bcfb8e0f7debf8b0ac14e48255701310a8d54b62934339498d1c2a64f0a3.png"
+    ],
+    "events": [
+      {
+        "name": "Yo-Sea Asia Tour Minimum Band Set",
+        "date": "2026-10-11",
+        "venue_name": "The Wall Live House",
+        "city": "Unknown",
+        "performers": [
+          "Yo-Sea"
+        ],
+        "image_url": "https://assets.kktix.io/upload_images/575565/yosea_Banner1200x630_original.png",
+        "ticket_platform": "KKTIX",
+        "ticket_url": "https://youngteam.kktix.cc/events/yosea",
+        "price": "TWD$1,590",
+        "is_hot": false,
+        "card_url": "cards/card_13.jpg"
+      },
+      {
+        "name": "Omoinotake ONE MAN TOUR TAIPEI",
+        "date": "2026-10-11",
+        "venue_name": "Zepp New Taipei",
+        "city": "新北市",
+        "performers": [
+          "Omoinotake"
+        ],
+        "image_url": "https://assets.kktix.io/assets/kktix-og-image-d905bcfb8e0f7debf8b0ac14e48255701310a8d54b62934339498d1c2a64f0a3.png",
+        "ticket_platform": "KKTIX",
+        "ticket_url": "https://offtimemusic.kktix.cc/events/omoinotake2026",
+        "price": "TWD$2,880 / TWD$2,280 / TWD$2,580 / TWD$2,080",
+        "is_hot": false,
+        "card_url": "cards/card_14.jpg"
+      }
+    ],
+    "cards": [
+      "cards/card_13.jpg",
+      "cards/card_14.jpg"
     ]
   }
 ]

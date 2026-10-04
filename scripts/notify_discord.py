@@ -114,8 +114,8 @@ def main():
                     "inline": False
                 },
                 {
-                    "name": "📝 Threads 策展庫",
-                    "value": f"• 每週精選週報：`{len(posts)} 則串文草稿`" + (f" ({date_window})" if date_window else "") + f"\n• 單場爆款候選：`{len(spotlights)} 場焦點演出`",
+                    "name": "📝 Threads 策展庫與社群圖卡",
+                    "value": f"• 每週精選週報：`{len(posts)} 則串文草稿`" + (f" ({date_window})" if date_window else "") + f"\n• 單場爆款候選：`{len(spotlights)} 場焦點演出`\n• 4:5 官方社群圖卡：`已套用日系雜誌框 (後台支援一鍵複製/下載)`",
                     "inline": False
                 },
                 {

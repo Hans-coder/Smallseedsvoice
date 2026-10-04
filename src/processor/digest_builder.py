@@ -116,6 +116,7 @@ class DigestBuilder:
         cover_text = self._generate_cover_text(start_date, end_date, len(sorted_events), sorted_events)
         current_text = cover_text
         current_images = []
+        current_events = []
         
         # Threads limit enforcement
         for date_str, date_events in grouped_sections.items():
@@ -135,9 +136,10 @@ class DigestBuilder:
             
             # If adding header exceeds limit, push current post and start new
             if len(current_text) + len(section_header) > self.max_chars:
-                posts.append({'text': current_text.strip(), 'images': current_images})
+                posts.append({'text': current_text.strip(), 'images': current_images, 'events': current_events})
                 current_text = section_header.strip()
                 current_images = []
+                current_events = []
             else:
                 current_text += section_header
             
@@ -146,17 +148,31 @@ class DigestBuilder:
                 
                 if len(current_text) + len(event_line) > self.max_chars:
                     # Push current post
-                    posts.append({'text': current_text.strip(), 'images': current_images})
+                    posts.append({'text': current_text.strip(), 'images': current_images, 'events': current_events})
                     current_text = event_line.strip()
                     current_images = []
+                    current_events = []
                 else:
                     current_text += event_line
                 
                 if event.get('image_url'):
                     current_images.append(event['image_url'])
+
+                current_events.append({
+                    'name': event.get('name') or event.get('activity_name', 'Unknown Event'),
+                    'date': event.get('date') or event.get('time', 'TBA'),
+                    'venue_name': event.get('venue_name') or event.get('venue') or event.get('location') or '全台展演空間',
+                    'city': event.get('city') or '',
+                    'performers': event.get('performers', []),
+                    'image_url': event.get('image_url', ''),
+                    'ticket_platform': event.get('ticket_platform') or event.get('platform') or '',
+                    'ticket_url': event.get('ticket_url') or event.get('url') or '',
+                    'price': event.get('price', ''),
+                    'is_hot': event.get('is_hot', False)
+                })
         
         if current_text:
-            posts.append({'text': current_text.strip(), 'images': current_images})
+            posts.append({'text': current_text.strip(), 'images': current_images, 'events': current_events})
 
         # 品牌圖 fallback：若第一篇 cover post 沒有圖片，加入 Smallseeds 品牌圖
         BRAND_IMAGE_URL = (

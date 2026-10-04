@@ -420,20 +420,63 @@
       padding-bottom: 6px;
     }
 
-    .thread-img-thumb {
-      width: 72px;
-      height: 72px;
-      border-radius: var(--radius-xs);
-      object-fit: cover;
-      border: 1px solid var(--border-subtle);
-      flex-shrink: 0;
-      cursor: pointer;
-      transition: transform 0.15s ease;
+    .images-label-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
     }
 
-    .thread-img-thumb:hover {
-      transform: scale(1.05);
+    .card-badge-pill {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      background: rgba(212, 255, 0, 0.12);
+      color: var(--accent-spotlight);
+      border: 1px solid rgba(212, 255, 0, 0.3);
+      padding: 2px 8px;
+      border-radius: var(--radius-xs);
+      font-weight: 700;
+    }
+
+    .thread-card-thumb-wrap {
+      position: relative;
+      flex-shrink: 0;
+      width: 78px;
+      aspect-ratio: 4 / 5;
+      border-radius: var(--radius-xs);
+      overflow: hidden;
+      border: 1.5px solid var(--border-medium);
+      cursor: pointer;
+      background: #14161d;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .thread-card-thumb-wrap:hover {
+      transform: translateY(-2px) scale(1.05);
       border-color: var(--accent-spotlight);
+      box-shadow: 0 6px 16px rgba(212, 255, 0, 0.25);
+    }
+
+    .thread-card-thumb-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .thumb-overlay-badge {
+      position: absolute;
+      bottom: 3px;
+      right: 3px;
+      background: rgba(10, 11, 14, 0.88);
+      backdrop-filter: blur(4px);
+      color: #fff;
+      font-family: var(--font-mono);
+      font-size: 0.58rem;
+      padding: 1px 4px;
+      border-radius: 2px;
+      pointer-events: none;
+      border: 1px solid rgba(255, 255, 255, 0.15);
     }
 
     /* Action Buttons Footer */
@@ -452,10 +495,12 @@
       display: flex;
       gap: 6px;
       width: 100%;
+      flex-wrap: wrap;
     }
 
     .btn-copy-post {
       flex: 1;
+      min-width: 140px;
       background: var(--accent-spotlight);
       color: var(--accent-spotlight-text);
       border: none;
@@ -474,6 +519,29 @@
 
     .btn-copy-post:active {
       transform: scale(0.98);
+    }
+
+    .btn-download-all-cards {
+      background: var(--bg-elevated);
+      color: var(--text-main);
+      border: 1px solid var(--border-medium);
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 10px 12px;
+      border-radius: var(--radius-xs);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      transition: background 0.15s ease, border-color 0.15s ease;
+    }
+
+    .btn-download-all-cards:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--accent-spotlight);
+      color: var(--accent-spotlight);
     }
 
     .btn-open-threads {
@@ -497,10 +565,218 @@
       background: #fff;
     }
 
+    /* Card Modal Overlay & Card Preview */
+    .card-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(8, 9, 12, 0.94);
+      backdrop-filter: blur(14px);
+      z-index: 10001;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      animation: fadeInModal 0.2s ease;
+    }
+
+    @keyframes fadeInModal {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .card-modal-container {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-md);
+      width: 100%;
+      max-width: 480px;
+      max-height: 94vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9);
+    }
+
+    .card-modal-header {
+      padding: 12px 18px;
+      border-bottom: 1px solid var(--border-ticket);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg-base);
+    }
+
+    .card-modal-title-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      overflow: hidden;
+    }
+
+    .card-modal-badge {
+      background: var(--accent-spotlight);
+      color: var(--accent-spotlight-text);
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    .card-modal-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 320px;
+    }
+
+    .card-modal-close {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.5rem;
+      line-height: 1;
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .card-modal-close:hover {
+      color: #fff;
+    }
+
+    .card-modal-body {
+      padding: 16px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .card-preview-viewport {
+      position: relative;
+      width: 100%;
+      max-width: 340px;
+      aspect-ratio: 4 / 5;
+      background: #12141a;
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      border: 1px solid var(--border-medium);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card-preview-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    .card-modal-nav-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0, 0, 0, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #fff;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 1.2rem;
+      transition: background 0.15s ease;
+      z-index: 2;
+    }
+
+    .card-modal-nav-btn:hover {
+      background: var(--accent-spotlight);
+      color: #000;
+    }
+
+    .card-modal-nav-btn.prev { left: 8px; }
+    .card-modal-nav-btn.next { right: 8px; }
+
+    .card-modal-meta-box {
+      width: 100%;
+      background: var(--bg-card);
+      border: 1px solid var(--border-ticket);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .card-modal-meta-line {
+      margin-bottom: 4px;
+    }
+
+    .card-modal-meta-line strong {
+      color: var(--text-main);
+    }
+
+    .card-modal-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      width: 100%;
+    }
+
+    .btn-modal-action {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 11px 16px;
+      border-radius: var(--radius-xs);
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      border: none;
+      transition: transform 0.1s ease, filter 0.15s ease;
+    }
+
+    .btn-modal-action:active {
+      transform: scale(0.98);
+    }
+
+    .btn-modal-action.primary {
+      background: var(--accent-spotlight);
+      color: var(--accent-spotlight-text);
+    }
+
+    .btn-modal-action.secondary {
+      background: var(--bg-elevated);
+      color: var(--text-main);
+      border: 1px solid var(--border-medium);
+    }
+
+    .btn-modal-action.tertiary {
+      background: transparent;
+      color: var(--text-sub);
+      font-size: 0.76rem;
+    }
+
+    .btn-modal-action.tertiary:hover {
+      color: var(--text-main);
+    }
+
     /* Mode B & C: Spotlight Cards */
     .spotlights-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
       gap: 16px;
     }
 
@@ -511,19 +787,81 @@
       padding: 16px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
+    }
+
+    .spotlight-top-flex {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+
+    .spotlight-thumb-wrap {
+      width: 84px;
+      aspect-ratio: 4 / 5;
+      border-radius: var(--radius-xs);
+      border: 1.5px solid var(--border-medium);
+      overflow: hidden;
+      flex-shrink: 0;
+      cursor: pointer;
+      background: #14161d;
+      position: relative;
+      transition: all 0.2s ease;
+    }
+
+    .spotlight-thumb-wrap:hover {
+      border-color: var(--accent-spotlight);
+      transform: scale(1.03);
+      box-shadow: 0 4px 12px rgba(212, 255, 0, 0.2);
+    }
+
+    .spotlight-thumb-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .spotlight-info-col {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
     }
 
     .spotlight-title {
       font-size: 0.95rem;
       font-weight: 700;
       color: var(--text-main);
+      line-height: 1.3;
     }
 
     .spotlight-meta {
       font-family: var(--font-mono);
       font-size: 0.75rem;
       color: var(--text-muted);
+    }
+
+    .spotlight-tag-row {
+      display: flex;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .spotlight-pill {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-muted);
+      padding: 2px 6px;
+      border-radius: 2px;
+    }
+
+    .spotlight-pill.highlight {
+      background: rgba(212, 255, 0, 0.12);
+      color: var(--accent-spotlight);
+      border: 1px solid rgba(212, 255, 0, 0.3);
     }
 
     .spotlight-preview-text {
@@ -535,8 +873,13 @@
       color: var(--text-muted);
       white-space: pre-wrap;
       line-height: 1.5;
-      max-height: 160px;
+      max-height: 150px;
       overflow-y: auto;
+    }
+
+    .spotlight-actions-row {
+      display: flex;
+      gap: 8px;
     }
 
     /* Toast Notification */
@@ -578,6 +921,46 @@
       <input type="password" id="input-passcode" class="passcode-input" placeholder="••••••••" autocomplete="current-password" autofocus />
       <div id="passcode-error" class="error-msg">通行密碼錯誤，請重新輸入</div>
       <button class="btn-unlock" id="btn-unlock">解鎖進入後台</button>
+    </div>
+  </div>
+
+  <!-- 4:5 Social Card Preview & Export Modal -->
+  <div id="card-modal" class="card-modal-overlay" style="display: none;" onclick="closeCardModal(event)">
+    <div class="card-modal-container" onclick="event.stopPropagation()">
+      <div class="card-modal-header">
+        <div class="card-modal-title-box">
+          <span class="card-modal-badge">4:5 官方社群圖卡</span>
+          <h3 id="modal-card-title" class="card-modal-title">活動圖卡預覽</h3>
+        </div>
+        <button class="card-modal-close" onclick="closeCardModal()">&times;</button>
+      </div>
+
+      <div class="card-modal-body">
+        <div class="card-preview-viewport">
+          <img id="modal-card-img" src="" alt="4:5 社群圖卡" class="card-preview-img" />
+          <button id="modal-prev-btn" class="card-modal-nav-btn prev" onclick="navigateModalCard(-1)" title="上一張">‹</button>
+          <button id="modal-next-btn" class="card-modal-nav-btn next" onclick="navigateModalCard(1)" title="下一張">›</button>
+        </div>
+
+        <div id="modal-card-meta" class="card-modal-meta-box">
+          <!-- 演出資訊動態填入 -->
+        </div>
+
+        <div class="card-modal-actions">
+          <button class="btn-modal-action primary" onclick="downloadCurrentModalCard()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <span>下載 4:5 社群圖卡 (JPG)</span>
+          </button>
+          <button class="btn-modal-action secondary" onclick="copyCurrentModalCard()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            <span>複製圖卡至剪貼簿 (直接貼上 Threads)</span>
+          </button>
+          <a id="modal-raw-link" href="#" target="_blank" rel="noopener" class="btn-modal-action tertiary">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            <span>檢視原始主辦方售票視覺</span>
+          </a>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -738,16 +1121,25 @@
         digestPosts = [];
       }
 
+      // Load Spotlights from spotlight_posts.json (with fallback to events.json)
       try {
-        // Load Events for Spotlights
+        const resSpot = await fetch('data/spotlight_posts.json?v=' + Date.now());
+        spotlightEvents = await resSpot.json();
+      } catch (err) {
+        console.warn('spotlight_posts.json not found, falling back to events.json:', err);
+        try {
+          const resEvents = await fetch('data/events.json?v=' + Date.now());
+          const eventsData = await resEvents.json();
+          const allEv = eventsData.events || [];
+          spotlightEvents = allEv.filter(e => e.is_free || e.is_hot).slice(0, 10);
+        } catch (e2) {}
+      }
+
+      try {
         const resEvents = await fetch('data/events.json?v=' + Date.now());
         const eventsData = await resEvents.json();
-        const allEv = eventsData.events || [];
-        spotlightEvents = allEv.filter(e => e.is_free || e.is_hot).slice(0, 10);
         document.getElementById('ribbon-timestamp').textContent = `最新資料：${eventsData.updated_at || '本週最新'}`;
-      } catch (err) {
-        console.warn('Events data load error:', err);
-      }
+      } catch (err) {}
 
       // Check Local Draft
       const savedDraft = localStorage.getItem('smallseeds_mobile_draft_digest');
@@ -768,6 +1160,17 @@
       renderSpotlights();
     }
 
+    // Modal State
+    let currentModalContext = {
+      type: 'digest', // 'digest' or 'spotlight'
+      postIdx: 0,
+      eventIdx: 0,
+      cardUrl: '',
+      rawUrl: '',
+      title: '',
+      filename: ''
+    };
+
     // Render Digest Posts
     function renderDigestPosts() {
       const container = document.getElementById('view-digest');
@@ -784,15 +1187,35 @@
       container.innerHTML = digestPosts.map((post, idx) => {
         const text = post.text || '';
         const charCount = text.length;
-        const images = post.images || [];
+        const eventsList = post.events || [];
+        const cards = post.cards || [];
+        const rawImages = post.images || [];
 
         let gaugeClass = '';
         if (charCount > 480) gaugeClass = 'danger';
         else if (charCount > 430) gaugeClass = 'warning';
 
-        const imagesHtml = images.map(img => `
-          <img src="${img}" class="thread-img-thumb" loading="lazy" onclick="window.open('${img}', '_blank')" title="點擊檢視原圖">
-        `).join('');
+        // Build 4:5 Card Thumbnails
+        const displayItems = eventsList.length > 0 ? eventsList : rawImages.map((img, i) => ({
+          name: `本週演出 #${i + 1}`,
+          image_url: img,
+          card_url: cards[i] || img,
+          date: '本週場次',
+          venue_name: '展演空間'
+        }));
+
+        const imagesHtml = displayItems.map((ev, evIdx) => {
+          const cardUrl = ev.card_url || (cards[evIdx] || ev.image_url);
+          const rawUrl = ev.image_url || '';
+          const title = escapeHtml(ev.name || ev.title || '演出活動');
+
+          return `
+            <div class="thread-card-thumb-wrap" onclick="openCardModal(${idx}, ${evIdx})" title="點擊預覽/下載 4:5 官方社群圖卡 (${title})">
+              <img src="${cardUrl}" class="thread-card-thumb-img" loading="lazy" onerror="this.src='${rawUrl}'" alt="${title}">
+              <span class="thumb-overlay-badge">4:5 圖卡</span>
+            </div>
+          `;
+        }).join('');
 
         return `
           <div class="thread-card" id="card-post-${idx}">
@@ -809,9 +1232,12 @@
             <div class="thread-body">
               <textarea class="thread-textarea" id="textarea-${idx}" oninput="handleTextChange(${idx}, this.value)">${escapeHtml(text)}</textarea>
 
-              ${images.length > 0 ? `
+              ${displayItems.length > 0 ? `
                 <div class="thread-images-section">
-                  <span class="images-label">附圖 (${images.length} 張，點擊可放大)：</span>
+                  <div class="images-label-row">
+                    <span class="images-label">4:5 官方社群圖卡 (${displayItems.length} 張，點擊可預覽/複製/下載)：</span>
+                    <span class="card-badge-pill">已套用日系雜誌框</span>
+                  </div>
                   <div class="images-scroll-row">
                     ${imagesHtml}
                   </div>
@@ -823,8 +1249,14 @@
               <div class="action-btn-group">
                 <button class="btn-copy-post" onclick="copyPostText(${idx})">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-                  <span>一鍵複製此篇</span>
+                  <span>一鍵複製此篇文案</span>
                 </button>
+                ${displayItems.length > 0 ? `
+                  <button class="btn-download-all-cards" onclick="downloadAllCardsForPost(${idx})" title="一鍵打包下載本篇所有 4:5 套框圖卡">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    <span>下載本篇全部圖卡 (${displayItems.length}張)</span>
+                  </button>
+                ` : ''}
                 <a href="https://www.threads.net/" target="_blank" rel="noopener" class="btn-open-threads">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.5 13.5c-.83.83-2.17 1.25-4 1.25-2.08 0-3.66-.58-4.75-1.75C6.66 13.83 6.12 12.08 6.12 9.75c0-2.33.54-4.08 1.63-5.25C8.84 3.33 10.42 2.75 12.5 2.75c1.83 0 3.17.42 4 1.25.83.83 1.25 2.17 1.25 4v1.5h-2.5v-1.5c0-.83-.17-1.33-.5-1.5-.33-.17-.83-.25-1.5-.25-.83 0-1.5.25-2 .75-.5.5-.75 1.42-.75 2.75s.25 2.25.75 2.75c.5.5 1.17.75 2 .75.67 0 1.17-.08 1.5-.25.33-.17.5-.67.5-1.5v-1.5h2.5v1.5c0 1.83-.42 3.17-1.25 4z"/></svg>
                   <span>開啟 Threads</span>
@@ -839,27 +1271,244 @@
     // Render Spotlights
     function renderSpotlights() {
       const container = document.getElementById('view-spotlight');
-      container.innerHTML = spotlightEvents.map(e => {
-        const performersText = (e.performers && e.performers.length) ? e.performers.slice(0, 5).map(p => `♥︎${p}`).join(' ') : '';
-        const postText = `⚑ ${e.date} 《${e.title}》（${e.is_free ? '免費入場' : '售票'}）\n\n`
-          + (performersText ? `➤ 卡司陣容：\n${performersText}\n\n` : '')
-          + `❑ 地點：[${e.city}] ${e.venue} ❑\n`
-          + `▶ 售票/官方：${e.ticket_platform || '官方售票'}\n\n`
+      if (!spotlightEvents || spotlightEvents.length === 0) {
+        container.innerHTML = `<div style="color:var(--text-muted); text-align:center; padding:30px;">尚無單場焦點候選資料</div>`;
+        return;
+      }
+
+      container.innerHTML = spotlightEvents.map((sp, idx) => {
+        const ev = sp.event || {};
+        const title = sp.title || ev.name || '單場焦點活動';
+        const dateStr = sp.date || ev.date || '';
+        const venueStr = sp.venue || ev.venue_name || ev.location || '';
+        const cityStr = sp.city || ev.city || '';
+        const cardUrl = sp.card_url || ev.card_url || (sp.images && sp.images[0]) || '';
+        const rawUrl = (sp.images && sp.images[0]) || ev.image_url || '';
+
+        const postText = sp.text || (
+          `⚑ ${dateStr} 《${title}》（${ev.is_free ? '免費入場' : '售票'}）\n\n`
+          + `❑ 地點：[${cityStr}] ${venueStr} ❑\n`
+          + `▶ 售票/官方：${ev.ticket_platform || '官方售票'}\n\n`
           + `💬 標記那個每次都喊沒錢聽團的朋友快衝 👥\n`
-          + `🔗 完整展演空間地圖：https://hans-coder.github.io/Smallseedsvoice/\n`
-          + `👉 追蹤 Threads：@smallseedsvoice`;
+          + `👉 追蹤 Threads：@smallseedsvoice`
+        );
 
         return `
           <div class="spotlight-card">
-            <h4 class="spotlight-title">${e.title}</h4>
-            <div class="spotlight-meta">📅 ${e.date} · [${e.city}] ${e.venue}</div>
+            <div class="spotlight-top-flex">
+              ${cardUrl ? `
+                <div class="spotlight-thumb-wrap" onclick="openSpotlightModal(${idx})" title="點擊預覽/下載 4:5 官方社群圖卡">
+                  <img src="${cardUrl}" loading="lazy" onerror="this.src='${rawUrl}'" alt="${escapeHtml(title)}">
+                  <span class="thumb-overlay-badge">4:5 圖卡</span>
+                </div>
+              ` : ''}
+              <div class="spotlight-info-col">
+                <h4 class="spotlight-title">${escapeHtml(title)}</h4>
+                <div class="spotlight-meta">📅 ${dateStr} · [${cityStr}] ${venueStr}</div>
+                <div class="spotlight-tag-row">
+                  <span class="spotlight-pill highlight">4:5 官方套框圖卡</span>
+                  <span class="spotlight-pill">${ev.is_free ? '免費入場' : '焦點專場'}</span>
+                </div>
+              </div>
+            </div>
+
             <pre class="spotlight-preview-text">${escapeHtml(postText)}</pre>
-            <button class="btn-copy-post" onclick="copyCustomText('${encodeURIComponent(postText)}')">
-              📋 複製單場爆款文案
-            </button>
+
+            <div class="spotlight-actions-row">
+              <button class="btn-copy-post" onclick="copyCustomText('${encodeURIComponent(postText)}')">
+                📋 複製爆款文案
+              </button>
+              ${cardUrl ? `
+                <button class="btn-download-all-cards" onclick="downloadFile('${cardUrl}', 'spotlight_${idx + 1}.jpg')">
+                  📥 下載圖卡
+                </button>
+              ` : ''}
+            </div>
           </div>
         `;
       }).join('');
+    }
+
+    // Modal Control Functions
+    function openCardModal(postIdx, eventIdx) {
+      const post = digestPosts[postIdx];
+      if (!post) return;
+      const eventsList = post.events || [];
+      const cards = post.cards || [];
+      const rawImages = post.images || [];
+
+      const ev = eventsList[eventIdx] || {
+        name: `本週場次 #${eventIdx + 1}`,
+        image_url: rawImages[eventIdx] || '',
+        card_url: cards[eventIdx] || rawImages[eventIdx] || '',
+        date: '近期演出',
+        venue_name: '全台展演空間'
+      };
+
+      const cardUrl = ev.card_url || (cards[eventIdx] || ev.image_url);
+      const rawUrl = ev.image_url || '';
+      const title = ev.name || ev.title || '演出活動';
+      const filename = `smallseeds_post${postIdx + 1}_card${eventIdx + 1}.jpg`;
+
+      currentModalContext = {
+        type: 'digest',
+        postIdx: postIdx,
+        eventIdx: eventIdx,
+        cardUrl: cardUrl,
+        rawUrl: rawUrl,
+        title: title,
+        filename: filename
+      };
+
+      updateModalView(ev, title, cardUrl, rawUrl);
+
+      // Nav buttons
+      const totalEvents = eventsList.length || rawImages.length;
+      document.getElementById('modal-prev-btn').style.display = eventIdx > 0 ? 'flex' : 'none';
+      document.getElementById('modal-next-btn').style.display = eventIdx < totalEvents - 1 ? 'flex' : 'none';
+
+      document.getElementById('card-modal').style.display = 'flex';
+    }
+
+    function openSpotlightModal(spotIdx) {
+      const sp = spotlightEvents[spotIdx];
+      if (!sp) return;
+      const ev = sp.event || {};
+      const cardUrl = sp.card_url || ev.card_url || (sp.images && sp.images[0]) || '';
+      const rawUrl = (sp.images && sp.images[0]) || ev.image_url || '';
+      const title = sp.title || ev.name || '單場焦點活動';
+      const filename = `smallseeds_spotlight_${spotIdx + 1}.jpg`;
+
+      currentModalContext = {
+        type: 'spotlight',
+        postIdx: 0,
+        eventIdx: spotIdx,
+        cardUrl: cardUrl,
+        rawUrl: rawUrl,
+        title: title,
+        filename: filename
+      };
+
+      updateModalView(ev, title, cardUrl, rawUrl);
+
+      // Nav buttons
+      document.getElementById('modal-prev-btn').style.display = spotIdx > 0 ? 'flex' : 'none';
+      document.getElementById('modal-next-btn').style.display = spotIdx < spotlightEvents.length - 1 ? 'flex' : 'none';
+
+      document.getElementById('card-modal').style.display = 'flex';
+    }
+
+    function updateModalView(ev, title, cardUrl, rawUrl) {
+      document.getElementById('modal-card-title').textContent = title;
+      const imgElem = document.getElementById('modal-card-img');
+      imgElem.src = cardUrl;
+      imgElem.onerror = () => { imgElem.src = rawUrl; };
+
+      const perfText = Array.isArray(ev.performers) && ev.performers.length > 0 ? ev.performers.join('、') : (ev.performers || '詳見活動頁面');
+      const venueText = ev.venue_name || ev.venue || ev.location || '全台展演空間';
+      const dateText = ev.date || '近期活動';
+
+      document.getElementById('modal-card-meta').innerHTML = `
+        <div class="card-modal-meta-line"><strong>活動名稱：</strong>${escapeHtml(title)}</div>
+        <div class="card-modal-meta-line"><strong>演出時間：</strong>${escapeHtml(dateText)}</div>
+        <div class="card-modal-meta-line"><strong>演出場地：</strong>${escapeHtml(venueText)}</div>
+        <div class="card-modal-meta-line"><strong>卡司陣容：</strong>${escapeHtml(perfText)}</div>
+      `;
+
+      const rawLink = document.getElementById('modal-raw-link');
+      if (rawUrl) {
+        rawLink.href = rawUrl;
+        rawLink.style.display = 'flex';
+      } else {
+        rawLink.style.display = 'none';
+      }
+    }
+
+    function navigateModalCard(direction) {
+      if (currentModalContext.type === 'digest') {
+        const nextIdx = currentModalContext.eventIdx + direction;
+        openCardModal(currentModalContext.postIdx, nextIdx);
+      } else {
+        const nextIdx = currentModalContext.eventIdx + direction;
+        openSpotlightModal(nextIdx);
+      }
+    }
+
+    function closeCardModal(e) {
+      if (e && e.target && e.target.id !== 'card-modal' && !e.target.classList.contains('card-modal-close')) return;
+      document.getElementById('card-modal').style.display = 'none';
+    }
+
+    // Download & Clipboard Actions
+    function downloadCurrentModalCard() {
+      if (!currentModalContext.cardUrl) return;
+      downloadFile(currentModalContext.cardUrl, currentModalContext.filename);
+      showToast('已觸發 4:5 社群圖卡下載！🎨');
+    }
+
+    async function copyCurrentModalCard() {
+      if (!currentModalContext.cardUrl) return;
+      showToast('正在讀取社群圖卡進行複製...');
+      try {
+        const res = await fetch(currentModalContext.cardUrl);
+        const blob = await res.blob();
+        
+        // Clipboard API 需確保為 image/png
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.src = URL.createObjectURL(blob);
+        await new Promise(r => img.onload = r);
+        const canvas = document.createElement('canvas');
+        canvas.width = img.naturalWidth;
+        canvas.height = img.naturalHeight;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+
+        canvas.toBlob(async (pngBlob) => {
+          try {
+            await navigator.clipboard.write([
+              new ClipboardItem({ 'image/png': pngBlob })
+            ]);
+            showToast('已複製 4:5 官方圖卡！可直接貼在 Threads / 貼文 🎨');
+          } catch (clipErr) {
+            showToast('瀏覽器剪貼簿限制，已改為您觸發直接下載！');
+            downloadCurrentModalCard();
+          }
+        }, 'image/png');
+      } catch (err) {
+        showToast('已為您觸發直接下載！');
+        downloadCurrentModalCard();
+      }
+    }
+
+    function downloadAllCardsForPost(postIdx) {
+      const post = digestPosts[postIdx];
+      if (!post) return;
+      const eventsList = post.events || [];
+      const cards = post.cards || [];
+      const urls = eventsList.map(e => e.card_url).filter(Boolean);
+      const downloadList = urls.length > 0 ? urls : cards;
+
+      if (downloadList.length === 0) {
+        showToast('此篇貼文尚無圖卡可下載');
+        return;
+      }
+
+      showToast(`正在下載第 #${postIdx + 1} 篇的 ${downloadList.length} 張社群圖卡...`);
+      downloadList.forEach((url, i) => {
+        setTimeout(() => {
+          downloadFile(url, `smallseeds_post${postIdx + 1}_card${i + 1}.jpg`);
+        }, i * 350);
+      });
+    }
+
+    function downloadFile(url, filename) {
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename || 'smallseeds_card.jpg';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     }
 
     // Edit Handler
