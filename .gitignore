@@ -41,6 +41,7 @@ wheels/
 *.webp
 *.gif
 !assets/**
+!web/cards/**
 
 # IDE
 .vscode/
