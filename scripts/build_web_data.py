@@ -132,15 +132,13 @@ def build_data():
     out_file = out_dir / "events.json"
 
     if not raw_path.exists():
-        print(f"找不到 {raw_path}，產生示範資料...")
-        events_raw = []
-    else:
-        try:
-            with open(raw_path, "r", encoding="utf-8") as f:
-                events_raw = json.load(f)
-        except Exception as e:
-            print(f"讀取 {raw_path} 錯誤: {e}")
-            events_raw = []
+        raise FileNotFoundError(f"找不到 {raw_path}，無法更新 Web 活動資料。")
+
+    with open(raw_path, "r", encoding="utf-8") as f:
+        events_raw = json.load(f)
+
+    if not isinstance(events_raw, list) or not events_raw:
+        raise ValueError(f"{raw_path} 沒有有效活動資料，保留目前 Web 資料。")
 
     print(f"讀取原始資料共 {len(events_raw)} 筆...")
 
@@ -220,6 +218,9 @@ def build_data():
     # 排序熱門展演空間
     top_venues = sorted(list(venues_counter.values()), key=lambda x: x["count"], reverse=True)
 
+    if not normalized_events:
+        raise ValueError(f"{raw_path} 沒有可發布的有效活動，保留目前 Web 資料。")
+
     payload = {
         "updated_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         "total_events": len(normalized_events),
@@ -238,27 +239,25 @@ def build_data():
     posts_path = Path("data/digest_posts.json")
     out_posts = out_dir / "digest_posts.json"
     if posts_path.exists():
-        try:
-            with open(posts_path, "r", encoding="utf-8") as f:
-                posts_data = json.load(f)
-            with open(out_posts, "w", encoding="utf-8") as f:
-                json.dump(posts_data, f, ensure_ascii=False, indent=2)
-            print(f"成功輸出 Web 貼文草稿庫: {out_posts} (共 {len(posts_data)} 則貼文)")
-        except Exception as e:
-            print(f"輸出 Web 貼文草稿庫失敗: {e}")
+        with open(posts_path, "r", encoding="utf-8") as f:
+            posts_data = json.load(f)
+        if not isinstance(posts_data, list):
+            raise ValueError(f"{posts_path} 格式錯誤，預期為清單。")
+        with open(out_posts, "w", encoding="utf-8") as f:
+            json.dump(posts_data, f, ensure_ascii=False, indent=2)
+        print(f"成功輸出 Web 貼文草稿庫: {out_posts} (共 {len(posts_data)} 則貼文)")
 
     # 同步輸出單場焦點候選至 web/data/spotlight_posts.json
     spotlights_path = Path("data/spotlight_posts.json")
     out_spotlights = out_dir / "spotlight_posts.json"
     if spotlights_path.exists():
-        try:
-            with open(spotlights_path, "r", encoding="utf-8") as f:
-                spotlights_data = json.load(f)
-            with open(out_spotlights, "w", encoding="utf-8") as f:
-                json.dump(spotlights_data, f, ensure_ascii=False, indent=2)
-            print(f"成功輸出 Web 焦點候選庫: {out_spotlights}")
-        except Exception as e:
-            print(f"輸出 Web 焦點候選庫失敗: {e}")
+        with open(spotlights_path, "r", encoding="utf-8") as f:
+            spotlights_data = json.load(f)
+        if not isinstance(spotlights_data, list):
+            raise ValueError(f"{spotlights_path} 格式錯誤，預期為清單。")
+        with open(out_spotlights, "w", encoding="utf-8") as f:
+            json.dump(spotlights_data, f, ensure_ascii=False, indent=2)
+        print(f"成功輸出 Web 焦點候選庫: {out_spotlights}")
 
 if __name__ == "__main__":
     build_data()

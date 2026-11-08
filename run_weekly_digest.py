@@ -29,9 +29,12 @@ def load_config() -> dict:
     config_path = Path("config.yaml")
     if not config_path.exists():
         logger.error("Config file not found: config.yaml")
-        return {}
+        raise FileNotFoundError("config.yaml not found.")
     with open(config_path, 'r', encoding='utf-8') as f:
-        return yaml.safe_load(f)
+        config = yaml.safe_load(f)
+    if not isinstance(config, dict) or not config:
+        raise ValueError("config.yaml is empty or does not contain a configuration mapping.")
+    return config
 
 def is_free_event(event: dict) -> bool:
     """Check if event is free based on price field."""
@@ -99,17 +102,12 @@ def main():
     
     # 1. Load Config
     config = load_config()
-    if not config:
-        return
 
     # --- Step 1: Scrape ---
     if args.step in ['scrape', 'all']:
-        # 0. Clean up stale data (skip if --append to accumulate multiple scraper runs)
+        # 0. Preserve the last successful snapshot until the new scrape completes.
         raw_data_path = Path("data/digest_raw.json")
-        if raw_data_path.exists() and not args.append:
-            raw_data_path.unlink()
-            logger.info("Removed stale data/digest_raw.json")
-        elif args.append and raw_data_path.exists():
+        if args.append and raw_data_path.exists():
             logger.info("--append mode: keeping existing data/digest_raw.json and adding to it")
 
         # Load existing events if in append mode
@@ -229,10 +227,9 @@ def main():
                 log_scraping_error("Instagram", e)
 
         if not events:
-            logger.warning("No events found from any source. Writing empty list to prevent stale data usage.")
-            with open("data/digest_raw.json", "w", encoding="utf-8") as f:
-                json.dump([], f, indent=4, ensure_ascii=False)
-            return
+            logger.error("No events found from any source. Scrapers may have been blocked or failed.")
+            log_scraping_error("Pipeline", Exception("No events collected from any source during scrape step."))
+            raise RuntimeError("No events collected; preserving the last successful data.")
 
         # 7. Improved Cross-Platform Deduplication & Smart Detail Merging
         deduplicated_events = []
@@ -281,17 +278,13 @@ def main():
         # Load raw events
         if not os.path.exists("data/digest_raw.json"):
             logger.error("data/digest_raw.json not found. Run --step scrape first.")
-            return
+            raise FileNotFoundError("data/digest_raw.json not found; cannot process an update.")
             
         with open("data/digest_raw.json", "r", encoding="utf-8") as f:
             events = json.load(f)
             
         if not events:
-            logger.warning("No events to process (list is empty).")
-            # Create empty posts file to be safe
-            with open("data/digest_posts.json", "w", encoding="utf-8") as f:
-                json.dump([], f, indent=4, ensure_ascii=False)
-            return
+            raise ValueError("data/digest_raw.json contains no events; preserving the last successful data.")
 
         # Process & Build Digest
         # 固定「下一個完整日曆週」（週一到週日），讓週一與週四兩個 workflow 看同一窗口。
@@ -332,47 +325,31 @@ def main():
                 logger.warning("--exclude-streetvoice set but data/streetvoice_raw.json not found. Skipping dedup.")
         
         if not events:
-            logger.warning("No events to process after filtering (possibly all were StreetVoice duplicates).")
-            with open("data/digest_posts.json", "w", encoding="utf-8") as f:
-                json.dump([], f, indent=4, ensure_ascii=False)
-            return
+            raise ValueError("No events remain after filtering; preserving the last successful data.")
         
         
         # Initialize Builder with AI enrichment enabled
         builder = DigestBuilder(config={"ai_enrichment": True}) 
-        posts = []
-        try:
-            posts = builder.build_digest(events, start_date, end_date)
-        except Exception as e:
-            logger.exception(f"DigestBuilder failed: {e}")
+        posts = builder.build_digest(events, start_date, end_date)
         
         # Save updated raw events back (now containing AI-extracted performers)
         with open("data/digest_raw.json", "w", encoding="utf-8") as f:
             json.dump(events, f, indent=4, ensure_ascii=False)
 
-        if posts:
-            logger.info(f"Generated {len(posts)} threads posts.")
-            with open("data/digest_posts.json", "w", encoding="utf-8") as f:
-                json.dump(posts, f, indent=4, ensure_ascii=False)
-            logger.info("Saved posts to data/digest_posts.json")
-        else:
-            logger.warning("No posts generated after processing.")
+        logger.info(f"Generated {len(posts)} threads posts.")
+        with open("data/digest_posts.json", "w", encoding="utf-8") as f:
+            json.dump(posts, f, indent=4, ensure_ascii=False)
+        logger.info("Saved posts to data/digest_posts.json")
 
         # Auto-generate candidate spotlight posts (Mode A: 单場焦點爆款)
-        try:
-            spotlights = builder.find_candidate_spotlights(events, limit=8)
-            with open("data/spotlight_posts.json", "w", encoding="utf-8") as f:
-                json.dump(spotlights, f, indent=4, ensure_ascii=False)
-            logger.info(f"Generated {len(spotlights)} candidate spotlight posts in data/spotlight_posts.json")
-        except Exception as e:
-            logger.warning(f"Failed to generate spotlight candidates: {e}")
+        spotlights = builder.find_candidate_spotlights(events, limit=8)
+        with open("data/spotlight_posts.json", "w", encoding="utf-8") as f:
+            json.dump(spotlights, f, indent=4, ensure_ascii=False)
+        logger.info(f"Generated {len(spotlights)} candidate spotlight posts in data/spotlight_posts.json")
 
         # Auto-update web data for the venue explorer (ALWAYS executed)
-        try:
-            from scripts.build_web_data import build_data
-            build_data()
-        except Exception as e:
-            logger.warning(f"Failed to auto-update web data: {e}")
+        from scripts.build_web_data import build_data
+        build_data()
 
     # --- Step 3: Post ---
     if args.step in ['post', 'all']:

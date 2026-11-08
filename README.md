@@ -62,6 +62,8 @@ python scripts/digest_server.py
 python run_weekly_digest.py --step all
 ```
 
+若排程未安裝好 Playwright 瀏覽器、所有來源皆未取得活動，或生成資料不完整，工作流程會以失敗結束且不部署空資料，保留網站上次成功更新的內容。
+
 ---
 
 ## 📁 目錄結構
