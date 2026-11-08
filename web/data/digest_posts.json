@@ -1,259 +1,473 @@
 [
   {
-    "text": "【全台音樂活動週報 🎸】(10/05 (週一) - 10/11 (週日))\n\n下週全台共有 14 場音樂現場！\n✨ 2 場完全免費戶外/市集活動、🔥 1 場焦點熱門大專場，聽團行事曆準備排起來 🏃‍♂️\n\n詳細每日場次請看下方串文整理 👇\n💬 這週你打算衝哪幾場？還是要去哪個 Livehouse 喝酒？留言區開聊！\n\n🗺️ 想依照「展演空間」或「縣市」秒查所有演出？首頁網站已同步更新！\n📅 10/06 (週二)\n• [台北] AmbiO 1st LIVE IN @ 杰克音樂 Jack's studio\n\n📅 10/09 (週五)\n• [台北] TeddyLoid Special DJ Live in IEGP @ MOONDOG\n• [台北] LEE MINHYUK  CONCERT <HEAT MAX> in TAIPEI @ Clapper Studio展演廳\n• [台南] 《OUTSIDE THE GATE》 VOL.1 @ SEETY 新城視展演空間\n\n📅 10/10 (週六) (上)",
+    "text": "【全台音樂活動週報 🎸】(11/09 (週一) - 11/15 (週日))\n\n下週全台共有 23 場音樂現場！\n✨ 18 場完全免費戶外/市集活動，聽團行事曆準備排起來 🏃‍♂️\n\n詳細每日場次請看下方串文整理 👇\n💬 這週你打算衝哪幾場？還是要去哪個 Livehouse 喝酒？留言區開聊！\n\n🗺️ 想依照「展演空間」或「縣市」秒查所有演出？首頁網站已同步更新！\n📅 11/09 (週一)\n• Cort x Neil Zaza Asia Tour 電吉他講習會 @ 杰克音樂 Jack's studio\n\n📅 11/11 (週三)\n• [台北] 造音現場｜LOUDER STAGE #01－負能株式會社 × 派拉瑞 Badlarry × Renny Yo 尤時雨 @ 凝聚力音樂娛樂Cohesion Space\n\n📅 11/12 (週四)\n• [台北] 古Ali／Ali Ku 《第一個1/3》 @ 女巫店\n• [台北] 南半球的夢幻女聲 Bridge Dog 台北演唱會 @ * 演出地點\n\n📅 11/13 (週五)\n• [台中] 殘殺邪教 歐亞巡迴台中場 @ 迴響音樂藝文展演空間",
     "images": [
-      "https://assets.kktix.io/upload_images/590163/7479475b197081df_original.jpg",
-      "https://assets.kktix.io/upload_images/590827/e4850e2017ede981_original.png",
-      "https://assets.kktix.io/upload_images/589997/5c52315f18ff55c3_original.jpg",
-      "https://assets.kktix.io/upload_images/584746/d68443bd4b43b9df_original.jpg"
+      "https://indievox.static.tixcraft.com/images/activity/26_iv0424895_c5973a97c4f87850ce045d1632e716cb.jpg",
+      "https://akstatic.streetvoice.com/venue_activity_image/2026/10/06/3a2d9faf13ea492f8b596d1fa4f9f4bc.jpeg",
+      "https://akstatic.streetvoice.com/venue_activity_image/2026/10/31/f7ac83c1412d4aa0971cc33ab2d73434.jpeg",
+      "https://indievox.static.tixcraft.com/images/activity/26_iv0425761_933e6ed00739cca6d675520a9ad97c90.jpg",
+      "https://akstatic.streetvoice.com/venue_activity_image/2026/09/25/036e1b9005e54e9f9a695f722656146b.jpeg"
     ],
     "events": [
       {
-        "name": "AmbiO 1st LIVE IN",
-        "date": "2026-10-06",
+        "name": "Cort x Neil Zaza Asia Tour 電吉他講習會",
+        "date": "2026-11-09",
         "venue_name": "杰克音樂 Jack's studio",
-        "city": "臺北市",
+        "city": "Unknown",
         "performers": [
-          "AmbiO"
+          "Neil Zaza"
         ],
-        "image_url": "https://assets.kktix.io/upload_images/590163/7479475b197081df_original.jpg",
-        "ticket_platform": "KKTIX",
-        "ticket_url": "https://jackartzone.kktix.cc/events/ambiotaiwan2026",
-        "price": "0",
+        "image_url": "https://indievox.static.tixcraft.com/images/activity/26_iv0424895_c5973a97c4f87850ce045d1632e716cb.jpg",
+        "ticket_platform": "Indievox",
+        "ticket_url": "https://www.indievox.com/activity/detail/26_iv0424895",
+        "price": "預售票 250 元",
         "is_hot": false,
         "card_url": "cards/card_1.jpg"
       },
       {
-        "name": "TeddyLoid Special DJ Live in IEGP",
-        "date": "2026-10-09",
-        "venue_name": "MOONDOG",
-        "city": "臺北市",
+        "name": "造音現場｜LOUDER STAGE #01－負能株式會社 × 派拉瑞 Badlarry × Renny Yo 尤時雨",
+        "date": "2026-11-11",
+        "venue_name": "凝聚力音樂娛樂Cohesion Space",
+        "city": "台北市",
         "performers": [
-          "TeddyLoid"
+          "負能株式會社",
+          "派拉瑞 Badlarry",
+          "尤時雨 Renny Yo"
         ],
-        "image_url": "https://assets.kktix.io/upload_images/590827/e4850e2017ede981_original.png",
-        "ticket_platform": "KKTIX",
-        "ticket_url": "https://baodaorecords.kktix.cc/events/f2890e28",
-        "price": "TWD$2,500 / TWD$1,500",
+        "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/10/06/3a2d9faf13ea492f8b596d1fa4f9f4bc.jpeg",
+        "ticket_platform": "",
+        "ticket_url": "https://streetvoice.com/gigs/10127/",
+        "price": "",
         "is_hot": false,
         "card_url": "cards/card_2.jpg"
       },
       {
-        "name": "LEE MINHYUK  CONCERT <HEAT MAX> in TAIPEI",
-        "date": "2026-10-09",
-        "venue_name": "Clapper Studio展演廳",
-        "city": "台北市",
-        "performers": [],
-        "image_url": "https://assets.kktix.io/upload_images/589997/5c52315f18ff55c3_original.jpg",
-        "ticket_platform": "KKTIX",
-        "ticket_url": "https://oaklight.kktix.cc/events/b3abaace",
-        "price": "TWD$5,680 / TWD$4,280",
+        "name": "古Ali／Ali Ku 《第一個1/3》",
+        "date": "2026-11-12",
+        "venue_name": "女巫店",
+        "city": "臺北市",
+        "performers": [
+          "古Ali"
+        ],
+        "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/10/31/f7ac83c1412d4aa0971cc33ab2d73434.jpeg",
+        "ticket_platform": "",
+        "ticket_url": "https://streetvoice.com/gigs/10284/",
+        "price": "",
         "is_hot": false,
         "card_url": "cards/card_3.jpg"
       },
       {
-        "name": "《OUTSIDE THE GATE》 VOL.1",
-        "date": "2026-10-09",
-        "venue_name": "SEETY 新城視展演空間",
-        "city": "臺南市",
-        "performers": [],
-        "image_url": "https://assets.kktix.io/upload_images/584746/d68443bd4b43b9df_original.jpg",
-        "ticket_platform": "KKTIX",
-        "ticket_url": "https://seetytainanlive.kktix.cc/events/6458a781-copy-1",
-        "price": "TWD$600 / TWD$1,000 / TWD$450 / TWD$800",
+        "name": "南半球的夢幻女聲 Bridge Dog 台北演唱會",
+        "date": "2026-11-12",
+        "venue_name": "* 演出地點",
+        "city": "Unknown",
+        "performers": [
+          "Bridge Dog"
+        ],
+        "image_url": "https://indievox.static.tixcraft.com/images/activity/26_iv0425761_933e6ed00739cca6d675520a9ad97c90.jpg",
+        "ticket_platform": "Indievox",
+        "ticket_url": "https://www.indievox.com/activity/detail/26_iv0425761",
+        "price": "* 票價資訊",
         "is_hot": false,
         "card_url": "cards/card_4.jpg"
+      },
+      {
+        "name": "殘殺邪教 歐亞巡迴台中場",
+        "date": "2026-11-13",
+        "venue_name": "迴響音樂藝文展演空間",
+        "city": "臺中市",
+        "performers": [
+          "殘殺邪教 Slaughtercult",
+          "男性陰部逆向開發",
+          "肉棒派對"
+        ],
+        "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/09/25/036e1b9005e54e9f9a695f722656146b.jpeg",
+        "ticket_platform": "Indievox",
+        "ticket_url": "https://www.indievox.com/activity/detail/26_iv0422572",
+        "price": "🔊 票價Ticket: 預售(Adv) 1200/ 現場(Door) 1500",
+        "is_hot": false,
+        "card_url": "cards/card_5.jpg"
       }
     ],
     "cards": [
       "cards/card_1.jpg",
       "cards/card_2.jpg",
       "cards/card_3.jpg",
-      "cards/card_4.jpg"
+      "cards/card_4.jpg",
+      "cards/card_5.jpg"
     ]
   },
   {
-    "text": "• [台北] LEE MINHYUK  CONCERT <HEAT MAX> in TAIPEI @ Clapper Studio展演廳• [台北] 音羽-otoha- OUR PLANET additional in TAIPEI @ The Wall Live House\n🔥 [高雄] Takao Rock 打狗祭：Hi-ing 5 - 拍謝少年高流演唱會 @ 高雄流行音樂中心 海音館\n• Konomi Suzuki Asia Tour in Hong Kong @ PORTAL\n\n📅 10/10 (週六) (下)\n• [台北] Shye 'Return' Live in Taipei @ 野地⽅Wild Lab\n• 邱冠瑜《凌晨三點的備忘錄》線上專場音樂會 @ Online Event\n• [台北] Ellery 呈獻 THE CUT - Fall Edition 秋季場 @ Comedy Plus 卡米地＋\n\n📅 10/11 (週日)\n• [台北] 康康SHOW-色·可餐 @ Billboard Live TAIPEI",
+    "text": "• [台北] 菌網 MYCELIUM @ Revolver• [台北] 哥查Kerchak《我只是個無能的胖子》 @ 女巫店\n• [台北] 伯爵白《情人未遂 Situationtrip》發片專場-台北場 @ SUB\n• [台北] DSPS《Sight Sound Taste Scent Touch》 @ 誠品生活松菸\n• [台北] 椅子樂團 Rolling On, Marching On 十週年巡演-台北場加場 @ Legacy TERA\n• [台北] 大範大聲（tuā-pān tuā-siann）Vol.01 SADOG X Yo Chen @ 野地方 Wild Lab\n\n📅 11/14 (週六) (上)\n• [桃園] ✷ FIREBALL 火球祭 ✷ - 11/14 @ 樂天桃園棒球場\n• [台北] 啊～獅八！明天還是要上班 / 和東獅樂團107 / 八週年演唱會 @ Corner House角落文創展演空間\n• [台北] 我覺得，愛是… @ Pipe Live Music\n• [台北] Juice Boy《所以說永遠多長》台北演唱會 @ SUB",
     "images": [
-      "https://assets.kktix.io/upload_images/589998/42d12bdfc76f3732_original.jpg",
-      "https://assets.kktix.io/upload_images/313965/%E9%9F%B3%E7%BE%BD-otoha-%E5%B0%88%E5%A0%B4-resize_1200x630_original.jpg",
-      "https://assets.kktix.io/upload_images/562854/_Hi-ing_5_KKTIX_%E5%AE%98%E7%B6%B2_%E4%B9%9D%E5%AE%AE%E6%A0%BC_1200_630_original.jpg",
-      "https://assets.kktix.io/upload_images/562890/1200x630__1__original.jpg",
-      "https://assets.kktix.io/upload_images/584797/913b3e7ff0b1826f_original.png",
-      "https://assets.kktix.io/upload_images/590920/4f5e97517c6e4a24_original.jpg",
-      "https://assets.kktix.io/upload_images/571660/8-3_PDF_fall_banner_original.jpg",
-      "https://assets.kktix.io/upload_images/574893/%E4%B8%BB%E8%A6%96%E8%A6%BA-KKTIX_original.png"
+      "https://akstatic.streetvoice.com/venue_activity_image/2026/10/15/94b18de843cd447c82c403e3b82b966e.jpeg",
+      "https://akstatic.streetvoice.com/venue_activity_image/2026/11/01/bd21dd72e55f459f939d0c9b356afed8.jpeg",
+      "https://akstatic.streetvoice.com/venue_activity_image/2026/09/12/78ca503158444f089750e9042dd6c749.jpeg",
+      "https://akstatic.streetvoice.com/venue_activity_image/2026/09/12/c15592521a9e4047b27e2fcf0e315ea2.jpeg",
+      "https://akstatic.streetvoice.com/venue_activity_image/2026/09/25/a302ddc35285491f98dda17469f8b8d6.jpeg",
+      "https://akstatic.streetvoice.com/venue_activity_image/2026/11/03/aa10a587fb4c4508b75717a772805269.png",
+      "https://akstatic.streetvoice.com/venue_activity_image/2026/10/13/cbc27a0083b845cfbaf34fee998e7384.jpeg",
+      "https://akstatic.streetvoice.com/venue_activity_image/2026/09/12/ab4c59fcadb04a60a32f3c062163a222.jpeg",
+      "https://akstatic.streetvoice.com/venue_activity_image/2026/10/17/be6437e98f3d4fb490274a082a9e11e5.jpeg",
+      "https://akstatic.streetvoice.com/venue_activity_image/2026/09/25/6288d24e59294cc8b2467dfa8cb0897b.jpeg"
     ],
     "events": [
       {
-        "name": "LEE MINHYUK  CONCERT <HEAT MAX> in TAIPEI",
-        "date": "2026-10-10",
-        "venue_name": "Clapper Studio展演廳",
-        "city": "台北市",
-        "performers": [],
-        "image_url": "https://assets.kktix.io/upload_images/589998/42d12bdfc76f3732_original.jpg",
-        "ticket_platform": "KKTIX",
-        "ticket_url": "https://oaklight.kktix.cc/events/d870e7c6",
-        "price": "TWD$5,680 / TWD$4,280",
-        "is_hot": false,
-        "card_url": "cards/card_5.jpg"
-      },
-      {
-        "name": "音羽-otoha- OUR PLANET additional in TAIPEI",
-        "date": "2026-10-10",
-        "venue_name": "The Wall Live House",
-        "city": "台北市",
+        "name": "菌網 MYCELIUM",
+        "date": "2026-11-13",
+        "venue_name": "Revolver",
+        "city": "臺北市",
         "performers": [
-          "音羽-otoha-"
+          "K.KILLER",
+          "氓犬 Inu Vicious",
+          "KIVΛMKI",
+          "轟轟 the Hong"
         ],
-        "image_url": "https://assets.kktix.io/upload_images/313965/%E9%9F%B3%E7%BE%BD-otoha-%E5%B0%88%E5%A0%B4-resize_1200x630_original.jpg",
-        "ticket_platform": "KKTIX",
-        "ticket_url": "https://emergelivehouse2.kktix.cc/events/e6fa4076",
-        "price": "TWD$1,880 / TWD$1,480",
+        "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/10/15/94b18de843cd447c82c403e3b82b966e.jpeg",
+        "ticket_platform": "Indievox",
+        "ticket_url": "https://www.indievox.com/activity/detail/26_iv04256e8",
+        "price": "",
         "is_hot": false,
         "card_url": "cards/card_6.jpg"
       },
       {
-        "name": "Takao Rock 打狗祭：Hi-ing 5 - 拍謝少年高流演唱會",
-        "date": "2026-10-10",
-        "venue_name": "高雄流行音樂中心 海音館",
-        "city": "高雄市",
+        "name": "哥查Kerchak《我只是個無能的胖子》",
+        "date": "2026-11-13",
+        "venue_name": "女巫店",
+        "city": "臺北市",
         "performers": [
-          "拍謝少年"
+          "哥查 Kerchak"
         ],
-        "image_url": "https://assets.kktix.io/upload_images/562854/_Hi-ing_5_KKTIX_%E5%AE%98%E7%B6%B2_%E4%B9%9D%E5%AE%AE%E6%A0%BC_1200_630_original.jpg",
-        "ticket_platform": "KKTIX",
-        "ticket_url": "https://kpmc.kktix.cc/events/hi-ing5",
-        "price": "TWD$2,680 / TWD$2,600 / TWD$2,680 / TWD$2,480 / TWD$1,880 / TWD$980",
-        "is_hot": true,
+        "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/11/01/bd21dd72e55f459f939d0c9b356afed8.jpeg",
+        "ticket_platform": "",
+        "ticket_url": "https://streetvoice.com/gigs/10290/",
+        "price": "",
+        "is_hot": false,
         "card_url": "cards/card_7.jpg"
       },
       {
-        "name": "Konomi Suzuki Asia Tour in Hong Kong",
-        "date": "2026-10-10",
-        "venue_name": "PORTAL",
-        "city": "Unknown",
+        "name": "伯爵白《情人未遂 Situationtrip》2026 發片專場-台北場",
+        "date": "2026-11-13",
+        "venue_name": "SUB",
+        "city": "臺北市",
         "performers": [
-          "Konomi Suzuki"
+          "伯爵白 Earl Blanc"
         ],
-        "image_url": "https://assets.kktix.io/upload_images/562890/1200x630__1__original.jpg",
-        "ticket_platform": "KKTIX",
-        "ticket_url": "https://edproduction.kktix.cc/events/konomi-suzuki-hk-2026",
-        "price": "HKD$1,012.0 / HKD$812.0",
+        "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/09/12/78ca503158444f089750e9042dd6c749.jpeg",
+        "ticket_platform": "",
+        "ticket_url": "https://streetvoice.com/gigs/9975/",
+        "price": "",
         "is_hot": false,
         "card_url": "cards/card_8.jpg"
       },
       {
-        "name": "Shye 'Return' Live in Taipei",
-        "date": "2026-10-10",
-        "venue_name": "野地⽅Wild Lab",
+        "name": "【誠品Fun聲】DSPS《Sight Sound Taste Scent Touch》",
+        "date": "2026-11-13",
+        "venue_name": "誠品生活松菸",
         "city": "臺北市",
         "performers": [
-          "Shye"
+          "DSPS"
         ],
-        "image_url": "https://assets.kktix.io/upload_images/584797/913b3e7ff0b1826f_original.png",
-        "ticket_platform": "KKTIX",
-        "ticket_url": "https://timemachine.kktix.cc/events/c499c8fe",
-        "price": "TWD$800",
+        "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/09/12/c15592521a9e4047b27e2fcf0e315ea2.jpeg",
+        "ticket_platform": "Indievox",
+        "ticket_url": "https://www.indievox.com/activity/detail/26_iv04200df",
+        "price": "",
         "is_hot": false,
         "card_url": "cards/card_9.jpg"
       },
       {
-        "name": "邱冠瑜《凌晨三點的備忘錄》線上專場音樂會",
-        "date": "2026-10-10",
-        "venue_name": "Online Event",
-        "city": "Unknown",
+        "name": "椅子樂團 Rolling On, Marching On 十週年巡演-台北場加場",
+        "date": "2026-11-13",
+        "venue_name": "Legacy TERA",
+        "city": "臺北市",
         "performers": [
-          "邱冠瑜"
+          "椅子樂團 The Chairs"
         ],
-        "image_url": "https://assets.kktix.io/upload_images/590920/4f5e97517c6e4a24_original.jpg",
-        "ticket_platform": "KKTIX",
-        "ticket_url": "https://yaoseen.kktix.cc/events/10102300",
-        "price": "免費",
+        "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/09/25/a302ddc35285491f98dda17469f8b8d6.jpeg",
+        "ticket_platform": "",
+        "ticket_url": "https://streetvoice.com/gigs/10016/",
+        "price": "",
         "is_hot": false,
         "card_url": "cards/card_10.jpg"
       },
       {
-        "name": "Ellery 呈獻 THE CUT - Fall Edition 秋季場",
-        "date": "2026-10-10",
-        "venue_name": "Comedy Plus 卡米地＋",
-        "city": "台北市",
-        "performers": [],
-        "image_url": "https://assets.kktix.io/upload_images/571660/8-3_PDF_fall_banner_original.jpg",
-        "ticket_platform": "KKTIX",
-        "ticket_url": "https://comedyclub.kktix.cc/events/thecutautumn",
-        "price": "$600 / $800 / $1200 / $600 / $800",
+        "name": "大範大聲（tuā-pān tuā-siann）Vol.01 SADOG X Yo Chen",
+        "date": "2026-11-13",
+        "venue_name": "野地方 Wild Lab",
+        "city": "臺北市",
+        "performers": [
+          "SADOG",
+          "Yo Chen"
+        ],
+        "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/11/03/aa10a587fb4c4508b75717a772805269.png",
+        "ticket_platform": "Indievox",
+        "ticket_url": "https://www.indievox.com/activity/detail/26_iv0424735",
+        "price": "",
         "is_hot": false,
         "card_url": "cards/card_11.jpg"
       },
       {
-        "name": "康康SHOW-色·可餐",
-        "date": "2026-10-11",
-        "venue_name": "Billboard Live TAIPEI",
-        "city": "臺北市",
+        "name": "✷ 2026 FIREBALL 火球祭 ✷ - 11/14",
+        "date": "2026-11-14",
+        "venue_name": "樂天桃園棒球場",
+        "city": "桃園市",
         "performers": [
-          "康康"
+          "滅火器 Fire EX.",
+          "FEVER 333",
+          "Sambomaster",
+          "Northern19",
+          "Soft Lipa",
+          "血肉果汁機 Flesh Juicer",
+          "鄭宜農 Enno Cheng",
+          "生祥樂隊",
+          "Gummy B",
+          "葛西瓦Kasiwa",
+          "Isyana Sarasvati",
+          "淺堤 Shallow Levée",
+          "GYMV",
+          "Ureuk and The Gypsies",
+          "RANDOM",
+          "PiA吳蓓雅",
+          "黃宇寒 Han",
+          "憂憂yo-yo",
+          "BUTTER RIOT"
         ],
-        "image_url": "https://assets.kktix.io/upload_images/574893/%E4%B8%BB%E8%A6%96%E8%A6%BA-KKTIX_original.png",
-        "ticket_platform": "KKTIX",
-        "ticket_url": "https://billboardlivetp.kktix.cc/events/46ce60a8",
-        "price": "TWD$2,200 / TWD$3,500 / TWD$4,500 / TWD$10,000 / TWD$30,000",
+        "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/10/13/cbc27a0083b845cfbaf34fee998e7384.jpeg",
+        "ticket_platform": "",
+        "ticket_url": "https://streetvoice.com/gigs/10159/",
+        "price": "",
         "is_hot": false,
         "card_url": "cards/card_12.jpg"
+      },
+      {
+        "name": "啊～獅八！明天還是要上班 / 和東獅樂團107 / 八週年演唱會",
+        "date": "2026-11-14",
+        "venue_name": "Corner House角落文創展演空間",
+        "city": "臺北市",
+        "performers": [
+          "和東獅樂團"
+        ],
+        "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/09/12/ab4c59fcadb04a60a32f3c062163a222.jpeg",
+        "ticket_platform": "",
+        "ticket_url": "https://streetvoice.com/gigs/9965/",
+        "price": "",
+        "is_hot": false,
+        "card_url": "cards/card_13.jpg"
+      },
+      {
+        "name": "我覺得，愛是…",
+        "date": "2026-11-14",
+        "venue_name": "Pipe Live Music",
+        "city": "臺北市",
+        "performers": [
+          "漁光倒 Yuguang Fall",
+          "MORE BE US"
+        ],
+        "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/10/17/be6437e98f3d4fb490274a082a9e11e5.jpeg",
+        "ticket_platform": "",
+        "ticket_url": "https://streetvoice.com/gigs/10180/",
+        "price": "",
+        "is_hot": false,
+        "card_url": "cards/card_14.jpg"
+      },
+      {
+        "name": "Juice Boy《所以說永遠多長》台北演唱會",
+        "date": "2026-11-14",
+        "venue_name": "SUB",
+        "city": "臺北市",
+        "performers": [
+          "Juice boy"
+        ],
+        "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/09/25/6288d24e59294cc8b2467dfa8cb0897b.jpeg",
+        "ticket_platform": "",
+        "ticket_url": "https://streetvoice.com/gigs/10024/",
+        "price": "",
+        "is_hot": false,
+        "card_url": "cards/card_15.jpg"
       }
     ],
     "cards": [
-      "cards/card_5.jpg",
       "cards/card_6.jpg",
       "cards/card_7.jpg",
       "cards/card_8.jpg",
       "cards/card_9.jpg",
       "cards/card_10.jpg",
       "cards/card_11.jpg",
-      "cards/card_12.jpg"
+      "cards/card_12.jpg",
+      "cards/card_13.jpg",
+      "cards/card_14.jpg",
+      "cards/card_15.jpg"
     ]
   },
   {
-    "text": "• [台北] Yo-Sea Asia Tour Minimum Band Set @ The Wall Live House• [新北] Omoinotake ONE MAN TOUR TAIPEI @ Zepp New Taipei",
+    "text": "• [台北] 客家音樂局 Vol.1 過家尞 @ 野地方 Wild Lab\n📅 11/14 (週六) (下)\n• [台北] 朵莉Dory_我是可笑的人啊 Full Band Live @ 女巫店\n• [台中] 蔡題謙 專場 @ Legacy Taichung 傳 音樂展演空間\n• [台北] 椅子樂團 Rolling On, Marching On 十週年巡演 - 台北場 @ Legacy TERA\n• [台中] 烙聲派對 VOL.3｜ FUCK’N BEFORE THE FREEZE @ 迴響音樂藝文展演空間\n\n📅 11/15 (週日)\n• [桃園] ✷ FIREBALL 火球祭 ✷ - 11/15 @ 樂天桃園棒球場\n• [台北] ASIA METAL FESTIVAL — TAIPEI @ 凝聚力音樂娛樂Cohesion Space\n• 11.15  冬日的黑夜大於白天 @ Live House",
     "images": [
-      "https://assets.kktix.io/upload_images/575565/yosea_Banner1200x630_original.png",
-      "https://assets.kktix.io/assets/kktix-og-image-d905bcfb8e0f7debf8b0ac14e48255701310a8d54b62934339498d1c2a64f0a3.png"
+      "https://akstatic.streetvoice.com/venue_activity_image/2026/10/03/05a4767cdd3046ab80161c1c24d78fa0.jpeg",
+      "https://akstatic.streetvoice.com/venue_activity_image/2026/11/03/2758986c9e43499e886a829bb4db0d84.jpeg",
+      "https://akstatic.streetvoice.com/venue_activity_image/2026/09/08/efad1aae53194fa8ab7b761064935c02.jpeg",
+      "https://akstatic.streetvoice.com/venue_activity_image/2026/09/12/632a9dfc822746eaa415d875ed5f2384.jpeg",
+      "https://akstatic.streetvoice.com/venue_activity_image/2026/10/31/6d1254343cbc4006a9f30c5729280488.jpeg",
+      "https://akstatic.streetvoice.com/venue_activity_image/2026/10/13/1999041053c0426b946b1dfe93f61e91.jpeg",
+      "https://akstatic.streetvoice.com/venue_activity_image/2026/07/19/c981d12050ba4fafa39cf50d379526ca.jpeg",
+      "https://indievox.static.tixcraft.com/images/activity/26_iv04296e0_66e05224a0d3be3f3c3e17c8a29fadc6.jpg"
     ],
     "events": [
       {
-        "name": "Yo-Sea Asia Tour Minimum Band Set",
-        "date": "2026-10-11",
-        "venue_name": "The Wall Live House",
-        "city": "Unknown",
+        "name": "2026 客家音樂局 Vol.1 過家尞",
+        "date": "2026-11-14",
+        "venue_name": "野地方 Wild Lab",
+        "city": "臺北市",
         "performers": [
-          "Yo-Sea"
+          "陳瑋儒",
+          "Hank 江晟榮",
+          "NGAI 客家女團",
+          "賈斯汀 Justin"
         ],
-        "image_url": "https://assets.kktix.io/upload_images/575565/yosea_Banner1200x630_original.png",
-        "ticket_platform": "KKTIX",
-        "ticket_url": "https://youngteam.kktix.cc/events/yosea",
-        "price": "TWD$1,590",
+        "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/10/03/05a4767cdd3046ab80161c1c24d78fa0.jpeg",
+        "ticket_platform": "Indievox",
+        "ticket_url": "https://www.indievox.com/activity/detail/26_iv0423766",
+        "price": "票價｜預售票 500 元、現場票 550 元",
         "is_hot": false,
-        "card_url": "cards/card_13.jpg"
+        "card_url": "cards/card_16.jpg"
       },
       {
-        "name": "Omoinotake ONE MAN TOUR TAIPEI",
-        "date": "2026-10-11",
-        "venue_name": "Zepp New Taipei",
-        "city": "新北市",
+        "name": "朵莉Dory_我是可笑的人啊 Full Band Live",
+        "date": "2026-11-14",
+        "venue_name": "女巫店",
+        "city": "臺北市",
         "performers": [
-          "Omoinotake"
+          "鄭瑜瑄Dory C"
         ],
-        "image_url": "https://assets.kktix.io/assets/kktix-og-image-d905bcfb8e0f7debf8b0ac14e48255701310a8d54b62934339498d1c2a64f0a3.png",
-        "ticket_platform": "KKTIX",
-        "ticket_url": "https://offtimemusic.kktix.cc/events/omoinotake2026",
-        "price": "TWD$2,880 / TWD$2,280 / TWD$2,580 / TWD$2,080",
+        "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/11/03/2758986c9e43499e886a829bb4db0d84.jpeg",
+        "ticket_platform": "",
+        "ticket_url": "https://streetvoice.com/gigs/10292/",
+        "price": "",
         "is_hot": false,
-        "card_url": "cards/card_14.jpg"
+        "card_url": "cards/card_17.jpg"
+      },
+      {
+        "name": "蔡題謙 2026 專場【中間】",
+        "date": "2026-11-14",
+        "venue_name": "Legacy Taichung 傳 音樂展演空間",
+        "city": "臺中市",
+        "performers": [
+          "蔡題謙 Tee Train",
+          "蔡題謙"
+        ],
+        "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/09/08/efad1aae53194fa8ab7b761064935c02.jpeg",
+        "ticket_platform": "Indievox",
+        "ticket_url": "https://www.indievox.com/activity/detail/26_iv0420267",
+        "price": "單人預售票 650元 / 雙人預售套票 1200元 / 現場票 800元 / 身障票 325元（線上購票）",
+        "is_hot": false,
+        "card_url": "cards/card_18.jpg"
+      },
+      {
+        "name": "椅子樂團 Rolling On, Marching On 十週年巡演 - 台北場",
+        "date": "2026-11-14",
+        "venue_name": "Legacy TERA",
+        "city": "臺北市",
+        "performers": [
+          "椅子樂團 The Chairs"
+        ],
+        "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/09/12/632a9dfc822746eaa415d875ed5f2384.jpeg",
+        "ticket_platform": "",
+        "ticket_url": "https://streetvoice.com/gigs/9966/",
+        "price": "",
+        "is_hot": false,
+        "card_url": "cards/card_19.jpg"
+      },
+      {
+        "name": "烙聲派對 VOL.3｜ FUCK’N BEFORE THE FREEZE",
+        "date": "2026-11-14",
+        "venue_name": "迴響音樂藝文展演空間",
+        "city": "臺中市",
+        "performers": [
+          "Rework雷沃克",
+          "Nullius Light",
+          "乙水 yeewater"
+        ],
+        "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/10/31/6d1254343cbc4006a9f30c5729280488.jpeg",
+        "ticket_platform": "Indievox",
+        "ticket_url": "https://www.indievox.com/activity/detail/26_iv04286c9",
+        "price": "",
+        "is_hot": false,
+        "card_url": "cards/card_20.jpg"
+      },
+      {
+        "name": "✷ 2026 FIREBALL 火球祭 ✷ - 11/15",
+        "date": "2026-11-15",
+        "venue_name": "樂天桃園棒球場",
+        "city": "桃園市",
+        "performers": [
+          "滅火器 Fire EX.",
+          "Dragon Ash",
+          "EGO-WRAPPIN’",
+          "HANA",
+          "Crystal Lake",
+          "TRASH",
+          "美秀集團",
+          "洪佩瑜 Pei-Yu Hung",
+          "陳嫺靜",
+          "公館青少年 GGteens",
+          "DSPS",
+          "EmptyORio",
+          "陳以恆",
+          "C.Holly",
+          "胖虎 punkhoo",
+          "擊沈女孩",
+          "固定客GOODICK",
+          "普通隊長",
+          "debloop"
+        ],
+        "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/10/13/1999041053c0426b946b1dfe93f61e91.jpeg",
+        "ticket_platform": "",
+        "ticket_url": "https://streetvoice.com/gigs/10160/",
+        "price": "",
+        "is_hot": false,
+        "card_url": "cards/card_21.jpg"
+      },
+      {
+        "name": "ASIA METAL FESTIVAL 2026 — TAIPEI",
+        "date": "2026-11-15",
+        "venue_name": "凝聚力音樂娛樂Cohesion Space",
+        "city": "台北市",
+        "performers": [
+          "Method",
+          "Complexant",
+          "Oathean",
+          "Cursed Eyes",
+          "Efflore 白華"
+        ],
+        "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/07/19/c981d12050ba4fafa39cf50d379526ca.jpeg",
+        "ticket_platform": "",
+        "ticket_url": "https://streetvoice.com/gigs/9698/",
+        "price": "",
+        "is_hot": false,
+        "card_url": "cards/card_22.jpg"
+      },
+      {
+        "name": "11.15  冬日的黑夜大於白天",
+        "date": "2026-11-15",
+        "venue_name": "Live House",
+        "city": "Unknown",
+        "performers": [],
+        "image_url": "https://indievox.static.tixcraft.com/images/activity/26_iv04296e0_66e05224a0d3be3f3c3e17c8a29fadc6.jpg",
+        "ticket_platform": "Indievox",
+        "ticket_url": "https://www.indievox.com/activity/detail/26_iv04296e0",
+        "price": "",
+        "is_hot": false,
+        "card_url": "cards/card_23.jpg"
       }
     ],
     "cards": [
-      "cards/card_13.jpg",
-      "cards/card_14.jpg"
+      "cards/card_16.jpg",
+      "cards/card_17.jpg",
+      "cards/card_18.jpg",
+      "cards/card_19.jpg",
+      "cards/card_20.jpg",
+      "cards/card_21.jpg",
+      "cards/card_22.jpg",
+      "cards/card_23.jpg"
     ]
   }
 ]
