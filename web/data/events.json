@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-11-09 01:24:55",
-  "total_events": 36,
+  "updated_at": "2026-11-10 03:59:40",
+  "total_events": 38,
   "total_free": 21,
   "total_hot": 0,
   "top_venues": [
@@ -29,11 +29,11 @@
       "count": 2
     },
     {
-      "id": "legacy_tc",
-      "name": "Legacy Taichung",
+      "id": "live_warehouse",
+      "name": "駁二 LIVE WAREHOUSE",
       "city": "Unknown",
-      "tagline": "台中專場旗艦地標",
-      "vibe": "中部核心",
+      "tagline": "高雄港邊倉庫・南方聽團大本營",
+      "vibe": "港都浪潮",
       "count": 2
     },
     {
@@ -45,35 +45,15 @@
       "count": 1
     },
     {
-      "id": "live_warehouse",
-      "name": "駁二 LIVE WAREHOUSE",
+      "id": "legacy_tc",
+      "name": "Legacy Taichung",
       "city": "Unknown",
-      "tagline": "高雄港邊倉庫・南方聽團大本營",
-      "vibe": "港都浪潮",
+      "tagline": "台中專場旗艦地標",
+      "vibe": "中部核心",
       "count": 1
     }
   ],
   "events": [
-    {
-      "id": "indievox_Cort x Neil Zaza Asia Tour 電吉他講習會_2026-11-09",
-      "title": "Cort x Neil Zaza Asia Tour 電吉他講習會",
-      "date": "2026-11-09",
-      "time": "18:30",
-      "venue": "杰克音樂 Jack's studio",
-      "venue_id": "other",
-      "location": "杰克音樂 Jack's studio",
-      "city": "Unknown",
-      "region": "全台其他",
-      "price": "NT$ 250",
-      "is_free": false,
-      "is_hot": false,
-      "performers": [
-        "Neil Zaza"
-      ],
-      "ticket_platform": "Indievox",
-      "ticket_url": "https://www.indievox.com/activity/detail/26_iv0424895",
-      "image_url": "https://indievox.static.tixcraft.com/images/activity/26_iv0424895_c5973a97c4f87850ce045d1632e716cb.jpg"
-    },
     {
       "id": "ev_0",
       "title": "造音現場｜LOUDER STAGE #01－負能株式會社 × 派拉瑞 Badlarry × Renny Yo 尤時雨",
@@ -686,46 +666,6 @@
       "image_url": "https://indievox.static.tixcraft.com/images/activity/26_iv0430199_51ea177da7d2fe2d648c01fd9d72bb5b.jpg"
     },
     {
-      "id": "indievox_鶴 The Crane - 小小茶會 Petit Tea Party_2026-11-20",
-      "title": "鶴 The Crane - 小小茶會 Petit Tea Party",
-      "date": "2026-11-20",
-      "time": "20:00",
-      "venue": "SUB",
-      "venue_id": "other",
-      "location": "SUB",
-      "city": "Unknown",
-      "region": "全台其他",
-      "price": "售票",
-      "is_free": false,
-      "is_hot": false,
-      "performers": [
-        "鶴"
-      ],
-      "ticket_platform": "Indievox",
-      "ticket_url": "https://www.indievox.com/activity/detail/26_iv04270ea",
-      "image_url": "https://indievox.static.tixcraft.com/images/activity/26_iv04270ea_c2ab7ef83f134216febdb262fb942219.png"
-    },
-    {
-      "id": "indievox_Fire Live 壞兒來福 Vol.4_2026-11-20",
-      "title": "Fire Live 壞兒來福 Vol.4",
-      "date": "2026-11-20",
-      "time": "",
-      "venue": "全台展演空間",
-      "venue_id": "other",
-      "location": "全台展演空間",
-      "city": "Unknown",
-      "region": "全台其他",
-      "price": "售票",
-      "is_free": false,
-      "is_hot": false,
-      "performers": [
-        "一生好命"
-      ],
-      "ticket_platform": "Indievox",
-      "ticket_url": "https://www.indievox.com/activity/detail/26_iv0425078",
-      "image_url": "https://indievox.static.tixcraft.com/images/activity/26_iv0425078_a29c9a19145fae726717e4ab8b783f65.png"
-    },
-    {
       "id": "indievox_That’s My Shhh presents LAZY HABITS 「THE CON..._2026-11-20",
       "title": "That’s My Shhh presents LAZY HABITS 「THE CON...",
       "date": "2026-11-20",
@@ -748,6 +688,108 @@
       "ticket_platform": "Indievox",
       "ticket_url": "https://www.indievox.com/activity/detail/26_iv0425817",
       "image_url": "https://indievox.static.tixcraft.com/images/activity/26_iv0425817_116d24529ce68aa3ae4cb3f84a7de283.jpg"
+    },
+    {
+      "id": "indievox_Fire Live 壞兒來福 Vol.4_2026-11-20",
+      "title": "Fire Live 壞兒來福 Vol.4",
+      "date": "2026-11-20",
+      "time": "",
+      "venue": "全台展演空間",
+      "venue_id": "other",
+      "location": "全台展演空間",
+      "city": "Unknown",
+      "region": "全台其他",
+      "price": "售票",
+      "is_free": false,
+      "is_hot": false,
+      "performers": [
+        "一生好命"
+      ],
+      "ticket_platform": "Indievox",
+      "ticket_url": "https://www.indievox.com/activity/detail/26_iv0425078",
+      "image_url": "https://indievox.static.tixcraft.com/images/activity/26_iv0425078_a29c9a19145fae726717e4ab8b783f65.png"
+    },
+    {
+      "id": "indievox_鶴 The Crane - 小小茶會 Petit Tea Party_2026-11-20",
+      "title": "鶴 The Crane - 小小茶會 Petit Tea Party",
+      "date": "2026-11-20",
+      "time": "20:00",
+      "venue": "SUB",
+      "venue_id": "other",
+      "location": "SUB",
+      "city": "Unknown",
+      "region": "全台其他",
+      "price": "售票",
+      "is_free": false,
+      "is_hot": false,
+      "performers": [
+        "鶴"
+      ],
+      "ticket_platform": "Indievox",
+      "ticket_url": "https://www.indievox.com/activity/detail/26_iv04270ea",
+      "image_url": "https://indievox.static.tixcraft.com/images/activity/26_iv04270ea_c2ab7ef83f134216febdb262fb942219.png"
+    },
+    {
+      "id": "indievox_11/21（六）《 Our First Show 》首次來台！（舞台）_2026-11-21",
+      "title": "11/21（六）《 Our First Show 》首次來台！（舞台）",
+      "date": "2026-11-21",
+      "time": "",
+      "venue": "Live House",
+      "venue_id": "other",
+      "location": "Live House",
+      "city": "Unknown",
+      "region": "全台其他",
+      "price": "NT$ 400 - 500",
+      "is_free": false,
+      "is_hot": false,
+      "performers": [
+        "Our First Show"
+      ],
+      "ticket_platform": "Indievox",
+      "ticket_url": "https://www.indievox.com/activity/detail/26_iv042523d",
+      "image_url": "https://indievox.static.tixcraft.com/images/activity/26_iv042523d_8b7770ad53e81e234ac6bbde22e0eaa9.jpeg"
+    },
+    {
+      "id": "indievox_交個朋友吧演出系列-番外_2026-11-21",
+      "title": "交個朋友吧演出系列-番外",
+      "date": "2026-11-21",
+      "time": "19:30",
+      "venue": "駁二 LIVE WAREHOUSE",
+      "venue_id": "live_warehouse",
+      "location": "駁二 LIVE WAREHOUSE",
+      "city": "Unknown",
+      "region": "全台其他",
+      "price": "售票",
+      "is_free": false,
+      "is_hot": false,
+      "performers": [
+        "HeheHaha",
+        "油漬艾莉",
+        "秋山"
+      ],
+      "ticket_platform": "Indievox",
+      "ticket_url": "https://www.indievox.com/activity/detail/26_iv04218a6",
+      "image_url": "https://indievox.static.tixcraft.com/images/activity/26_iv04218a6_a2d33348adecc2982682d5f61d59bf20.jpg"
+    },
+    {
+      "id": "indievox_鶴 The Crane - 小小茶會 Petit Tea Party_2026-11-21",
+      "title": "鶴 The Crane - 小小茶會 Petit Tea Party",
+      "date": "2026-11-21",
+      "time": "20:00",
+      "venue": "SUB",
+      "venue_id": "other",
+      "location": "SUB",
+      "city": "Unknown",
+      "region": "全台其他",
+      "price": "售票",
+      "is_free": false,
+      "is_hot": false,
+      "performers": [
+        "鶴"
+      ],
+      "ticket_platform": "Indievox",
+      "ticket_url": "https://www.indievox.com/activity/detail/26_iv0426807",
+      "image_url": "https://indievox.static.tixcraft.com/images/activity/26_iv0426807_17fa1fd6c8a994f9467e7c6057fcd62e.png"
     },
     {
       "id": "indievox_修齊首張個人專輯 《朋友、戀人與最糟糕的事》 發行專場_2026-12-05",
@@ -790,24 +832,22 @@
       "image_url": "https://indievox.static.tixcraft.com/images/activity/26_iv042981d_c0aa181d8d8345e05cc64a2ccb563590.jpg"
     },
     {
-      "id": "indievox_Legacy Presents趙詠華＆于冠華_2026-12-25",
-      "title": "Legacy Presents趙詠華＆于冠華",
-      "date": "2026-12-25",
+      "id": "indievox_東京夢幻瞪鞋樂團 Beachside Talks 台北演唱會_2027-01-10",
+      "title": "東京夢幻瞪鞋樂團 Beachside Talks 台北演唱會",
+      "date": "2027-01-10",
       "time": "19:00",
-      "venue": "Legacy Taichung",
-      "venue_id": "legacy_tc",
-      "location": "Legacy Taichung",
+      "venue": "* 演出地點 Venue： 杰克文創",
+      "venue_id": "other",
+      "location": "* 演出地點 Venue： 杰克文創",
       "city": "Unknown",
       "region": "全台其他",
-      "price": "NT$ 1,980 - 2,300",
+      "price": "售票",
       "is_free": false,
       "is_hot": false,
-      "performers": [
-        "趙詠華＆于冠華"
-      ],
+      "performers": [],
       "ticket_platform": "Indievox",
-      "ticket_url": "https://www.indievox.com/activity/detail/26_iv043029a",
-      "image_url": "https://indievox.static.tixcraft.com/images/activity/26_iv043029a_6c1a6c003a7433a7f4bb2a9f349ed7ad.jpg"
+      "ticket_url": "https://www.indievox.com/activity/detail/27_iv04287a9",
+      "image_url": "https://indievox.static.tixcraft.com/images/activity/27_iv04287a9_a6fd487e01d9873dc56fde04722cac36.jpg"
     },
     {
       "id": "indievox_魚條《變形》——台中場_2027-01-10",
