@@ -1,9 +1,17 @@
 {
-  "updated_at": "2026-11-10 03:59:40",
-  "total_events": 38,
-  "total_free": 21,
+  "updated_at": "2026-11-11 01:42:29",
+  "total_events": 39,
+  "total_free": 22,
   "total_hot": 0,
   "top_venues": [
+    {
+      "id": "corridor",
+      "name": "迴響音樂藝文展演空間",
+      "city": "臺中市",
+      "tagline": "台中老字號獨立搖滾溫床",
+      "vibe": "台中搖滾現場",
+      "count": 3
+    },
     {
       "id": "revolver",
       "name": "Revolver",
@@ -13,12 +21,12 @@
       "count": 3
     },
     {
-      "id": "corridor",
-      "name": "迴響音樂藝文展演空間",
-      "city": "臺中市",
-      "tagline": "台中老字號獨立搖滾溫床",
-      "vibe": "台中搖滾現場",
-      "count": 2
+      "id": "live_warehouse",
+      "name": "駁二 LIVE WAREHOUSE",
+      "city": "高雄市",
+      "tagline": "高雄港邊倉庫・南方聽團大本營",
+      "vibe": "港都浪潮",
+      "count": 3
     },
     {
       "id": "legacy_tpe",
@@ -26,14 +34,6 @@
       "city": "臺中市",
       "tagline": "華山旗艦中型專場空間",
       "vibe": "專場指標",
-      "count": 2
-    },
-    {
-      "id": "live_warehouse",
-      "name": "駁二 LIVE WAREHOUSE",
-      "city": "Unknown",
-      "tagline": "高雄港邊倉庫・南方聽團大本營",
-      "vibe": "港都浪潮",
       "count": 2
     },
     {
@@ -528,25 +528,29 @@
       "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/07/19/c981d12050ba4fafa39cf50d379526ca.jpeg"
     },
     {
-      "id": "indievox_11.15  冬日的黑夜大於白天_2026-11-15",
-      "title": "11.15  冬日的黑夜大於白天",
+      "id": "ev_20",
+      "title": "冬日的黑夜大於白天",
       "date": "2026-11-15",
       "time": "",
-      "venue": "Live House",
-      "venue_id": "other",
-      "location": "Live House",
-      "city": "Unknown",
+      "venue": "迴響音樂藝文展演空間",
+      "venue_id": "corridor",
+      "location": "迴響音樂藝文展演空間",
+      "city": "臺中市",
       "region": "全台其他",
       "price": "免費",
       "is_free": true,
       "is_hot": false,
-      "performers": [],
+      "performers": [
+        "darksea",
+        "poshiftofficial1026",
+        "平凡人 General"
+      ],
       "ticket_platform": "Indievox",
       "ticket_url": "https://www.indievox.com/activity/detail/26_iv04296e0",
-      "image_url": "https://indievox.static.tixcraft.com/images/activity/26_iv04296e0_66e05224a0d3be3f3c3e17c8a29fadc6.jpg"
+      "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/11/07/81360efe0dd44d2484add3deb4cd24b8.jpeg"
     },
     {
-      "id": "ev_20",
+      "id": "ev_21",
       "title": "少少｜SOFT HOURS vol.01 2026.11.16 — 11.22",
       "date": "2026-11-16",
       "time": "",
@@ -581,7 +585,27 @@
       "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/11/07/9cf3eff2683243cfa4b741ba2256c02c.jpeg"
     },
     {
-      "id": "ev_21",
+      "id": "ev_22",
+      "title": "魚條《變形》——高雄場",
+      "date": "2026-11-16",
+      "time": "",
+      "venue": "駁二 LIVE WAREHOUSE",
+      "venue_id": "live_warehouse",
+      "location": "駁二 LIVE WAREHOUSE",
+      "city": "高雄市",
+      "region": "南部",
+      "price": "免費",
+      "is_free": true,
+      "is_hot": false,
+      "performers": [
+        "魚條 Fish Stick"
+      ],
+      "ticket_platform": "官方售票",
+      "ticket_url": "https://streetvoice.com/gigs/10301/",
+      "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/11/07/59a5937f9d0a40978299bba354807eb1.jpeg"
+    },
+    {
+      "id": "ev_23",
       "title": "造音現場｜LOUDER STAGE #02－冒險家 Adventurer × 離岸潮汐 off‧Shore Tidal × Happyland",
       "date": "2026-11-18",
       "time": "",
@@ -603,7 +627,7 @@
       "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/10/09/3145a00240bf43e4b6ee99fccc0652e8.jpeg"
     },
     {
-      "id": "ev_22",
+      "id": "ev_24",
       "title": "Wah SUB！017 人類的讚歌；P!SCO X 眠氣 Hypersomnia",
       "date": "2026-11-18",
       "time": "",
@@ -625,7 +649,7 @@
       "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/10/23/bef75c2554de4b37bff042a5f0d8634d.jpeg"
     },
     {
-      "id": "ev_23",
+      "id": "ev_25",
       "title": "anaＸ鄭亞弦",
       "date": "2026-11-18",
       "time": "",
@@ -646,8 +670,8 @@
       "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/10/31/1c1382bd21aa48179d134b21ad753862.jpeg"
     },
     {
-      "id": "indievox_11.20  DISORDER LIVE ＃26 京神网洛KYOSHIN N..._2026-11-20",
-      "title": "11.20  DISORDER LIVE ＃26 京神网洛KYOSHIN N...",
+      "id": "indievox_11.20  DISORDER LIVE ＃26 京神网洛KYOSHI..._2026-11-20",
+      "title": "11.20  DISORDER LIVE ＃26 京神网洛KYOSHI...",
       "date": "2026-11-20",
       "time": "",
       "venue": "Live House",
@@ -659,15 +683,15 @@
       "is_free": false,
       "is_hot": false,
       "performers": [
-        "京神网洛KYOSHIN N..."
+        "京神网洛KYOSHI"
       ],
       "ticket_platform": "Indievox",
       "ticket_url": "https://www.indievox.com/activity/detail/26_iv0430199",
       "image_url": "https://indievox.static.tixcraft.com/images/activity/26_iv0430199_51ea177da7d2fe2d648c01fd9d72bb5b.jpg"
     },
     {
-      "id": "indievox_That’s My Shhh presents LAZY HABITS 「THE CON..._2026-11-20",
-      "title": "That’s My Shhh presents LAZY HABITS 「THE CON...",
+      "id": "indievox_That’s My Shhh presents LAZY HABITS 「THE CO..._2026-11-20",
+      "title": "That’s My Shhh presents LAZY HABITS 「THE CO...",
       "date": "2026-11-20",
       "time": "20:00",
       "venue": "Revolver",
@@ -742,9 +766,7 @@
       "price": "NT$ 400 - 500",
       "is_free": false,
       "is_hot": false,
-      "performers": [
-        "Our First Show"
-      ],
+      "performers": [],
       "ticket_platform": "Indievox",
       "ticket_url": "https://www.indievox.com/activity/detail/26_iv042523d",
       "image_url": "https://indievox.static.tixcraft.com/images/activity/26_iv042523d_8b7770ad53e81e234ac6bbde22e0eaa9.jpeg"
