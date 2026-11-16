@@ -1,7 +1,7 @@
 {
-  "updated_at": "2026-11-15 01:33:07",
-  "total_events": 45,
-  "total_free": 27,
+  "updated_at": "2026-11-16 01:34:41",
+  "total_events": 44,
+  "total_free": 25,
   "total_hot": 2,
   "top_venues": [
     {
@@ -10,15 +10,7 @@
       "city": "高雄市",
       "tagline": "高雄港邊倉庫・南方聽團大本營",
       "vibe": "港都浪潮",
-      "count": 4
-    },
-    {
-      "id": "corridor",
-      "name": "迴響音樂藝文展演空間",
-      "city": "臺中市",
-      "tagline": "台中老字號獨立搖滾溫床",
-      "vibe": "台中搖滾現場",
-      "count": 3
+      "count": 5
     },
     {
       "id": "revolver",
@@ -53,6 +45,14 @@
       "count": 2
     },
     {
+      "id": "corridor",
+      "name": "迴響音樂藝文展演空間",
+      "city": "臺中市",
+      "tagline": "台中老字號獨立搖滾溫床",
+      "vibe": "台中搖滾現場",
+      "count": 2
+    },
+    {
       "id": "legacy_tc",
       "name": "Legacy Taichung",
       "city": "Unknown",
@@ -77,6 +77,14 @@
       "count": 1
     },
     {
+      "id": "kpm",
+      "name": "高流 (高雄流行音樂中心)",
+      "city": "高雄市",
+      "tagline": "真愛碼頭・國際港灣音樂地標",
+      "vibe": "港灣地標",
+      "count": 1
+    },
+    {
       "id": "legacy_mini",
       "name": "Legacy mini",
       "city": "Unknown",
@@ -88,90 +96,6 @@
   "events": [
     {
       "id": "ev_0",
-      "title": "✷ 2026 FIREBALL 火球祭 ✷ - 11/15",
-      "date": "2026-11-15",
-      "time": "",
-      "venue": "樂天桃園棒球場",
-      "venue_id": "other",
-      "location": "樂天桃園棒球場",
-      "city": "桃園市",
-      "region": "雙北與北部",
-      "price": "免費",
-      "is_free": true,
-      "is_hot": false,
-      "performers": [
-        "滅火器 Fire EX.",
-        "Dragon Ash",
-        "EGO-WRAPPIN’",
-        "HANA",
-        "Crystal Lake",
-        "TRASH",
-        "美秀集團",
-        "洪佩瑜 Pei-Yu Hung",
-        "陳嫺靜",
-        "公館青少年 GGteens",
-        "DSPS",
-        "EmptyORio",
-        "陳以恆",
-        "C.Holly",
-        "胖虎 punkhoo",
-        "擊沈女孩",
-        "固定客GOODICK",
-        "普通隊長",
-        "debloop"
-      ],
-      "ticket_platform": "官方售票",
-      "ticket_url": "https://streetvoice.com/gigs/10160/",
-      "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/10/13/1999041053c0426b946b1dfe93f61e91.jpeg"
-    },
-    {
-      "id": "ev_1",
-      "title": "ASIA METAL FESTIVAL 2026 — TAIPEI",
-      "date": "2026-11-15",
-      "time": "",
-      "venue": "凝聚力音樂娛樂Cohesion Space",
-      "venue_id": "other",
-      "location": "凝聚力音樂娛樂Cohesion Space",
-      "city": "台北市",
-      "region": "雙北與北部",
-      "price": "免費",
-      "is_free": true,
-      "is_hot": false,
-      "performers": [
-        "Method",
-        "Complexant",
-        "Oathean",
-        "Cursed Eyes",
-        "Efflore 白華"
-      ],
-      "ticket_platform": "官方售票",
-      "ticket_url": "https://streetvoice.com/gigs/9698/",
-      "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/07/19/c981d12050ba4fafa39cf50d379526ca.jpeg"
-    },
-    {
-      "id": "ev_2",
-      "title": "冬日的黑夜大於白天",
-      "date": "2026-11-15",
-      "time": "",
-      "venue": "迴響音樂藝文展演空間",
-      "venue_id": "corridor",
-      "location": "迴響音樂藝文展演空間",
-      "city": "臺中市",
-      "region": "全台其他",
-      "price": "免費",
-      "is_free": true,
-      "is_hot": false,
-      "performers": [
-        "darksea",
-        "poshiftofficial1026",
-        "平凡人 General"
-      ],
-      "ticket_platform": "Indievox",
-      "ticket_url": "https://www.indievox.com/activity/detail/26_iv04296e0",
-      "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/11/07/81360efe0dd44d2484add3deb4cd24b8.jpeg"
-    },
-    {
-      "id": "ev_3",
       "title": "少少｜SOFT HOURS vol.01 2026.11.16 — 11.22",
       "date": "2026-11-16",
       "time": "",
@@ -206,7 +130,7 @@
       "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/11/07/9cf3eff2683243cfa4b741ba2256c02c.jpeg"
     },
     {
-      "id": "ev_4",
+      "id": "ev_1",
       "title": "魚條《變形》——高雄場",
       "date": "2026-11-16",
       "time": "",
@@ -226,7 +150,7 @@
       "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/11/07/59a5937f9d0a40978299bba354807eb1.jpeg"
     },
     {
-      "id": "ev_5",
+      "id": "ev_2",
       "title": "造音現場｜LOUDER STAGE #02－冒險家 Adventurer × 離岸潮汐 off‧Shore Tidal × Happyland",
       "date": "2026-11-18",
       "time": "",
@@ -248,7 +172,7 @@
       "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/10/09/3145a00240bf43e4b6ee99fccc0652e8.jpeg"
     },
     {
-      "id": "ev_6",
+      "id": "ev_3",
       "title": "Wah SUB！017 人類的讚歌；P!SCO X 眠氣 Hypersomnia",
       "date": "2026-11-18",
       "time": "",
@@ -270,7 +194,7 @@
       "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/10/23/bef75c2554de4b37bff042a5f0d8634d.jpeg"
     },
     {
-      "id": "ev_7",
+      "id": "ev_4",
       "title": "anaＸ鄭亞弦",
       "date": "2026-11-18",
       "time": "",
@@ -291,7 +215,7 @@
       "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/10/31/1c1382bd21aa48179d134b21ad753862.jpeg"
     },
     {
-      "id": "ev_8",
+      "id": "ev_5",
       "title": "Double A Battery・aiko x ana 跨國共演",
       "date": "2026-11-19",
       "time": "",
@@ -312,7 +236,7 @@
       "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/10/23/ec3768ffa77e483789dd203a1283bd5e.jpeg"
     },
     {
-      "id": "ev_9",
+      "id": "ev_6",
       "title": "2026 Smoking Goose 吸菸鵝 \"Small Talks\" Taiwan Tour-台北場",
       "date": "2026-11-19",
       "time": "",
@@ -334,7 +258,7 @@
       "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/10/28/b3184c0327a342e0b86d6c2251265b19.jpeg"
     },
     {
-      "id": "ev_10",
+      "id": "ev_7",
       "title": "色彩協定",
       "date": "2026-11-20",
       "time": "",
@@ -356,7 +280,7 @@
       "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/10/31/98f51027e7fc4571a1b578ed5b644190.jpeg"
     },
     {
-      "id": "ev_11",
+      "id": "ev_8",
       "title": "2026 Smoking Goose 吸菸鵝 \"Small Talks\" Taiwan Tour-台中場",
       "date": "2026-11-20",
       "time": "",
@@ -378,7 +302,7 @@
       "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/10/28/304802b9da8d4baaa2d03043a945a529.jpeg"
     },
     {
-      "id": "ev_12",
+      "id": "ev_9",
       "title": "失眠少女俱樂部【品怡 Pink X 芙里安 Valiant X CClaire 馬愷伶】共同演出",
       "date": "2026-11-20",
       "time": "",
@@ -400,7 +324,7 @@
       "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/10/09/659a0b8ca89a4ae0b6821516fc2c9c95.jpeg"
     },
     {
-      "id": "ev_13",
+      "id": "ev_10",
       "title": "2026 Fire Live 壞兒來福 Vol.4",
       "date": "2026-11-20",
       "time": "",
@@ -422,7 +346,7 @@
       "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/10/17/2a0bddccc6d2407cb227f923f831b1bd.jpeg"
     },
     {
-      "id": "ev_14",
+      "id": "ev_11",
       "title": "沈默紳士 × 核果人 NUTS《沈果發表會》",
       "date": "2026-11-20",
       "time": "",
@@ -443,7 +367,7 @@
       "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/11/10/035e6a3f5dbd45099dabe807ddde2435.png"
     },
     {
-      "id": "ev_15",
+      "id": "ev_12",
       "title": "JOYCE 就以斯 才華換桃花 香港專場",
       "date": "2026-11-20",
       "time": "",
@@ -463,7 +387,7 @@
       "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/09/05/17ff153adf024f1f854455aa975e18b1.jpeg"
     },
     {
-      "id": "ev_16",
+      "id": "ev_13",
       "title": "鶴 The Crane - 小小茶會 Petit Tea Party - 加場",
       "date": "2026-11-20",
       "time": "",
@@ -496,9 +420,7 @@
       "price": "NT$ 400 - 500",
       "is_free": false,
       "is_hot": false,
-      "performers": [
-        "京神网洛KYOSHI"
-      ],
+      "performers": [],
       "ticket_platform": "Indievox",
       "ticket_url": "https://www.indievox.com/activity/detail/26_iv0430199",
       "image_url": "https://indievox.static.tixcraft.com/images/activity/26_iv0430199_51ea177da7d2fe2d648c01fd9d72bb5b.jpg"
@@ -528,7 +450,7 @@
       "image_url": "https://indievox.static.tixcraft.com/images/activity/26_iv0425817_116d24529ce68aa3ae4cb3f84a7de283.jpg"
     },
     {
-      "id": "ev_17",
+      "id": "ev_14",
       "title": "星空音樂節 - 11/21",
       "date": "2026-11-21",
       "time": "",
@@ -551,7 +473,7 @@
       "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/10/31/e182c32ff2c74a60822f6c9e6f2571b9.jpeg"
     },
     {
-      "id": "ev_18",
+      "id": "ev_15",
       "title": "孬女鵝Mi Papito 沈浸式演唱會🎶",
       "date": "2026-11-21",
       "time": "",
@@ -571,7 +493,7 @@
       "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/11/02/c5c5d82a5be84876852406b5b22af8fb.jpeg"
     },
     {
-      "id": "ev_19",
+      "id": "ev_16",
       "title": "雀斑 Freckles 2026 Tour in Taipei 「不標準情人」黑膠發片場",
       "date": "2026-11-21",
       "time": "",
@@ -591,7 +513,7 @@
       "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/10/31/dcfdf9be00c3470a95cf7f1f8fe58422.jpeg"
     },
     {
-      "id": "ev_20",
+      "id": "ev_17",
       "title": "交個朋友吧演出系列-番外",
       "date": "2026-11-21",
       "time": "",
@@ -616,7 +538,7 @@
       "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/09/25/81bc668d901a4e4394034fb31cc2424b.jpeg"
     },
     {
-      "id": "ev_21",
+      "id": "ev_18",
       "title": "《酒醒吧!新生代2.0》曾柏崴x李心凱x蝸牛蓋瑞",
       "date": "2026-11-21",
       "time": "",
@@ -638,7 +560,7 @@
       "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/10/23/a6f573a379ef4b58b258fbdb855e3a02.jpeg"
     },
     {
-      "id": "ev_22",
+      "id": "ev_19",
       "title": "2026 Smoking Goose 吸菸鵝 \"Small Talks\" Taiwan Tour-台南場",
       "date": "2026-11-21",
       "time": "",
@@ -660,7 +582,7 @@
       "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/10/28/6f763c1b9f774caeb18cb777b3c99ec0.jpeg"
     },
     {
-      "id": "ev_23",
+      "id": "ev_20",
       "title": "Matzka&Tihot 2026「簡單粗暴」演唱會",
       "date": "2026-11-21",
       "time": "",
@@ -681,7 +603,7 @@
       "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/10/03/ce262d4432bc45dd832a4b722142c17a.jpeg"
     },
     {
-      "id": "ev_24",
+      "id": "ev_21",
       "title": "11/21（六）《 Our First Show 》",
       "date": "2026-11-21",
       "time": "",
@@ -703,7 +625,7 @@
       "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/10/19/07fa0aa1b1184c8ea95767021335a0a6.jpeg"
     },
     {
-      "id": "ev_25",
+      "id": "ev_22",
       "title": "鶴 The Crane - 小小茶會 Petit Tea Party",
       "date": "2026-11-21",
       "time": "",
@@ -724,7 +646,7 @@
       "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/11/10/0f10973b45a74bca980d1a93cc1cfef2.png"
     },
     {
-      "id": "ev_26",
+      "id": "ev_23",
       "title": "11/21 3⁶SMP 叁⁶ 模組合成器演出計畫 舞曲專場",
       "date": "2026-11-21",
       "time": "",
@@ -748,7 +670,7 @@
       "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/10/29/b01326c6ad5f43b89cf59d9f9fd2ca0f.jpeg"
     },
     {
-      "id": "ev_27",
+      "id": "ev_24",
       "title": "SOFT HOURS vol.01｜NIGHT SLEEPING 跨夜睡眠特別場",
       "date": "2026-11-21",
       "time": "",
@@ -776,7 +698,7 @@
       "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/11/07/4e3f6e41f7354705b162c1226a25cda5.jpeg"
     },
     {
-      "id": "ev_28",
+      "id": "ev_25",
       "title": "星空音樂節 - 11/22",
       "date": "2026-11-22",
       "time": "",
@@ -799,7 +721,7 @@
       "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/10/31/8acc7ab3bd674bd1a284100bc2b216cb.jpeg"
     },
     {
-      "id": "ev_29",
+      "id": "ev_26",
       "title": "朱頭皮_60小壽嘉年華",
       "date": "2026-11-22",
       "time": "",
@@ -819,7 +741,7 @@
       "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/09/12/e432594f03134516bcc025a3152581e6.jpeg"
     },
     {
-      "id": "ev_30",
+      "id": "ev_27",
       "title": "Song of Autumn【台北場】",
       "date": "2026-11-22",
       "time": "",
@@ -841,7 +763,7 @@
       "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/10/26/61db120e08b34c92ad578d19a4c67429.jpeg"
     },
     {
-      "id": "ev_31",
+      "id": "ev_28",
       "title": "2026 Smoking Goose 吸菸鵝 \"Small Talks\" Taiwan Tour-高雄場",
       "date": "2026-11-22",
       "time": "",
@@ -919,26 +841,6 @@
       "image_url": "https://indievox.static.tixcraft.com/images/activity/26_iv04279e7_54f6e95d6be231c90ff6e5d37d591b95.jpg"
     },
     {
-      "id": "indievox_Wah SUB！018 ; Metal Road 金屬之路_2026-11-27",
-      "title": "Wah SUB！018 ; Metal Road 金屬之路",
-      "date": "2026-11-27",
-      "time": "20:00",
-      "venue": "SUB",
-      "venue_id": "other",
-      "location": "SUB",
-      "city": "Unknown",
-      "region": "全台其他",
-      "price": "售票",
-      "is_free": false,
-      "is_hot": false,
-      "performers": [
-        "Infernal Chaos ft. GOODICK 固定客"
-      ],
-      "ticket_platform": "Indievox",
-      "ticket_url": "https://www.indievox.com/activity/detail/26_iv0426632",
-      "image_url": "https://indievox.static.tixcraft.com/images/activity/26_iv0426632_830b0957bc805f77ed62771b4c8c20c7.jpg"
-    },
-    {
       "id": "indievox_Legacy Presents：小球（莊鵑瑛）《Rese..._2026-11-27",
       "title": "Legacy Presents：小球（莊鵑瑛）《Rese...",
       "date": "2026-11-27",
@@ -959,6 +861,46 @@
       "image_url": "https://indievox.static.tixcraft.com/images/activity/26_iv0419556_dbab5de924a1a291b65698b1486c4aa4.jpg"
     },
     {
+      "id": "indievox_Wah SUB！018 ; Metal Road 金屬之路_2026-11-27",
+      "title": "Wah SUB！018 ; Metal Road 金屬之路",
+      "date": "2026-11-27",
+      "time": "20:00",
+      "venue": "SUB",
+      "venue_id": "other",
+      "location": "SUB",
+      "city": "Unknown",
+      "region": "全台其他",
+      "price": "售票",
+      "is_free": false,
+      "is_hot": false,
+      "performers": [
+        "Infernal Chaos ft. GOODICK 固定客"
+      ],
+      "ticket_platform": "Indievox",
+      "ticket_url": "https://www.indievox.com/activity/detail/26_iv0426632",
+      "image_url": "https://indievox.static.tixcraft.com/images/activity/26_iv0426632_830b0957bc805f77ed62771b4c8c20c7.jpg"
+    },
+    {
+      "id": "ev_29",
+      "title": "BELISH《想起你的時刻》2026不插電小巡迴-高雄場",
+      "date": "2026-11-28",
+      "time": "",
+      "venue": "高流 (高雄流行音樂中心)",
+      "venue_id": "kpm",
+      "location": "高流 (高雄流行音樂中心)",
+      "city": "高雄市",
+      "region": "南部",
+      "price": "免費",
+      "is_free": true,
+      "is_hot": false,
+      "performers": [
+        "BELISH"
+      ],
+      "ticket_platform": "官方售票",
+      "ticket_url": "https://streetvoice.com/gigs/10188/",
+      "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/10/22/c35503b1d8434e9087a2541e7fb59acb.jpeg"
+    },
+    {
       "id": "indievox_11.28 漁光倒 YuguangFall 首次專場_2026-11-28",
       "title": "11.28 漁光倒 YuguangFall 首次專場",
       "date": "2026-11-28",
@@ -971,10 +913,32 @@
       "price": "售票",
       "is_free": false,
       "is_hot": false,
-      "performers": [],
+      "performers": [
+        "漁光倒 YuguangFall"
+      ],
       "ticket_platform": "Indievox",
       "ticket_url": "https://www.indievox.com/activity/detail/26_iv0431404",
       "image_url": "https://indievox.static.tixcraft.com/images/activity/26_iv0431404_58703454af5b6b989be7b1139e8e268b.jpg"
+    },
+    {
+      "id": "indievox_Smiling death on the stage 第七層 墮戀地獄_2026-12-13",
+      "title": "Smiling death on the stage 第七層 墮戀地獄",
+      "date": "2026-12-13",
+      "time": "14:00",
+      "venue": "駁二 LIVE WAREHOUSE",
+      "venue_id": "live_warehouse",
+      "location": "駁二 LIVE WAREHOUSE",
+      "city": "Unknown",
+      "region": "全台其他",
+      "price": "售票",
+      "is_free": false,
+      "is_hot": false,
+      "performers": [
+        "我想一想我想想笑死"
+      ],
+      "ticket_platform": "Indievox",
+      "ticket_url": "https://www.indievox.com/activity/detail/26_iv042512f",
+      "image_url": "https://indievox.static.tixcraft.com/images/activity/26_iv042512f_eaa46a6018a3aa78b68c47d5674ebe42.jpg"
     },
     {
       "id": "indievox_G蛋布丁《布丁的房間》演唱會_2026-12-18",
