@@ -1,6 +1,6 @@
 [
   {
-    "text": "【全台音樂活動週報 🎸】(11/23 (週一) - 11/29 (週日))\n\n下週全台共有 5 場音樂現場！\n✨ 1 場完全免費戶外/市集活動，聽團行事曆準備排起來 🏃‍♂️\n\n詳細每日場次請看下方串文整理 👇\n💬 這週你打算衝哪幾場？還是要去哪個 Livehouse 喝酒？留言區開聊！\n\n🗺️ 想依照「展演空間」或「縣市」秒查所有演出？首頁網站已同步更新！\n📅 11/25 (週三)\n• FOREVER YOUNG —— 唱一晚奇妙的歌 @ Legacy TERA\n\n📅 11/27 (週五)\n• [台中] Legacy Presents：小球（莊鵑瑛）《Rese... @ Legacy Taichung 音樂展演空間\n• Wah SUB！018 ; Metal Road 金屬之路 @ SUB\n\n📅 11/28 (週六)\n• [高雄] BELISH《想起你的時刻》不插電小巡迴-高雄場 @ 海邊的卡夫卡-高流店\n• [台中] 11.28 漁光倒 YuguangFall 首次專場 @ SOUND LIVE HOUSE",
+    "text": "【全台音樂活動週報 🎸】(11/23 (週一) - 11/29 (週日))\n\n下週全台共有 6 場音樂現場！\n✨ 2 場完全免費戶外/市集活動，聽團行事曆準備排起來 🏃‍♂️\n\n詳細每日場次請看下方串文整理 👇\n💬 這週你打算衝哪幾場？還是要去哪個 Livehouse 喝酒？留言區開聊！\n\n🗺️ 想依照「展演空間」或「縣市」秒查所有演出？首頁網站已同步更新！\n📅 11/25 (週三)\n• FOREVER YOUNG —— 唱一晚奇妙的歌 @ Legacy TERA\n\n📅 11/27 (週五)\n• [台中] Legacy Presents：小球（莊鵑瑛）《Rese... @ Legacy Taichung 音樂展演空間\n• Wah SUB！018 ; Metal Road 金屬之路 @ SUB\n\n📅 11/28 (週六)\n• [高雄] BELISH《想起你的時刻》不插電小巡迴-高雄場 @ 海邊的卡夫卡-高流店\n• [台中] 11.28 漁光倒 YuguangFall 首次專場 @ SOUND LIVE HOUSE\n\n📅 11/29 (週日)",
     "images": [
       "https://indievox.static.tixcraft.com/images/activity/26_iv04279e7_54f6e95d6be231c90ff6e5d37d591b95.jpg",
       "https://indievox.static.tixcraft.com/images/activity/26_iv0419556_dbab5de924a1a291b65698b1486c4aa4.jpg",
@@ -89,6 +89,33 @@
       "cards/card_3.jpg",
       "cards/card_4.jpg",
       "cards/card_5.jpg"
+    ]
+  },
+  {
+    "text": "• [台北] 「回り回って雨上がって」雙單曲巡迴-台北場 @ Revolver",
+    "images": [
+      "https://akstatic.streetvoice.com/venue_activity_image/2026/10/27/1710cf86b94e4371a075d4ec4ac5b613.jpeg"
+    ],
+    "events": [
+      {
+        "name": "「回り回って雨上がって」雙單曲巡迴-台北場",
+        "date": "2026-11-29",
+        "venue_name": "Revolver",
+        "city": "臺北市",
+        "performers": [
+          "SHIKI-HARU四季春",
+          "蕨鳴子 fernoiz"
+        ],
+        "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/10/27/1710cf86b94e4371a075d4ec4ac5b613.jpeg",
+        "ticket_platform": "",
+        "ticket_url": "https://streetvoice.com/gigs/10245/",
+        "price": "",
+        "is_hot": false,
+        "card_url": "cards/card_6.jpg"
+      }
+    ],
+    "cards": [
+      "cards/card_6.jpg"
     ]
   }
 ]
