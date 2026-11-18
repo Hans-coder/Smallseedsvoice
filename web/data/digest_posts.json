@@ -1,26 +1,117 @@
 [
   {
-    "text": "【全台音樂活動週報 🎸】(11/23 (週一) - 11/29 (週日))\n\n下週全台共有 6 場音樂現場！\n✨ 2 場完全免費戶外/市集活動，聽團行事曆準備排起來 🏃‍♂️\n\n詳細每日場次請看下方串文整理 👇\n💬 這週你打算衝哪幾場？還是要去哪個 Livehouse 喝酒？留言區開聊！\n\n🗺️ 想依照「展演空間」或「縣市」秒查所有演出？首頁網站已同步更新！\n📅 11/25 (週三)\n• FOREVER YOUNG —— 唱一晚奇妙的歌 @ Legacy TERA\n\n📅 11/27 (週五)\n• [台中] Legacy Presents：小球（莊鵑瑛）《Rese... @ Legacy Taichung 音樂展演空間\n• Wah SUB！018 ; Metal Road 金屬之路 @ SUB\n\n📅 11/28 (週六)\n• [高雄] BELISH《想起你的時刻》不插電小巡迴-高雄場 @ 海邊的卡夫卡-高流店\n• [台中] 11.28 漁光倒 YuguangFall 首次專場 @ SOUND LIVE HOUSE\n\n📅 11/29 (週日)",
+    "text": "【全台音樂活動週報 🎸】(11/23 (週一) - 11/29 (週日))\n\n下週全台共有 8 場音樂現場！\n✨ 4 場完全免費戶外/市集活動，聽團行事曆準備排起來 🏃‍♂️\n\n詳細每日場次請看下方串文整理 👇\n💬 這週你打算衝哪幾場？還是要去哪個 Livehouse 喝酒？留言區開聊！\n\n🗺️ 想依照「展演空間」或「縣市」秒查所有演出？首頁網站已同步更新！\n📅 11/25 (週三)\n• [台北] 造音現場｜LOUDER STAGE #03－Ocean Somnia 海洋沉眠 × 文明人 The civilized × 夢迴 BackTODream @ 凝聚力音樂娛樂Cohesion Space\n• [台北] 林佩薇AGGMini Concert @ Our Music Stage 北流\n• [台北] Billboard Live Taipei 一週年盛典 @ Billboard Live TAIPEI\n• [台北] FOREVER YOUNG —— 唱一晚奇妙的歌 @ Legacy TERA\n\n📅 11/26 (週四)",
     "images": [
-      "https://indievox.static.tixcraft.com/images/activity/26_iv04279e7_54f6e95d6be231c90ff6e5d37d591b95.jpg",
-      "https://indievox.static.tixcraft.com/images/activity/26_iv0419556_dbab5de924a1a291b65698b1486c4aa4.jpg",
-      "https://indievox.static.tixcraft.com/images/activity/26_iv0426632_830b0957bc805f77ed62771b4c8c20c7.jpg",
-      "https://akstatic.streetvoice.com/venue_activity_image/2026/10/22/c35503b1d8434e9087a2541e7fb59acb.jpeg",
-      "https://indievox.static.tixcraft.com/images/activity/26_iv0431404_58703454af5b6b989be7b1139e8e268b.jpg"
+      "https://akstatic.streetvoice.com/venue_activity_image/2026/10/23/50080d640c324d0d970c0e8a9c1e5e03.jpeg",
+      "https://akstatic.streetvoice.com/venue_activity_image/2026/10/31/3fe67c9fc7d04608abace45ea64d7675.jpeg",
+      "https://akstatic.streetvoice.com/venue_activity_image/2026/11/14/5bee212fcd25445781b0e201bd0677aa.jpeg",
+      "https://akstatic.streetvoice.com/venue_activity_image/2026/11/17/577285df951f4223a6d0a35716e70387.png"
     ],
     "events": [
+      {
+        "name": "造音現場｜LOUDER STAGE #03－Ocean Somnia 海洋沉眠 × 文明人 The civilized × 夢迴 BackTODream",
+        "date": "2026-11-25",
+        "venue_name": "凝聚力音樂娛樂Cohesion Space",
+        "city": "台北市",
+        "performers": [
+          "文明人 The civilized",
+          "ocean somnia",
+          "夢迴BackTODream"
+        ],
+        "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/10/23/50080d640c324d0d970c0e8a9c1e5e03.jpeg",
+        "ticket_platform": "",
+        "ticket_url": "https://streetvoice.com/gigs/10202/",
+        "price": "",
+        "is_hot": false,
+        "card_url": "cards/card_1.jpg"
+      },
+      {
+        "name": "林佩薇AGG【扭誕Reborn】Mini Concert",
+        "date": "2026-11-25",
+        "venue_name": "Our Music Stage 北流",
+        "city": "臺北市",
+        "performers": [
+          "林佩薇 AGG"
+        ],
+        "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/10/31/3fe67c9fc7d04608abace45ea64d7675.jpeg",
+        "ticket_platform": "",
+        "ticket_url": "https://streetvoice.com/gigs/10281/",
+        "price": "",
+        "is_hot": false,
+        "card_url": "cards/card_2.jpg"
+      },
+      {
+        "name": "Billboard Live Taipei 一週年盛典",
+        "date": "2026-11-25",
+        "venue_name": "Billboard Live TAIPEI",
+        "city": "臺北市",
+        "performers": [
+          "好樂團 GoodBand",
+          "163braces"
+        ],
+        "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/11/14/5bee212fcd25445781b0e201bd0677aa.jpeg",
+        "ticket_platform": "",
+        "ticket_url": "https://streetvoice.com/gigs/10344/",
+        "price": "",
+        "is_hot": false,
+        "card_url": "cards/card_3.jpg"
+      },
       {
         "name": "FOREVER YOUNG —— 唱一晚奇妙的歌",
         "date": "2026-11-25",
         "venue_name": "Legacy TERA",
-        "city": "Unknown",
-        "performers": [],
-        "image_url": "https://indievox.static.tixcraft.com/images/activity/26_iv04279e7_54f6e95d6be231c90ff6e5d37d591b95.jpg",
+        "city": "臺北市",
+        "performers": [
+          "自然捲",
+          "奇哥",
+          "魏如萱",
+          "十九兩樂團",
+          "thisisyoyo",
+          "吳志寧 zulin",
+          "柔 米 Zoomie",
+          "馬念先",
+          "草莓救星",
+          "黃玠",
+          "絲襪小小姐"
+        ],
+        "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/11/17/577285df951f4223a6d0a35716e70387.png",
         "ticket_platform": "Indievox",
         "ticket_url": "https://www.indievox.com/activity/detail/26_iv04279e7",
         "price": "預售票 2480 元 / 身障票 1240 元（線上訂購）/ 現場票 2880元",
         "is_hot": false,
-        "card_url": "cards/card_1.jpg"
+        "card_url": "cards/card_4.jpg"
+      }
+    ],
+    "cards": [
+      "cards/card_1.jpg",
+      "cards/card_2.jpg",
+      "cards/card_3.jpg",
+      "cards/card_4.jpg"
+    ]
+  },
+  {
+    "text": "• [台北] The Spice Cabinet 五香放克《派仔之遊》The Adventures of Pie Boy In Concert @ THE WALL MUSIC\n📅 11/27 (週五)\n• [台中] Legacy Presents：小球（莊鵑瑛）《Rese... @ Legacy Taichung 音樂展演空間\n• Wah SUB！018 ; Metal Road 金屬之路 @ SUB\n\n📅 11/28 (週六)\n• [台中] 11.28 漁光倒 YuguangFall 首次專場 @ SOUND LIVE HOUSE",
+    "images": [
+      "https://akstatic.streetvoice.com/venue_activity_image/2026/11/12/ff5fd7b7d91144efa6b531de9171be46.jpeg",
+      "https://indievox.static.tixcraft.com/images/activity/26_iv0419556_dbab5de924a1a291b65698b1486c4aa4.jpg",
+      "https://indievox.static.tixcraft.com/images/activity/26_iv0426632_830b0957bc805f77ed62771b4c8c20c7.jpg",
+      "https://indievox.static.tixcraft.com/images/activity/26_iv0431404_58703454af5b6b989be7b1139e8e268b.jpg"
+    ],
+    "events": [
+      {
+        "name": "The Spice Cabinet 五香放克《派仔之遊》The Adventures of Pie Boy In Concert",
+        "date": "2026-11-26",
+        "venue_name": "THE WALL MUSIC",
+        "city": "臺北市",
+        "performers": [
+          "The Spice Cabinet 五香放克樂團"
+        ],
+        "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/11/12/ff5fd7b7d91144efa6b531de9171be46.jpeg",
+        "ticket_platform": "",
+        "ticket_url": "https://streetvoice.com/gigs/10329/",
+        "price": "",
+        "is_hot": false,
+        "card_url": "cards/card_5.jpg"
       },
       {
         "name": "Legacy Presents：小球（莊鵑瑛）《Rese...",
@@ -35,7 +126,7 @@
         "ticket_url": "https://www.indievox.com/activity/detail/26_iv0419556",
         "price": "單人預售票 1700 元 / 雙人預售套票 3200 元 / 現場票 2000 元 / 身障票 850 元（線上購票）",
         "is_hot": false,
-        "card_url": "cards/card_2.jpg"
+        "card_url": "cards/card_6.jpg"
       },
       {
         "name": "Wah SUB！018 ; Metal Road 金屬之路",
@@ -50,22 +141,7 @@
         "ticket_url": "https://www.indievox.com/activity/detail/26_iv0426632",
         "price": "老鳥預售票",
         "is_hot": false,
-        "card_url": "cards/card_3.jpg"
-      },
-      {
-        "name": "BELISH《想起你的時刻》2026不插電小巡迴-高雄場",
-        "date": "2026-11-28",
-        "venue_name": "海邊的卡夫卡-高流店",
-        "city": "高雄市",
-        "performers": [
-          "BELISH"
-        ],
-        "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/10/22/c35503b1d8434e9087a2541e7fb59acb.jpeg",
-        "ticket_platform": "",
-        "ticket_url": "https://streetvoice.com/gigs/10188/",
-        "price": "",
-        "is_hot": false,
-        "card_url": "cards/card_4.jpg"
+        "card_url": "cards/card_7.jpg"
       },
       {
         "name": "11.28 漁光倒 YuguangFall 首次專場",
@@ -80,42 +156,14 @@
         "ticket_url": "https://www.indievox.com/activity/detail/26_iv0431404",
         "price": null,
         "is_hot": false,
-        "card_url": "cards/card_5.jpg"
+        "card_url": "cards/card_8.jpg"
       }
     ],
     "cards": [
-      "cards/card_1.jpg",
-      "cards/card_2.jpg",
-      "cards/card_3.jpg",
-      "cards/card_4.jpg",
-      "cards/card_5.jpg"
-    ]
-  },
-  {
-    "text": "• [台北] 「回り回って雨上がって」雙單曲巡迴-台北場 @ Revolver",
-    "images": [
-      "https://akstatic.streetvoice.com/venue_activity_image/2026/10/27/1710cf86b94e4371a075d4ec4ac5b613.jpeg"
-    ],
-    "events": [
-      {
-        "name": "「回り回って雨上がって」雙單曲巡迴-台北場",
-        "date": "2026-11-29",
-        "venue_name": "Revolver",
-        "city": "臺北市",
-        "performers": [
-          "SHIKI-HARU四季春",
-          "蕨鳴子 fernoiz"
-        ],
-        "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/10/27/1710cf86b94e4371a075d4ec4ac5b613.jpeg",
-        "ticket_platform": "",
-        "ticket_url": "https://streetvoice.com/gigs/10245/",
-        "price": "",
-        "is_hot": false,
-        "card_url": "cards/card_6.jpg"
-      }
-    ],
-    "cards": [
-      "cards/card_6.jpg"
+      "cards/card_5.jpg",
+      "cards/card_6.jpg",
+      "cards/card_7.jpg",
+      "cards/card_8.jpg"
     ]
   }
 ]
