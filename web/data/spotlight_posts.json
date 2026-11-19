@@ -1,61 +1,8 @@
 [
   {
     "type": "spotlight",
-    "title": "造音現場｜LOUDER STAGE #02－冒險家 Adventurer × 離岸潮汐 off‧Shore Tidal × Happyland",
-    "text": "⚑ 2026/11/18㊂ 《造音現場｜LOUDER STAGE #02－冒險家 Adventurer × 離岸潮汐 off‧Shore Tidal × Happyland》（免費）\n\n➤ 卡司陣容：\n♥︎adventurers ♥︎離岸潮汐offShore．Tidal ♥︎Happyland\n\n❑ 地點：[台北市] 凝聚力音樂娛樂Cohesion Space ❑\n\n💬 這週末免費去處有了！轉發分享給想一起聽歌的人 🎶\n\n🔗 依展演空間看全台本週演出：見首頁連結",
-    "images": [
-      "https://akstatic.streetvoice.com/venue_activity_image/2026/10/09/3145a00240bf43e4b6ee99fccc0652e8.jpeg"
-    ],
-    "event": {
-      "name": "造音現場｜LOUDER STAGE #02－冒險家 Adventurer × 離岸潮汐 off‧Shore Tidal × Happyland",
-      "date": "2026-11-18",
-      "time": "19:00",
-      "venue_name": "凝聚力音樂娛樂Cohesion Space",
-      "city": "台北市",
-      "performers": [
-        "adventurers",
-        "離岸潮汐offShore．Tidal",
-        "Happyland"
-      ],
-      "source_url": "https://streetvoice.com/gigs/10134/",
-      "ticket_url": "https://streetvoice.com/gigs/10134/",
-      "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/10/09/3145a00240bf43e4b6ee99fccc0652e8.jpeg",
-      "source": "StreetVoice",
-      "is_free": "unknown",
-      "card_url": "cards/spotlight_1.jpg"
-    },
-    "card_url": "cards/spotlight_1.jpg"
-  },
-  {
-    "type": "spotlight",
-    "title": "anaＸ鄭亞弦",
-    "text": "⚑ 2026/11/18㊂ 《anaＸ鄭亞弦》（免費）\n\n➤ 卡司陣容：\n♥︎ana ♥︎鄭亞弦Lolli\n\n❑ 地點：[臺北市] 野地方 Wild Lab ❑\n\n💬 免費入場太佛了吧！標記那個每次都喊沒錢聽團的朋友快衝 👥\n\n🔗 依展演空間看全台本週演出：見首頁連結",
-    "images": [
-      "https://akstatic.streetvoice.com/venue_activity_image/2026/10/31/1c1382bd21aa48179d134b21ad753862.jpeg"
-    ],
-    "event": {
-      "name": "【週三野孩】anaＸ鄭亞弦",
-      "date": "2026-11-18",
-      "time": "20:00",
-      "venue_name": "野地方 Wild Lab",
-      "city": "臺北市",
-      "performers": [
-        "ana",
-        "鄭亞弦Lolli"
-      ],
-      "source_url": "https://streetvoice.com/gigs/10279/",
-      "ticket_url": "https://streetvoice.com/gigs/10279/",
-      "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/10/31/1c1382bd21aa48179d134b21ad753862.jpeg",
-      "source": "StreetVoice",
-      "is_free": "unknown",
-      "card_url": "cards/spotlight_2.jpg"
-    },
-    "card_url": "cards/spotlight_2.jpg"
-  },
-  {
-    "type": "spotlight",
     "title": "Double A Battery・aiko x ana 跨國共演",
-    "text": "⚑ 2026/11/19㊃ 《Double A Battery・aiko x ana 跨國共演》（免費）\n\n➤ 卡司陣容：\n♥︎aiko ♥︎ana\n\n❑ 地點：[臺北市] 女巫店 ❑\n\n💬 這週末免費去處有了！轉發分享給想一起聽歌的人 🎶\n\n🔗 依展演空間看全台本週演出：見首頁連結",
+    "text": "⚑ 2026/11/19㊃ 《Double A Battery・aiko x ana 跨國共演》（免費）\n\n➤ 卡司陣容：\n♥︎aiko ♥︎ana\n\n❑ 地點：[臺北市] 女巫店 ❑\n\n💬 免費入場太佛了吧！標記那個每次都喊沒錢聽團的朋友快衝 👥\n\n🔗 依展演空間看全台本週演出：見首頁連結",
     "images": [
       "https://akstatic.streetvoice.com/venue_activity_image/2026/10/23/ec3768ffa77e483789dd203a1283bd5e.jpeg"
     ],
@@ -74,9 +21,9 @@
       "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/10/23/ec3768ffa77e483789dd203a1283bd5e.jpeg",
       "source": "StreetVoice",
       "is_free": "unknown",
-      "card_url": "cards/spotlight_3.jpg"
+      "card_url": "cards/spotlight_1.jpg"
     },
-    "card_url": "cards/spotlight_3.jpg"
+    "card_url": "cards/spotlight_1.jpg"
   },
   {
     "type": "spotlight",
@@ -101,9 +48,9 @@
       "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/10/28/b3184c0327a342e0b86d6c2251265b19.jpeg",
       "source": "StreetVoice",
       "is_free": "unknown",
-      "card_url": "cards/spotlight_4.jpg"
+      "card_url": "cards/spotlight_2.jpg"
     },
-    "card_url": "cards/spotlight_4.jpg"
+    "card_url": "cards/spotlight_2.jpg"
   },
   {
     "type": "spotlight",
@@ -128,14 +75,14 @@
       "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/10/31/98f51027e7fc4571a1b578ed5b644190.jpeg",
       "source": "StreetVoice",
       "is_free": "unknown",
-      "card_url": "cards/spotlight_5.jpg"
+      "card_url": "cards/spotlight_3.jpg"
     },
-    "card_url": "cards/spotlight_5.jpg"
+    "card_url": "cards/spotlight_3.jpg"
   },
   {
     "type": "spotlight",
     "title": "Smoking Goose 吸菸鵝 \"Small Talks\" Tour-台中場",
-    "text": "⚑ 2026/11/20㊄ 《Smoking Goose 吸菸鵝 \"Small Talks\" Tour-台中場》（免費）\n\n➤ 卡司陣容：\n♥︎Smoking Goose(스모킹구스) ♥︎NAGI ♥︎明珠 MINJU\n\n❑ 地點：[臺中市] The Pillars 柱 ❑\n\n💬 這週末免費去處有了！轉發分享給想一起聽歌的人 🎶\n\n🔗 依展演空間看全台本週演出：見首頁連結",
+    "text": "⚑ 2026/11/20㊄ 《Smoking Goose 吸菸鵝 \"Small Talks\" Tour-台中場》（免費）\n\n➤ 卡司陣容：\n♥︎Smoking Goose(스모킹구스) ♥︎NAGI ♥︎明珠 MINJU\n\n❑ 地點：[臺中市] The Pillars 柱 ❑\n\n💬 免費入場太佛了吧！標記那個每次都喊沒錢聽團的朋友快衝 👥\n\n🔗 依展演空間看全台本週演出：見首頁連結",
     "images": [
       "https://akstatic.streetvoice.com/venue_activity_image/2026/10/28/304802b9da8d4baaa2d03043a945a529.jpeg"
     ],
@@ -155,14 +102,14 @@
       "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/10/28/304802b9da8d4baaa2d03043a945a529.jpeg",
       "source": "StreetVoice",
       "is_free": "unknown",
-      "card_url": "cards/spotlight_6.jpg"
+      "card_url": "cards/spotlight_4.jpg"
     },
-    "card_url": "cards/spotlight_6.jpg"
+    "card_url": "cards/spotlight_4.jpg"
   },
   {
     "type": "spotlight",
     "title": "失眠少女俱樂部共同演出",
-    "text": "⚑ 2026/11/20㊄ 《失眠少女俱樂部共同演出》（免費）\n\n➤ 卡司陣容：\n♥︎pink品怡 ♥︎芙里安 Valiant Pan ♥︎馬愷伶 Claire Ma\n\n❑ 地點：[臺北市] 女巫店 ❑\n\n💬 這週末免費去處有了！轉發分享給想一起聽歌的人 🎶\n\n🔗 依展演空間看全台本週演出：見首頁連結",
+    "text": "⚑ 2026/11/20㊄ 《失眠少女俱樂部共同演出》（免費）\n\n➤ 卡司陣容：\n♥︎pink品怡 ♥︎芙里安 Valiant Pan ♥︎馬愷伶 Claire Ma\n\n❑ 地點：[臺北市] 女巫店 ❑\n\n💬 免費入場太佛了吧！標記那個每次都喊沒錢聽團的朋友快衝 👥\n\n🔗 依展演空間看全台本週演出：見首頁連結",
     "images": [
       "https://akstatic.streetvoice.com/venue_activity_image/2026/10/09/659a0b8ca89a4ae0b6821516fc2c9c95.jpeg"
     ],
@@ -182,14 +129,14 @@
       "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/10/09/659a0b8ca89a4ae0b6821516fc2c9c95.jpeg",
       "source": "StreetVoice",
       "is_free": "unknown",
-      "card_url": "cards/spotlight_7.jpg"
+      "card_url": "cards/spotlight_5.jpg"
     },
-    "card_url": "cards/spotlight_7.jpg"
+    "card_url": "cards/spotlight_5.jpg"
   },
   {
     "type": "spotlight",
     "title": "沈默紳士 × 核果人 NUTS《沈果發表會》",
-    "text": "⚑ 2026/11/20㊄ 《沈默紳士 × 核果人 NUTS《沈果發表會》》（免費）\n\n➤ 卡司陣容：\n♥︎沈默紳士 ♥︎核果人 NUTS\n\n❑ 地點：[臺北市] Clapper Studio ❑\n\n💬 免費入場太佛了吧！標記那個每次都喊沒錢聽團的朋友快衝 👥\n\n🔗 依展演空間看全台本週演出：見首頁連結",
+    "text": "⚑ 2026/11/20㊄ 《沈默紳士 × 核果人 NUTS《沈果發表會》》（免費）\n\n➤ 卡司陣容：\n♥︎沈默紳士 ♥︎核果人 NUTS\n\n❑ 地點：[臺北市] Clapper Studio ❑\n\n💬 這週末免費去處有了！轉發分享給想一起聽歌的人 🎶\n\n🔗 依展演空間看全台本週演出：見首頁連結",
     "images": [
       "https://akstatic.streetvoice.com/venue_activity_image/2026/11/10/035e6a3f5dbd45099dabe807ddde2435.png"
     ],
@@ -206,6 +153,59 @@
       "source_url": "https://streetvoice.com/gigs/10322/",
       "ticket_url": "https://streetvoice.com/gigs/10322/",
       "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/11/10/035e6a3f5dbd45099dabe807ddde2435.png",
+      "source": "StreetVoice",
+      "is_free": "unknown",
+      "card_url": "cards/spotlight_6.jpg"
+    },
+    "card_url": "cards/spotlight_6.jpg"
+  },
+  {
+    "type": "spotlight",
+    "title": "DISORDER LIVE ＃26 京神网洛KYOSHIN NET、布萊克Black、有貓餅Neko Issue",
+    "text": "⚑ 2026/11/20㊄ 《DISORDER LIVE ＃26 京神网洛KYOSHIN NET、布萊克Black、有貓餅Neko Issue》（免費）\n\n➤ 卡司陣容：\n♥︎京神网洛 ♥︎布萊克 ♥︎Neko Issue 有貓餅\n\n❑ 地點：[臺中市] 迴響音樂藝文展演空間 ❑\n\n💬 免費入場太佛了吧！標記那個每次都喊沒錢聽團的朋友快衝 👥\n\n🔗 依展演空間看全台本週演出：見首頁連結",
+    "images": [
+      "https://akstatic.streetvoice.com/venue_activity_image/2026/11/14/50bd3808c89f4a65a29beeefb3f1c0ca.jpeg"
+    ],
+    "event": {
+      "name": "DISORDER LIVE ＃26 京神网洛KYOSHIN NET、布萊克Black、有貓餅Neko Issue",
+      "date": "2026-11-20",
+      "time": "20:00",
+      "venue_name": "迴響音樂藝文展演空間",
+      "city": "臺中市",
+      "performers": [
+        "京神网洛",
+        "布萊克",
+        "Neko Issue 有貓餅"
+      ],
+      "source_url": "https://streetvoice.com/gigs/10334/",
+      "ticket_url": "https://streetvoice.com/gigs/10334/",
+      "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/11/14/50bd3808c89f4a65a29beeefb3f1c0ca.jpeg",
+      "source": "StreetVoice",
+      "is_free": "unknown",
+      "card_url": "cards/spotlight_7.jpg"
+    },
+    "card_url": "cards/spotlight_7.jpg"
+  },
+  {
+    "type": "spotlight",
+    "title": "貝克小姐 Miss Bac. 〈一點一點的思念〉不插電音樂夜",
+    "text": "⚑ 2026/11/20㊄ 《貝克小姐 Miss Bac. 〈一點一點的思念〉不插電音樂夜》（免費）\n\n➤ 卡司陣容：\n♥︎貝克小姐Miss Bac. ♥︎陳宇祥 Shawn\n\n❑ 地點：[新北市] 空軍三重一村 ❑\n\n💬 免費入場太佛了吧！標記那個每次都喊沒錢聽團的朋友快衝 👥\n\n🔗 依展演空間看全台本週演出：見首頁連結",
+    "images": [
+      "https://akstatic.streetvoice.com/venue_activity_image/2026/11/17/abd469ab74fa4683a6cb97ac7b05ba0f.jpeg"
+    ],
+    "event": {
+      "name": "貝克小姐 Miss Bac. 〈一點一點的思念〉不插電音樂夜",
+      "date": "2026-11-20",
+      "time": "20:00",
+      "venue_name": "空軍三重一村",
+      "city": "新北市",
+      "performers": [
+        "貝克小姐Miss Bac.",
+        "陳宇祥 Shawn"
+      ],
+      "source_url": "https://streetvoice.com/gigs/10374/",
+      "ticket_url": "https://streetvoice.com/gigs/10374/",
+      "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/11/17/abd469ab74fa4683a6cb97ac7b05ba0f.jpeg",
       "source": "StreetVoice",
       "is_free": "unknown",
       "card_url": "cards/spotlight_8.jpg"
