@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-11-24 05:52:23",
-  "total_events": 37,
+  "updated_at": "2026-11-25 04:47:59",
+  "total_events": 39,
   "total_free": 17,
   "total_hot": 1,
   "top_venues": [
@@ -594,8 +594,8 @@
       "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/10/31/9c929789d41445dd9ea1b2e62e636a4e.jpeg"
     },
     {
-      "id": "indievox_12.4  DISORDER LIVE ＃27：伍貳柒FivEToSeVen、無..._2026-12-04",
-      "title": "12.4  DISORDER LIVE ＃27：伍貳柒FivEToSeVen、無...",
+      "id": "indievox_12.4  DISORDER LIVE ＃27：伍貳柒FivEToS..._2026-12-04",
+      "title": "12.4  DISORDER LIVE ＃27：伍貳柒FivEToS...",
       "date": "2026-12-04",
       "time": "",
       "venue": "Live House",
@@ -606,9 +606,7 @@
       "price": "NT$ 400 - 500",
       "is_free": false,
       "is_hot": false,
-      "performers": [
-        "伍貳柒FivEToSeVen"
-      ],
+      "performers": [],
       "ticket_platform": "Indievox",
       "ticket_url": "https://www.indievox.com/activity/detail/26_iv04320d9",
       "image_url": "https://indievox.static.tixcraft.com/images/activity/26_iv04320d9_240fcd7ed578ba39a12bb04fb46bc075.jpeg"
@@ -654,8 +652,8 @@
       "image_url": "https://indievox.static.tixcraft.com/images/activity/26_iv04139b2_4db8f8a254ef054b2906ff11035b4b7d.jpg"
     },
     {
-      "id": "indievox_12.5  DISORDER LIVE  ACG特別企劃：我們仍未..._2026-12-05",
-      "title": "12.5  DISORDER LIVE  ACG特別企劃：我們仍未...",
+      "id": "indievox_12.5  DISORDER LIVE  ACG特別企劃：我們..._2026-12-05",
+      "title": "12.5  DISORDER LIVE  ACG特別企劃：我們...",
       "date": "2026-12-05",
       "time": "",
       "venue": "Live House",
@@ -670,48 +668,6 @@
       "ticket_platform": "Indievox",
       "ticket_url": "https://www.indievox.com/activity/detail/26_iv0432107",
       "image_url": "https://indievox.static.tixcraft.com/images/activity/26_iv0432107_84d4c909250a4328012e08f21b14ea7f.jpg"
-    },
-    {
-      "id": "indievox_Missing My Deer in the Rain_2026-12-05",
-      "title": "Missing My Deer in the Rain",
-      "date": "2026-12-05",
-      "time": "19:30",
-      "venue": "Loi了咖啡 音樂展演空間",
-      "venue_id": "other",
-      "location": "Loi了咖啡 音樂展演空間",
-      "city": "Unknown",
-      "region": "全台其他",
-      "price": "NT$ 500 - 800",
-      "is_free": false,
-      "is_hot": false,
-      "performers": [
-        "艮鹿",
-        "雨城時刻",
-        "I Miss Who I Was"
-      ],
-      "ticket_platform": "Indievox",
-      "ticket_url": "https://www.indievox.com/activity/detail/26_iv0426222",
-      "image_url": "https://indievox.static.tixcraft.com/images/activity/26_iv0426222_cbdb5c0da654af612f8b61f633f19de1.png"
-    },
-    {
-      "id": "indievox_台南午場 ✦ 庸俗救星｜歲末聯歡演唱會 ✦ 映画場_2026-12-05",
-      "title": "台南午場 ✦ 庸俗救星｜歲末聯歡演唱會 ✦ 映画場",
-      "date": "2026-12-05",
-      "time": "",
-      "venue": "映画場",
-      "venue_id": "other",
-      "location": "映画場",
-      "city": "Unknown",
-      "region": "全台其他",
-      "price": "NT$ 1,100 - 1,200",
-      "is_free": false,
-      "is_hot": false,
-      "performers": [
-        "庸俗救星"
-      ],
-      "ticket_platform": "Indievox",
-      "ticket_url": "https://www.indievox.com/activity/detail/26_iv0430611",
-      "image_url": "https://indievox.static.tixcraft.com/images/activity/26_iv0430611_218372d9eb20daf61222b9950a7a05ff.jpg"
     },
     {
       "id": "indievox__2026-12-05",
@@ -732,13 +688,33 @@
       "image_url": "https://indievox.static.tixcraft.com/images/activity/26_iv04280c7_4d4994a9dbc311cd9a9c2a32a3c8dcc9.jpg"
     },
     {
+      "id": "indievox_台南晚場 ✦ 庸俗救星｜歲末聯歡演唱會 ✦ 映画場_2026-12-05",
+      "title": "台南晚場 ✦ 庸俗救星｜歲末聯歡演唱會 ✦ 映画場",
+      "date": "2026-12-05",
+      "time": "",
+      "venue": "映画場",
+      "venue_id": "other",
+      "location": "映画場",
+      "city": "Unknown",
+      "region": "全台其他",
+      "price": "NT$ 1,100 - 1,200",
+      "is_free": false,
+      "is_hot": false,
+      "performers": [
+        "庸俗救星"
+      ],
+      "ticket_platform": "Indievox",
+      "ticket_url": "https://www.indievox.com/activity/detail/26_iv04307bc",
+      "image_url": "https://indievox.static.tixcraft.com/images/activity/26_iv04307bc_233bdc6f831d115e871ce6490db9fc65.jpg"
+    },
+    {
       "id": "indievox_虎山音樂祭 Tiger Mountain Ramble_2026-12-05",
       "title": "虎山音樂祭 Tiger Mountain Ramble",
       "date": "2026-12-05",
       "time": "",
-      "venue": "虎山",
+      "venue": "Live House",
       "venue_id": "other",
-      "location": "虎山",
+      "location": "Live House",
       "city": "Unknown",
       "region": "全台其他",
       "price": "售票",
@@ -770,6 +746,46 @@
       "image_url": "https://indievox.static.tixcraft.com/images/activity/26_iv0429373_06ef8c1f3749a3bdd000c276c7b2823e.jpg"
     },
     {
+      "id": "indievox_Missing My Deer in the Rain_2026-12-05",
+      "title": "Missing My Deer in the Rain",
+      "date": "2026-12-05",
+      "time": "19:30",
+      "venue": "Loi了咖啡 音樂展演空間",
+      "venue_id": "other",
+      "location": "Loi了咖啡 音樂展演空間",
+      "city": "Unknown",
+      "region": "全台其他",
+      "price": "NT$ 500 - 800",
+      "is_free": false,
+      "is_hot": false,
+      "performers": [
+        "艮鹿",
+        "雨城時刻",
+        "I Miss Who I Was"
+      ],
+      "ticket_platform": "Indievox",
+      "ticket_url": "https://www.indievox.com/activity/detail/26_iv0426222",
+      "image_url": "https://indievox.static.tixcraft.com/images/activity/26_iv0426222_cbdb5c0da654af612f8b61f633f19de1.png"
+    },
+    {
+      "id": "indievox_12.6  什麼！這個星球禁止迴旋踢_2026-12-06",
+      "title": "12.6  什麼！這個星球禁止迴旋踢",
+      "date": "2026-12-06",
+      "time": "",
+      "venue": "Live House",
+      "venue_id": "other",
+      "location": "Live House",
+      "city": "Unknown",
+      "region": "全台其他",
+      "price": "售票",
+      "is_free": false,
+      "is_hot": false,
+      "performers": [],
+      "ticket_platform": "Indievox",
+      "ticket_url": "https://www.indievox.com/activity/detail/26_iv043289c",
+      "image_url": "https://indievox.static.tixcraft.com/images/activity/26_iv043289c_5e2d80b2f41f9c40783d0e1c9c9e3d8a.png"
+    },
+    {
       "id": "indievox_爵犬 Joe Trane《WHO SAYS?》LIVE AT SUB 專場派對_2026-12-27",
       "title": "爵犬 Joe Trane《WHO SAYS?》LIVE AT SUB 專場派對",
       "date": "2026-12-27",
@@ -788,6 +804,26 @@
       "ticket_platform": "Indievox",
       "ticket_url": "https://www.indievox.com/activity/detail/26_iv04319a6",
       "image_url": "https://indievox.static.tixcraft.com/images/activity/26_iv04319a6_a8e1c8f3b53432adebcf605a8f2fa8fe.png"
+    },
+    {
+      "id": "indievox_體熊專科。Major in Body Bear10th Anniversary One Man Live_2027-01-09",
+      "title": "體熊專科。Major in Body Bear10th Anniversary One Man Live",
+      "date": "2027-01-09",
+      "time": "20:00",
+      "venue": "SUB",
+      "venue_id": "other",
+      "location": "SUB",
+      "city": "Unknown",
+      "region": "全台其他",
+      "price": "售票",
+      "is_free": false,
+      "is_hot": false,
+      "performers": [
+        "體熊專科"
+      ],
+      "ticket_platform": "Indievox",
+      "ticket_url": "https://www.indievox.com/activity/detail/27_iv043257b",
+      "image_url": "https://indievox.static.tixcraft.com/images/activity/27_iv043257b_91fe0a28e141bb95f3064eb26f9f9440.jpg"
     },
     {
       "id": "indievox_Legacy Presents岑寧兒 ＆ 張貝芝 《between you and me…》小巡演 - 台北站_2027-01-15",
