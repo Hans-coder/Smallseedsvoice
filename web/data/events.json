@@ -1,8 +1,8 @@
 {
-  "updated_at": "2026-11-27 03:57:59",
-  "total_events": 40,
-  "total_free": 17,
-  "total_hot": 1,
+  "updated_at": "2026-11-28 03:45:55",
+  "total_events": 52,
+  "total_free": 28,
+  "total_hot": 4,
   "top_venues": [
     {
       "id": "legacy_tpe",
@@ -10,7 +10,23 @@
       "city": "臺中市",
       "tagline": "華山旗艦中型專場空間",
       "vibe": "專場指標",
-      "count": 9
+      "count": 8
+    },
+    {
+      "id": "live_warehouse",
+      "name": "駁二 LIVE WAREHOUSE",
+      "city": "高雄市",
+      "tagline": "高雄港邊倉庫・南方聽團大本營",
+      "vibe": "港都浪潮",
+      "count": 4
+    },
+    {
+      "id": "kpm",
+      "name": "高流 (高雄流行音樂中心)",
+      "city": "高雄市",
+      "tagline": "真愛碼頭・國際港灣音樂地標",
+      "vibe": "港灣地標",
+      "count": 3
     },
     {
       "id": "corridor",
@@ -19,22 +35,6 @@
       "tagline": "台中老字號獨立搖滾溫床",
       "vibe": "台中搖滾現場",
       "count": 3
-    },
-    {
-      "id": "zepp",
-      "name": "Zepp New Taipei",
-      "city": "新北市",
-      "tagline": "新莊宏匯・日系頂規音場專場",
-      "vibe": "頂級音場",
-      "count": 1
-    },
-    {
-      "id": "kpm",
-      "name": "高流 (高雄流行音樂中心)",
-      "city": "高雄市",
-      "tagline": "真愛碼頭・國際港灣音樂地標",
-      "vibe": "港灣地標",
-      "count": 1
     },
     {
       "id": "pipe",
@@ -53,11 +53,11 @@
       "count": 1
     },
     {
-      "id": "live_warehouse",
-      "name": "駁二 LIVE WAREHOUSE",
-      "city": "高雄市",
-      "tagline": "高雄港邊倉庫・南方聽團大本營",
-      "vibe": "港都浪潮",
+      "id": "the_wall",
+      "name": "The Wall Live House",
+      "city": "臺北市",
+      "tagline": "公館地下傳奇搖滾基地",
+      "vibe": "地下殿堂",
       "count": 1
     },
     {
@@ -72,91 +72,6 @@
   "events": [
     {
       "id": "ev_0",
-      "title": "Karencici The Loser Live In Concert",
-      "date": "2026-11-27",
-      "time": "",
-      "venue": "Zepp New Taipei",
-      "venue_id": "zepp",
-      "location": "Zepp New Taipei",
-      "city": "新北市",
-      "region": "雙北與北部",
-      "price": "免費",
-      "is_free": true,
-      "is_hot": false,
-      "performers": [
-        "林愷倫karencici"
-      ],
-      "ticket_platform": "官方售票",
-      "ticket_url": "https://streetvoice.com/gigs/9660/",
-      "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/07/10/d7e55a2f16b34a6eb74258f5fde88001.jpeg"
-    },
-    {
-      "id": "ev_1",
-      "title": "Legacy Presents【2026都市女聲】：小球（莊鵑瑛）《Reset：Memory》－台中場",
-      "date": "2026-11-27",
-      "time": "",
-      "venue": "Legacy Taipei",
-      "venue_id": "legacy_tpe",
-      "location": "Legacy Taipei",
-      "city": "臺中市",
-      "region": "全台其他",
-      "price": "NT$ 1,700 - 3,200",
-      "is_free": false,
-      "is_hot": false,
-      "performers": [
-        "莊小球",
-        "小球（莊鵑瑛）"
-      ],
-      "ticket_platform": "Indievox",
-      "ticket_url": "https://www.indievox.com/activity/detail/26_iv0419556",
-      "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/09/05/3991e2964f20496db6311dc83924ff2f.jpeg"
-    },
-    {
-      "id": "ev_2",
-      "title": "Wah SUB！018 ; Metal Road 金屬之路",
-      "date": "2026-11-27",
-      "time": "",
-      "venue": "SUB",
-      "venue_id": "other",
-      "location": "SUB",
-      "city": "臺北市",
-      "region": "全台其他",
-      "price": "售票",
-      "is_free": false,
-      "is_hot": false,
-      "performers": [
-        "Infernal Chaos",
-        "固定客GOODICK",
-        "Alien Avenge 異族亡魂",
-        "Dharma 達摩樂隊",
-        "Infernal Chaos ft. GOODICK 固定客"
-      ],
-      "ticket_platform": "Indievox",
-      "ticket_url": "https://www.indievox.com/activity/detail/26_iv0426632",
-      "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/10/23/3ac060d920a54f0bb9c1696e482c6c01.jpeg"
-    },
-    {
-      "id": "ev_3",
-      "title": "鄒序 Hogan T. 無端端 2026 鄒序秋冬小巡 - 台中",
-      "date": "2026-11-27",
-      "time": "",
-      "venue": "The Pillars 柱",
-      "venue_id": "other",
-      "location": "The Pillars 柱",
-      "city": "臺中市",
-      "region": "全台其他",
-      "price": "免費",
-      "is_free": true,
-      "is_hot": false,
-      "performers": [
-        "鄒序 hogan"
-      ],
-      "ticket_platform": "官方售票",
-      "ticket_url": "https://streetvoice.com/gigs/10222/",
-      "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/10/23/6120b4940cd945a2805e21785bf0f595.jpeg"
-    },
-    {
-      "id": "ev_4",
       "title": "BELISH《想起你的時刻》2026不插電小巡迴-高雄場",
       "date": "2026-11-28",
       "time": "",
@@ -176,7 +91,7 @@
       "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/10/22/c35503b1d8434e9087a2541e7fb59acb.jpeg"
     },
     {
-      "id": "ev_5",
+      "id": "ev_1",
       "title": "漁光倒 YuguangFall 2026 首次專場- 台中站加場",
       "date": "2026-11-28",
       "time": "",
@@ -196,7 +111,7 @@
       "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/11/20/00ca7343e890480ca107b1a1be770528.png"
     },
     {
-      "id": "ev_6",
+      "id": "ev_2",
       "title": "魏妙如 X 謝紫若 《三千兩百公里》",
       "date": "2026-11-28",
       "time": "",
@@ -217,7 +132,7 @@
       "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/08/29/48c198ad024642cba5fa711d818a1f1b.jpeg"
     },
     {
-      "id": "ev_7",
+      "id": "ev_3",
       "title": "椅子樂團 Rolling On, Marching On 十週年巡演 - 台中場",
       "date": "2026-11-28",
       "time": "",
@@ -255,7 +170,7 @@
       "image_url": "https://indievox.static.tixcraft.com/images/activity/26_iv0431404_58703454af5b6b989be7b1139e8e268b.jpg"
     },
     {
-      "id": "ev_8",
+      "id": "ev_4",
       "title": "白日夢遊",
       "date": "2026-11-29",
       "time": "",
@@ -277,7 +192,7 @@
       "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/10/31/f323cad96ccc451faa68ade63a85caec.jpeg"
     },
     {
-      "id": "ev_9",
+      "id": "ev_5",
       "title": "像貓咪一樣長的午覺 Catnap Motel",
       "date": "2026-11-29",
       "time": "",
@@ -299,7 +214,7 @@
       "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/10/09/4cfe43e7f5e449e5ba5731cfafd67258.jpeg"
     },
     {
-      "id": "ev_10",
+      "id": "ev_6",
       "title": "「回り回って雨上がって」雙單曲巡迴-台北場",
       "date": "2026-11-29",
       "time": "",
@@ -320,7 +235,7 @@
       "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/10/27/1710cf86b94e4371a075d4ec4ac5b613.jpeg"
     },
     {
-      "id": "ev_11",
+      "id": "ev_7",
       "title": "日本祭2026 台日女聲之夜",
       "date": "2026-11-29",
       "time": "",
@@ -344,7 +259,7 @@
       "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/11/21/d2cd1fd553c04818ac4e28b00abe5cfa.jpeg"
     },
     {
-      "id": "ev_12",
+      "id": "ev_8",
       "title": "椅子樂團 Rolling On, Marching On 十週年巡演-台中場加場",
       "date": "2026-11-29",
       "time": "",
@@ -364,7 +279,7 @@
       "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/09/25/8df0d63b84f64108b6c77585e2437a0a.jpeg"
     },
     {
-      "id": "ev_13",
+      "id": "ev_9",
       "title": "Wah SUB！019 舉杯 ; 非人物種Ｘ無妄合作社",
       "date": "2026-11-29",
       "time": "",
@@ -404,7 +319,7 @@
       "image_url": "https://indievox.static.tixcraft.com/images/activity/26_iv043223d_994aa5b00e9561f840ed24b5d6c6960c.jpeg"
     },
     {
-      "id": "ev_14",
+      "id": "ev_10",
       "title": "午夜乒乓 丘高氣爽 Chill ＆ High Tour 台北站",
       "date": "2026-12-02",
       "time": "",
@@ -424,7 +339,7 @@
       "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/10/31/ae8be3ead4e34af4bbaf4485efc94e06.jpeg"
     },
     {
-      "id": "ev_15",
+      "id": "ev_11",
       "title": "春之子：雷擎",
       "date": "2026-12-03",
       "time": "",
@@ -444,7 +359,7 @@
       "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/10/31/9c929789d41445dd9ea1b2e62e636a4e.jpeg"
     },
     {
-      "id": "ev_16",
+      "id": "ev_12",
       "title": "2026 妖山祭・妖霧漫山 Mont. Monster Matsuri・Misty Mountain Mysteria - 12/4",
       "date": "2026-12-04",
       "time": "",
@@ -471,7 +386,7 @@
       "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/11/21/cc2e2091df7d419eaa11a933df3da362.jpeg"
     },
     {
-      "id": "ev_17",
+      "id": "ev_13",
       "title": "BK 2026 台北專場-【還是會想念】",
       "date": "2026-12-04",
       "time": "",
@@ -491,7 +406,7 @@
       "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/10/22/9404a9b3553749e5b54e6f13cb6614b9.jpeg"
     },
     {
-      "id": "ev_18",
+      "id": "ev_14",
       "title": "格式塔少女 Gestalt Girl 「働くこと、休むこと。」專輯發片巡迴 - 高雄場",
       "date": "2026-12-04",
       "time": "",
@@ -513,7 +428,7 @@
       "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/10/29/0bbb8167b42c499d8b828589e167a6eb.jpeg"
     },
     {
-      "id": "ev_19",
+      "id": "ev_15",
       "title": "有待商榷《一起交白卷》",
       "date": "2026-12-04",
       "time": "",
@@ -533,7 +448,7 @@
       "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/10/23/ea259b1e73cf46d08ac8632d10e31f5d.jpeg"
     },
     {
-      "id": "ev_20",
+      "id": "ev_16",
       "title": "第二屆北流演唱會學院成果展演《那狠會》",
       "date": "2026-12-04",
       "time": "",
@@ -559,7 +474,7 @@
       "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/11/14/b69690e83c22453085515678b45612e6.jpeg"
     },
     {
-      "id": "ev_21",
+      "id": "ev_17",
       "title": "DISORDER LIVE ＃27：伍貳柒FivEToSeVen、無所畏 Wu Soul Way、茜茜溱妮QIANQIAN JENNIE",
       "date": "2026-12-04",
       "time": "",
@@ -581,8 +496,8 @@
       "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/11/21/6eb18710b4b848d99a5aa8543e8c1623.jpeg"
     },
     {
-      "id": "indievox_12.4  DISORDER LIVE ＃27：伍貳柒FivEToSeVen、無..._2026-12-04",
-      "title": "12.4  DISORDER LIVE ＃27：伍貳柒FivEToSeVen、無...",
+      "id": "indievox_12.4  DISORDER LIVE ＃27：伍貳柒FivEToS..._2026-12-04",
+      "title": "12.4  DISORDER LIVE ＃27：伍貳柒FivEToS...",
       "date": "2026-12-04",
       "time": "",
       "venue": "Live House",
@@ -594,14 +509,60 @@
       "is_free": false,
       "is_hot": false,
       "performers": [
-        "伍貳柒FivEToSeVen"
+        "伍貳柒FivEToS"
       ],
       "ticket_platform": "Indievox",
       "ticket_url": "https://www.indievox.com/activity/detail/26_iv04320d9",
       "image_url": "https://indievox.static.tixcraft.com/images/activity/26_iv04320d9_240fcd7ed578ba39a12bb04fb46bc075.jpeg"
     },
     {
-      "id": "ev_22",
+      "id": "ev_18",
+      "title": "2026 黑熊部落 - 12/5",
+      "date": "2026-12-05",
+      "time": "",
+      "venue": "顏氏牧場",
+      "venue_id": "other",
+      "location": "顏氏牧場",
+      "city": "南投縣",
+      "region": "中部",
+      "price": "免費",
+      "is_free": true,
+      "is_hot": false,
+      "performers": [
+        "睡後故事",
+        "Aloha Production 夏悅舞集",
+        "YoungLee 337",
+        "DSPS",
+        "伍悅",
+        "裘海正",
+        "小老虎jfever",
+        "HARIKUYAMAKU",
+        "鄒紹凡",
+        "孟萱",
+        "搭好,我們出不去",
+        "安慶 age",
+        "克里夫 Cliff",
+        "PiNkChAin",
+        "蔡丹尼",
+        "Cen Cen",
+        "林昀駿 Troy Lin",
+        "BACKBEAT BROTHERS",
+        "DJ KAZULA",
+        "DJ SON",
+        "ARC",
+        "BÜ1",
+        "Ccc333ccc",
+        "Oskii",
+        "KIKIWAWA",
+        "四四拍",
+        "Lin Meng B2B Harikuyamaku"
+      ],
+      "ticket_platform": "官方售票",
+      "ticket_url": "https://streetvoice.com/gigs/10398/",
+      "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/11/21/4d8afc29e3e4417899b3ba7cd547f381.jpeg"
+    },
+    {
+      "id": "ev_19",
       "title": "2026 妖山祭・妖霧漫山 Mont. Monster Matsuri・Misty Mountain Mysteria - 12/5",
       "date": "2026-12-05",
       "time": "",
@@ -639,8 +600,290 @@
       "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/11/21/299c4ac966f3486dba2b7ace94a5a20a.jpeg"
     },
     {
-      "id": "indievox_12.5  DISORDER LIVE  ACG特別企劃：我們仍未..._2026-12-05",
-      "title": "12.5  DISORDER LIVE  ACG特別企劃：我們仍未...",
+      "id": "ev_20",
+      "title": "第七屆 Kahuzas 音樂節｜嘎呼拉斯",
+      "date": "2026-12-05",
+      "time": "",
+      "venue": "高雄市立寶來國民中學",
+      "venue_id": "other",
+      "location": "高雄市立寶來國民中學",
+      "city": "高雄市",
+      "region": "南部",
+      "price": "免費",
+      "is_free": true,
+      "is_hot": true,
+      "performers": [
+        "生祥樂隊",
+        "Sauljaljui 戴曉君",
+        "滅火器 Fire EX."
+      ],
+      "ticket_platform": "官方售票",
+      "ticket_url": "https://streetvoice.com/gigs/10324/",
+      "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/11/07/fca1ee82166945f790f314f622cd2201.jpeg"
+    },
+    {
+      "id": "ev_21",
+      "title": "2026下酒祭 FEAT.日本",
+      "date": "2026-12-05",
+      "time": "",
+      "venue": "高流 (高雄流行音樂中心)",
+      "venue_id": "kpm",
+      "location": "高流 (高雄流行音樂中心)",
+      "city": "高雄市",
+      "region": "南部",
+      "price": "免費",
+      "is_free": true,
+      "is_hot": false,
+      "performers": [
+        "THE WAVY",
+        "DSPS",
+        "工口紳士",
+        "存在証明 NO FACE NO REaLiTY",
+        "BG8LOCC",
+        "庸俗救星Vulgar Savior",
+        "薄荷綠工廠(Mint Green Mill)",
+        "宅邦戰隊",
+        "otakuni",
+        "オタク二"
+      ],
+      "ticket_platform": "官方售票",
+      "ticket_url": "https://streetvoice.com/gigs/10400/",
+      "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/11/21/6915425c9e2e48788bf391a9fc08beb7.jpeg"
+    },
+    {
+      "id": "ev_22",
+      "title": "Ring 誓約之聲18週年成人式 - 續。成年主張",
+      "date": "2026-12-05",
+      "time": "",
+      "venue": "凝聚力音樂娛樂Cohesion Space",
+      "venue_id": "other",
+      "location": "凝聚力音樂娛樂Cohesion Space",
+      "city": "台北市",
+      "region": "雙北與北部",
+      "price": "免費",
+      "is_free": true,
+      "is_hot": false,
+      "performers": [
+        "Ring -誓約之聲-",
+        "DIZLIKE"
+      ],
+      "ticket_platform": "官方售票",
+      "ticket_url": "https://streetvoice.com/gigs/10348/",
+      "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/11/14/13238227775949e086a10dc7984225cf.jpeg"
+    },
+    {
+      "id": "ev_23",
+      "title": "邱舒《正來尞》2026 巡迴終場－高雄站",
+      "date": "2026-12-05",
+      "time": "",
+      "venue": "高流 (高雄流行音樂中心)",
+      "venue_id": "kpm",
+      "location": "高流 (高雄流行音樂中心)",
+      "city": "高雄市",
+      "region": "南部",
+      "price": "免費",
+      "is_free": true,
+      "is_hot": false,
+      "performers": [
+        "邱舒 Chiu Shu"
+      ],
+      "ticket_platform": "官方售票",
+      "ticket_url": "https://streetvoice.com/gigs/10349/",
+      "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/11/14/bce0e58f2bea43ac9f96e113f25dbd51.jpeg"
+    },
+    {
+      "id": "ev_24",
+      "title": "八十八顆三十周年芭樂祭感恩募款不插電巡迴 -台東場",
+      "date": "2026-12-05",
+      "time": "",
+      "venue": "Bar Cynic 吧蟲",
+      "venue_id": "other",
+      "location": "Bar Cynic 吧蟲",
+      "city": "臺東縣",
+      "region": "全台其他",
+      "price": "免費",
+      "is_free": true,
+      "is_hot": false,
+      "performers": [
+        "88balaz"
+      ],
+      "ticket_platform": "官方售票",
+      "ticket_url": "https://streetvoice.com/gigs/10388/",
+      "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/11/21/fdd5839550894b7caa7d4bb6052fdbde.jpeg"
+    },
+    {
+      "id": "ev_25",
+      "title": "WOLFGRIEF Taiwan Tour - 樂悠悠游擊隊",
+      "date": "2026-12-05",
+      "time": "",
+      "venue": "樂悠悠游擊隊",
+      "venue_id": "other",
+      "location": "樂悠悠游擊隊",
+      "city": "臺北市",
+      "region": "全台其他",
+      "price": "免費",
+      "is_free": true,
+      "is_hot": false,
+      "performers": [
+        "WOLFGRIEF",
+        "Slowing Oscillation (斯洛頻率)",
+        "Optical Orca 光學虎鯨",
+        "秋山 ChillSome"
+      ],
+      "ticket_platform": "官方售票",
+      "ticket_url": "https://streetvoice.com/gigs/10393/",
+      "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/11/21/f4894bf7858c4386b3926c628e68e55c.jpeg"
+    },
+    {
+      "id": "ev_26",
+      "title": "Blood As Ink - 以血為墨",
+      "date": "2026-12-05",
+      "time": "",
+      "venue": "The Wall Live House",
+      "venue_id": "the_wall",
+      "location": "The Wall Live House",
+      "city": "臺北市",
+      "region": "全台其他",
+      "price": "免費",
+      "is_free": true,
+      "is_hot": false,
+      "performers": [
+        "Un Avec Deux Official"
+      ],
+      "ticket_platform": "官方售票",
+      "ticket_url": "https://streetvoice.com/gigs/9400/",
+      "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/05/23/02ac8558ac76467988b3e03d32ec0bcf.jpeg"
+    },
+    {
+      "id": "ev_27",
+      "title": "Missing My De(a)er in the Rain",
+      "date": "2026-12-05",
+      "time": "",
+      "venue": "Loi了咖啡 音樂展演空間",
+      "venue_id": "other",
+      "location": "Loi了咖啡 音樂展演空間",
+      "city": "高雄市",
+      "region": "南部",
+      "price": "NT$ 500 - 800",
+      "is_free": false,
+      "is_hot": false,
+      "performers": [
+        "艮鹿",
+        "雨城時刻 Rain City Moment",
+        "I MISS WHO I WAS",
+        "雨城時刻",
+        "I Miss Who I Was"
+      ],
+      "ticket_platform": "Indievox",
+      "ticket_url": "https://www.indievox.com/activity/detail/26_iv0426222",
+      "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/10/23/a1ec616b0cde468c9500a4fc0a360d48.jpeg"
+    },
+    {
+      "id": "ev_28",
+      "title": "TAIPEI & TOKYO 日京江羽人 X Mao Nakatsu Vol.2 Taipei Edition",
+      "date": "2026-12-05",
+      "time": "",
+      "venue": "女巫店",
+      "venue_id": "other",
+      "location": "女巫店",
+      "city": "臺北市",
+      "region": "全台其他",
+      "price": "免費",
+      "is_free": true,
+      "is_hot": false,
+      "performers": [
+        "日京江羽人",
+        "Mao Nakatsu"
+      ],
+      "ticket_platform": "官方售票",
+      "ticket_url": "https://streetvoice.com/gigs/10223/",
+      "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/10/23/e44adc3b156149efa5df41d5f62f8651.jpeg"
+    },
+    {
+      "id": "ev_29",
+      "title": "高雄一",
+      "date": "2026-12-05",
+      "time": "",
+      "venue": "駁二 LIVE WAREHOUSE",
+      "venue_id": "live_warehouse",
+      "location": "駁二 LIVE WAREHOUSE",
+      "city": "高雄市",
+      "region": "南部",
+      "price": "免費",
+      "is_free": true,
+      "is_hot": false,
+      "performers": [
+        "美秀集團"
+      ],
+      "ticket_platform": "官方售票",
+      "ticket_url": "https://streetvoice.com/gigs/10263/",
+      "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/10/31/50430b0e090b46b69c5e5437964c7fd0.jpeg"
+    },
+    {
+      "id": "ev_30",
+      "title": "修齊首張個人專輯 《朋友、戀人與最糟糕的事》 發行專場",
+      "date": "2026-12-05",
+      "time": "",
+      "venue": "Legacy Taipei",
+      "venue_id": "legacy_tpe",
+      "location": "Legacy Taipei",
+      "city": "臺北市",
+      "region": "全台其他",
+      "price": "NT$ 800 - 1,000",
+      "is_free": false,
+      "is_hot": false,
+      "performers": [
+        "劉修齊",
+        "修齊"
+      ],
+      "ticket_platform": "Indievox",
+      "ticket_url": "https://www.indievox.com/activity/detail/26_iv0429373",
+      "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/11/07/f55ec3520db04f64af925dcf35172929.jpeg"
+    },
+    {
+      "id": "ev_31",
+      "title": "庸俗救星｜歲末聯歡演唱會 ✦ 映画場-台南晚場",
+      "date": "2026-12-05",
+      "time": "",
+      "venue": "全美戲院A廳",
+      "venue_id": "other",
+      "location": "全美戲院A廳",
+      "city": "臺南市",
+      "region": "全台其他",
+      "price": "NT$ 1,100 - 1,200",
+      "is_free": false,
+      "is_hot": false,
+      "performers": [
+        "庸俗救星Vulgar Savior"
+      ],
+      "ticket_platform": "Indievox",
+      "ticket_url": "https://www.indievox.com/activity/detail/26_iv0430611",
+      "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/11/14/425dfb4e1c9d4eaa815da8f943e6ad45.jpeg"
+    },
+    {
+      "id": "ev_32",
+      "title": "一起去看海嗎？",
+      "date": "2026-12-05",
+      "time": "",
+      "venue": "Riff Bar · Live Jazz & Music",
+      "venue_id": "other",
+      "location": "Riff Bar · Live Jazz & Music",
+      "city": "臺北市",
+      "region": "全台其他",
+      "price": "免費",
+      "is_free": true,
+      "is_hot": false,
+      "performers": [
+        "INSP 走心樂園",
+        "Hugowave"
+      ],
+      "ticket_platform": "官方售票",
+      "ticket_url": "https://streetvoice.com/gigs/10412/",
+      "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/11/25/04eebcd993c844cc946250e1b19b9760.jpeg"
+    },
+    {
+      "id": "indievox_12.5  DISORDER LIVE  ACG特別企劃：我們..._2026-12-05",
+      "title": "12.5  DISORDER LIVE  ACG特別企劃：我們...",
       "date": "2026-12-05",
       "time": "",
       "venue": "Live House",
@@ -655,86 +898,6 @@
       "ticket_platform": "Indievox",
       "ticket_url": "https://www.indievox.com/activity/detail/26_iv0432107",
       "image_url": "https://indievox.static.tixcraft.com/images/activity/26_iv0432107_84d4c909250a4328012e08f21b14ea7f.jpg"
-    },
-    {
-      "id": "indievox_修齊首張個人專輯 《朋友、戀人與最糟糕的事》 發行專場_2026-12-05",
-      "title": "修齊首張個人專輯 《朋友、戀人與最糟糕的事》 發行專場",
-      "date": "2026-12-05",
-      "time": "20:00",
-      "venue": "Legacy Taipei",
-      "venue_id": "legacy_tpe",
-      "location": "Legacy Taipei",
-      "city": "Unknown",
-      "region": "全台其他",
-      "price": "NT$ 800 - 1,000",
-      "is_free": false,
-      "is_hot": false,
-      "performers": [
-        "修齊"
-      ],
-      "ticket_platform": "Indievox",
-      "ticket_url": "https://www.indievox.com/activity/detail/26_iv0429373",
-      "image_url": "https://indievox.static.tixcraft.com/images/activity/26_iv0429373_06ef8c1f3749a3bdd000c276c7b2823e.jpg"
-    },
-    {
-      "id": "indievox_台南午場 ✦ 庸俗救星｜歲末聯歡演唱會 ✦ 映画場_2026-12-05",
-      "title": "台南午場 ✦ 庸俗救星｜歲末聯歡演唱會 ✦ 映画場",
-      "date": "2026-12-05",
-      "time": "",
-      "venue": "映画場",
-      "venue_id": "other",
-      "location": "映画場",
-      "city": "Unknown",
-      "region": "全台其他",
-      "price": "NT$ 1,100 - 1,200",
-      "is_free": false,
-      "is_hot": false,
-      "performers": [
-        "庸俗救星"
-      ],
-      "ticket_platform": "Indievox",
-      "ticket_url": "https://www.indievox.com/activity/detail/26_iv0430611",
-      "image_url": "https://indievox.static.tixcraft.com/images/activity/26_iv0430611_218372d9eb20daf61222b9950a7a05ff.jpg"
-    },
-    {
-      "id": "indievox_虎山音樂祭 Tiger Mountain Ramble_2026-12-05",
-      "title": "虎山音樂祭 Tiger Mountain Ramble",
-      "date": "2026-12-05",
-      "time": "",
-      "venue": "虎山",
-      "venue_id": "other",
-      "location": "虎山",
-      "city": "Unknown",
-      "region": "全台其他",
-      "price": "售票",
-      "is_free": false,
-      "is_hot": true,
-      "performers": [],
-      "ticket_platform": "Indievox",
-      "ticket_url": "https://www.indievox.com/activity/detail/26_iv04241ad",
-      "image_url": "https://indievox.static.tixcraft.com/images/activity/26_iv04241ad_b17123c527390d00f83ba8b229024820.jpg"
-    },
-    {
-      "id": "indievox_Missing My Deer in the Rain_2026-12-05",
-      "title": "Missing My Deer in the Rain",
-      "date": "2026-12-05",
-      "time": "19:30",
-      "venue": "Loi了咖啡 音樂展演空間",
-      "venue_id": "other",
-      "location": "Loi了咖啡 音樂展演空間",
-      "city": "Unknown",
-      "region": "全台其他",
-      "price": "NT$ 500 - 800",
-      "is_free": false,
-      "is_hot": false,
-      "performers": [
-        "艮鹿",
-        "雨城時刻",
-        "I Miss Who I Was"
-      ],
-      "ticket_platform": "Indievox",
-      "ticket_url": "https://www.indievox.com/activity/detail/26_iv0426222",
-      "image_url": "https://indievox.static.tixcraft.com/images/activity/26_iv0426222_cbdb5c0da654af612f8b61f633f19de1.png"
     },
     {
       "id": "indievox__2026-12-05",
@@ -753,6 +916,95 @@
       "ticket_platform": "Indievox",
       "ticket_url": "https://www.indievox.com/activity/detail/26_iv04280c7",
       "image_url": "https://indievox.static.tixcraft.com/images/activity/26_iv04280c7_4d4994a9dbc311cd9a9c2a32a3c8dcc9.jpg"
+    },
+    {
+      "id": "indievox_虎山音樂祭 Tiger Mountain Ramble_2026-12-05",
+      "title": "虎山音樂祭 Tiger Mountain Ramble",
+      "date": "2026-12-05",
+      "time": "",
+      "venue": "Live House",
+      "venue_id": "other",
+      "location": "Live House",
+      "city": "Unknown",
+      "region": "全台其他",
+      "price": "售票",
+      "is_free": false,
+      "is_hot": true,
+      "performers": [],
+      "ticket_platform": "Indievox",
+      "ticket_url": "https://www.indievox.com/activity/detail/26_iv04241ad",
+      "image_url": "https://indievox.static.tixcraft.com/images/activity/26_iv04241ad_b17123c527390d00f83ba8b229024820.jpg"
+    },
+    {
+      "id": "ev_33",
+      "title": "2026 黑熊部落 - 12/6",
+      "date": "2026-12-06",
+      "time": "",
+      "venue": "顏氏牧場",
+      "venue_id": "other",
+      "location": "顏氏牧場",
+      "city": "南投縣",
+      "region": "中部",
+      "price": "免費",
+      "is_free": true,
+      "is_hot": false,
+      "performers": [
+        "瑜珈Dehna",
+        "PUZZLEMAN",
+        "emoment",
+        "someshiit 山姆",
+        "Barbara",
+        "嶼浵．Isle of tone",
+        "Junkyard Shaman",
+        "Afra Lin",
+        "蘇文劭劭Shao",
+        "馬尾"
+      ],
+      "ticket_platform": "官方售票",
+      "ticket_url": "https://streetvoice.com/gigs/10399/",
+      "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/11/21/58e3fd9fb48a4c858a7cf510c3c57c77.jpeg"
+    },
+    {
+      "id": "ev_34",
+      "title": "格式塔少女 Gestalt Girl 「働くこと、休むこと。」專輯發片巡迴 - 台北場",
+      "date": "2026-12-06",
+      "time": "",
+      "venue": "Legacy Taipei",
+      "venue_id": "legacy_tpe",
+      "location": "Legacy Taipei",
+      "city": "臺北市",
+      "region": "全台其他",
+      "price": "NT$ 1,300 - 2,400",
+      "is_free": false,
+      "is_hot": false,
+      "performers": [
+        "ゲシュタルト乙女 Gestalt Girl",
+        "陳以恆",
+        "格式塔少女 Gestalt Girl"
+      ],
+      "ticket_platform": "Indievox",
+      "ticket_url": "https://www.indievox.com/activity/detail/26_iv0414174",
+      "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/10/29/914239f438554e2db52992a798ac5b44.jpeg"
+    },
+    {
+      "id": "ev_35",
+      "title": "高雄二",
+      "date": "2026-12-06",
+      "time": "",
+      "venue": "駁二 LIVE WAREHOUSE",
+      "venue_id": "live_warehouse",
+      "location": "駁二 LIVE WAREHOUSE",
+      "city": "高雄市",
+      "region": "南部",
+      "price": "免費",
+      "is_free": true,
+      "is_hot": false,
+      "performers": [
+        "美秀集團"
+      ],
+      "ticket_platform": "官方售票",
+      "ticket_url": "https://streetvoice.com/gigs/10264/",
+      "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/10/31/3aafe06d66684adf93448597739f5338.jpeg"
     },
     {
       "id": "indievox_12.6  什麼！這個星球禁止迴旋踢_2026-12-06",
@@ -795,24 +1047,86 @@
       "image_url": "https://indievox.static.tixcraft.com/images/activity/26_iv04219b4_2439994f05343b20e6511e6abab765eb.jpg"
     },
     {
-      "id": "indievox_格式塔少女 Gestalt Girl 「働くこと、休むこと。」專輯發片巡..._2026-12-06",
-      "title": "格式塔少女 Gestalt Girl 「働くこと、休むこと。」專輯發片巡...",
-      "date": "2026-12-06",
-      "time": "19:00",
+      "id": "indievox_《永遠是生誕祭有多好》鬼灯翠生誕祭_2026-12-12",
+      "title": "《永遠是生誕祭有多好》鬼灯翠生誕祭",
+      "date": "2026-12-12",
+      "time": "13:00",
+      "venue": "駁二 LIVE WAREHOUSE",
+      "venue_id": "live_warehouse",
+      "location": "駁二 LIVE WAREHOUSE",
+      "city": "Unknown",
+      "region": "全台其他",
+      "price": "售票",
+      "is_free": false,
+      "is_hot": true,
+      "performers": [
+        "鬼灯翠 w/99ㄑㄑ",
+        "琉璃花RURIKA"
+      ],
+      "ticket_platform": "Indievox",
+      "ticket_url": "https://www.indievox.com/activity/detail/26_iv0426486",
+      "image_url": "https://indievox.static.tixcraft.com/images/activity/26_iv0426486_68e0de3e64904ddcb7d358384217c926.jpg"
+    },
+    {
+      "id": "indievox_魏品勻 David Wei 《還好我們都被生出來了》 Full Band ..._2026-12-12",
+      "title": "魏品勻 David Wei 《還好我們都被生出來了》 Full Band ...",
+      "date": "2026-12-12",
+      "time": "",
+      "venue": "Live House",
+      "venue_id": "other",
+      "location": "Live House",
+      "city": "Unknown",
+      "region": "全台其他",
+      "price": "NT$ 850 - 900",
+      "is_free": false,
+      "is_hot": false,
+      "performers": [],
+      "ticket_platform": "Indievox",
+      "ticket_url": "https://www.indievox.com/activity/detail/26_iv0424581",
+      "image_url": "https://indievox.static.tixcraft.com/images/activity/26_iv0424581_9b3b2718a1e14efd32e484cb3098a10d.jpg"
+    },
+    {
+      "id": "indievox_Legacy Presents：小球（莊鵑瑛）《Rese..._2026-12-12",
+      "title": "Legacy Presents：小球（莊鵑瑛）《Rese...",
+      "date": "2026-12-12",
+      "time": "19:30",
       "venue": "Legacy Taipei",
       "venue_id": "legacy_tpe",
       "location": "Legacy Taipei",
       "city": "Unknown",
       "region": "全台其他",
-      "price": "NT$ 1,300 - 2,400",
+      "price": "NT$ 1,700 - 3,200",
       "is_free": false,
       "is_hot": false,
       "performers": [
-        "格式塔少女 Gestalt Girl"
+        "小球（莊鵑瑛）"
       ],
       "ticket_platform": "Indievox",
-      "ticket_url": "https://www.indievox.com/activity/detail/26_iv0414174",
-      "image_url": "https://indievox.static.tixcraft.com/images/activity/26_iv0414174_3311fc4c3710560a33f8c69dbe1b8800.jpg"
+      "ticket_url": "https://www.indievox.com/activity/detail/26_iv04196b4",
+      "image_url": "https://indievox.static.tixcraft.com/images/activity/26_iv04196b4_cfeb4c3d5606f7398264dadfda66f6a2.jpg"
+    },
+    {
+      "id": "indievox_龐克折返跑音樂節_2026-12-12",
+      "title": "龐克折返跑音樂節",
+      "date": "2026-12-12",
+      "time": "12:00",
+      "venue": "水湳轉運中心 戶外草地廣場",
+      "venue_id": "other",
+      "location": "水湳轉運中心 戶外草地廣場",
+      "city": "Unknown",
+      "region": "全台其他",
+      "price": "售票",
+      "is_free": false,
+      "is_hot": true,
+      "performers": [
+        "來自台灣",
+        "日本",
+        "韓國",
+        "新加坡 等亞洲地區約40組樂團"
+      ],
+      "ticket_platform": "Indievox",
+      "ticket_url": "https://www.indievox.com/activity/detail/26_iv042231e",
+      "image_url": "https://indievox.static.tixcraft.com/images/activity/26_iv042231e_05967e0c5a616eddc586ff341ce0e754.png"
     },
     {
       "id": "indievox_The Next Big Thing 大團誕生（年終特別場）_2026-12-18",
@@ -875,27 +1189,6 @@
       "ticket_platform": "Indievox",
       "ticket_url": "https://www.indievox.com/activity/detail/27_iv043257b",
       "image_url": "https://indievox.static.tixcraft.com/images/activity/27_iv043257b_91fe0a28e141bb95f3064eb26f9f9440.jpg"
-    },
-    {
-      "id": "indievox_Legacy Presents岑寧兒 ＆ 張貝芝 《between you and me…》小巡演 - 台北站_2027-01-15",
-      "title": "Legacy Presents岑寧兒 ＆ 張貝芝 《between you and me…》小巡演 - 台北站",
-      "date": "2027-01-15",
-      "time": "20:00",
-      "venue": "Legacy Taipei",
-      "venue_id": "legacy_tpe",
-      "location": "Legacy Taipei",
-      "city": "Unknown",
-      "region": "全台其他",
-      "price": "NT$ 1,600 - 2,500",
-      "is_free": false,
-      "is_hot": false,
-      "performers": [
-        "岑寧兒",
-        "張貝芝"
-      ],
-      "ticket_platform": "Indievox",
-      "ticket_url": "https://www.indievox.com/activity/detail/27_iv04316cf",
-      "image_url": "https://indievox.static.tixcraft.com/images/activity/27_iv04316cf_b12748b660702671efaaed81699aa9d3.jpg"
     },
     {
       "id": "indievox_Legacy Presents馬毓芬+于冠華《駿馬耀華》演唱會-台北限定場_2027-01-31",

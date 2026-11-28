@@ -2,7 +2,7 @@
   {
     "type": "spotlight",
     "title": "虎山音樂祭 Tiger Mountain Ramble",
-    "text": "⚑ 2026/12/05㊅ 《虎山音樂祭 Tiger Mountain Ramble》（售票）\n\n❑ 地點：[Unknown] 虎山 ❑\n\n▶ 購票系統：Indievox\n\n💬 已經買好票的來留言區認親！現場見 🔥\n\n🔗 依展演空間看全台本週演出：見首頁連結",
+    "text": "⚑ 2026/12/05㊅ 《虎山音樂祭 Tiger Mountain Ramble》（售票）\n\n❑ 地點：[Unknown] Live House ❑\n\n▶ 購票系統：Indievox\n\n💬 這場免費入場太香了，標記你想一起去吹風聽歌的人！\n\n🔗 依展演空間看全台本週演出：見首頁連結",
     "images": [
       "https://indievox.static.tixcraft.com/images/activity/26_iv04241ad_b17123c527390d00f83ba8b229024820.jpg"
     ],
@@ -13,7 +13,7 @@
       "date": "2026-12-05",
       "start_time": null,
       "time": "Unknown",
-      "venue_name": "虎山",
+      "venue_name": "Live House",
       "city": "Unknown",
       "price": null,
       "ticket_sale_date": null,
@@ -24,7 +24,6 @@
       "note": "Scraped from Indievox (Table View)",
       "reliability": "official",
       "is_hot": true,
-      "location": "虎山",
       "is_discovery": false,
       "performer_profiles": {},
       "genre": "Other",
@@ -34,8 +33,74 @@
   },
   {
     "type": "spotlight",
+    "title": "《永遠是生誕祭有多好》鬼灯翠生誕祭",
+    "text": "⚑ 2026/12/12㊅ 13:00 《《永遠是生誕祭有多好》鬼灯翠生誕祭》（售票）\n\n➤ 卡司陣容：\n♥︎鬼灯翠 w/99ㄑㄑ ♥︎琉璃花RURIKA\n\n❑ 地點：[Unknown] LIVE WAREHOUSE 小庫 ❑\n\n▶ 購票系統：Indievox\n\n💬 已經買好票的來留言區認親！現場見 🔥\n\n🔗 依展演空間看全台本週演出：見首頁連結",
+    "images": [
+      "https://indievox.static.tixcraft.com/images/activity/26_iv0426486_68e0de3e64904ddcb7d358384217c926.jpg"
+    ],
+    "event": {
+      "activity_id": "indievox_《永遠是生誕祭有多好》鬼灯翠生誕祭_2026-12-12",
+      "name": "《永遠是生誕祭有多好》鬼灯翠生誕祭",
+      "performers": [
+        "鬼灯翠 w/99ㄑㄑ",
+        "琉璃花RURIKA"
+      ],
+      "date": "2026-12-12",
+      "start_time": "13:00",
+      "time": "Unknown",
+      "venue_name": "LIVE WAREHOUSE 小庫",
+      "city": "Unknown",
+      "price": "預售票",
+      "ticket_sale_date": null,
+      "is_free": "unknown",
+      "ticket_platform": "Indievox",
+      "ticket_url": "https://www.indievox.com/activity/detail/26_iv0426486",
+      "image_url": "https://indievox.static.tixcraft.com/images/activity/26_iv0426486_68e0de3e64904ddcb7d358384217c926.jpg",
+      "note": "Scraped from Indievox (Table View)",
+      "reliability": "official",
+      "is_hot": true,
+      "card_url": "cards/spotlight_2.jpg"
+    },
+    "card_url": "cards/spotlight_2.jpg"
+  },
+  {
+    "type": "spotlight",
+    "title": "龐克折返跑音樂節",
+    "text": "⚑ 2026/12/12㊅ 12:00 《龐克折返跑音樂節》（售票）\n\n➤ 卡司陣容：\n♥︎來自台灣 ♥︎日本 ♥︎韓國 ♥︎新加坡 等亞洲地區約40組樂團\n\n❑ 地點：[Unknown] 水湳轉運中心 戶外草地廣場 ❑\n\n▶ 購票系統：Indievox\n\n💬 週六撞場撞成這樣，如果是你，這週會選哪一場？👇\n\n🔗 依展演空間看全台本週演出：見首頁連結",
+    "images": [
+      "https://indievox.static.tixcraft.com/images/activity/26_iv042231e_05967e0c5a616eddc586ff341ce0e754.png"
+    ],
+    "event": {
+      "activity_id": "indievox_龐克折返跑音樂節_2026-12-12",
+      "name": "龐克折返跑音樂節",
+      "performers": [
+        "來自台灣",
+        "日本",
+        "韓國",
+        "新加坡 等亞洲地區約40組樂團"
+      ],
+      "date": "2026-12-12",
+      "start_time": "12:00",
+      "time": "Unknown",
+      "venue_name": "水湳轉運中心 戶外草地廣場",
+      "city": "Unknown",
+      "price": "超早鳥雙日票 1600元 / 預售雙日票 1800元 / 四人預售雙日套票 6800元 / 單日預售票 1200元 / 現場雙日票 2200元 / 單日現場票 1400元",
+      "ticket_sale_date": "2026/09/20 (日) 12:00 全面開賣",
+      "is_free": "unknown",
+      "ticket_platform": "Indievox",
+      "ticket_url": "https://www.indievox.com/activity/detail/26_iv042231e",
+      "image_url": "https://indievox.static.tixcraft.com/images/activity/26_iv042231e_05967e0c5a616eddc586ff341ce0e754.png",
+      "note": "Scraped from Indievox (Table View)",
+      "reliability": "official",
+      "is_hot": true,
+      "card_url": "cards/spotlight_3.jpg"
+    },
+    "card_url": "cards/spotlight_3.jpg"
+  },
+  {
+    "type": "spotlight",
     "title": "魏妙如 X 謝紫若 《三千兩百公里》",
-    "text": "⚑ 2026/11/28㊅ 《魏妙如 X 謝紫若 《三千兩百公里》》（免費）\n\n➤ 卡司陣容：\n♥︎魏妙如 ♥︎謝紫若\n\n❑ 地點：[臺北市] 女巫店 ❑\n\n💬 免費入場太佛了吧！標記那個每次都喊沒錢聽團的朋友快衝 👥\n\n🔗 依展演空間看全台本週演出：見首頁連結",
+    "text": "⚑ 2026/11/28㊅ 《魏妙如 X 謝紫若 《三千兩百公里》》（免費）\n\n➤ 卡司陣容：\n♥︎魏妙如 ♥︎謝紫若\n\n❑ 地點：[臺北市] 女巫店 ❑\n\n💬 這週末免費去處有了！轉發分享給想一起聽歌的人 🎶\n\n🔗 依展演空間看全台本週演出：見首頁連結",
     "images": [
       "https://akstatic.streetvoice.com/venue_activity_image/2026/08/29/48c198ad024642cba5fa711d818a1f1b.jpeg"
     ],
@@ -54,9 +119,9 @@
       "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/08/29/48c198ad024642cba5fa711d818a1f1b.jpeg",
       "source": "StreetVoice",
       "is_free": "unknown",
-      "card_url": "cards/spotlight_2.jpg"
+      "card_url": "cards/spotlight_4.jpg"
     },
-    "card_url": "cards/spotlight_2.jpg"
+    "card_url": "cards/spotlight_4.jpg"
   },
   {
     "type": "spotlight",
@@ -81,14 +146,14 @@
       "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/10/31/f323cad96ccc451faa68ade63a85caec.jpeg",
       "source": "StreetVoice",
       "is_free": "unknown",
-      "card_url": "cards/spotlight_3.jpg"
+      "card_url": "cards/spotlight_5.jpg"
     },
-    "card_url": "cards/spotlight_3.jpg"
+    "card_url": "cards/spotlight_5.jpg"
   },
   {
     "type": "spotlight",
     "title": "像貓咪一樣長的午覺 Catnap Motel",
-    "text": "⚑ 2026/11/29㊐ 《像貓咪一樣長的午覺 Catnap Motel》（免費）\n\n➤ 卡司陣容：\n♥︎寸 Chune ♥︎施勁瑋 ♥︎ana\n\n❑ 地點：[臺北市] 野地方 Wild Lab ❑\n\n💬 這週末免費去處有了！轉發分享給想一起聽歌的人 🎶\n\n🔗 依展演空間看全台本週演出：見首頁連結",
+    "text": "⚑ 2026/11/29㊐ 《像貓咪一樣長的午覺 Catnap Motel》（免費）\n\n➤ 卡司陣容：\n♥︎寸 Chune ♥︎施勁瑋 ♥︎ana\n\n❑ 地點：[臺北市] 野地方 Wild Lab ❑\n\n💬 免費入場太佛了吧！標記那個每次都喊沒錢聽團的朋友快衝 👥\n\n🔗 依展演空間看全台本週演出：見首頁連結",
     "images": [
       "https://akstatic.streetvoice.com/venue_activity_image/2026/10/09/4cfe43e7f5e449e5ba5731cfafd67258.jpeg"
     ],
@@ -108,14 +173,14 @@
       "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/10/09/4cfe43e7f5e449e5ba5731cfafd67258.jpeg",
       "source": "StreetVoice",
       "is_free": "unknown",
-      "card_url": "cards/spotlight_4.jpg"
+      "card_url": "cards/spotlight_6.jpg"
     },
-    "card_url": "cards/spotlight_4.jpg"
+    "card_url": "cards/spotlight_6.jpg"
   },
   {
     "type": "spotlight",
     "title": "「回り回って雨上がって」雙單曲巡迴-台北場",
-    "text": "⚑ 2026/11/29㊐ 《「回り回って雨上がって」雙單曲巡迴-台北場》（免費）\n\n➤ 卡司陣容：\n♥︎SHIKI-HARU四季春 ♥︎蕨鳴子 fernoiz\n\n❑ 地點：[臺北市] Revolver ❑\n\n💬 這週末免費去處有了！轉發分享給想一起聽歌的人 🎶\n\n🔗 依展演空間看全台本週演出：見首頁連結",
+    "text": "⚑ 2026/11/29㊐ 《「回り回って雨上がって」雙單曲巡迴-台北場》（免費）\n\n➤ 卡司陣容：\n♥︎SHIKI-HARU四季春 ♥︎蕨鳴子 fernoiz\n\n❑ 地點：[臺北市] Revolver ❑\n\n💬 免費入場太佛了吧！標記那個每次都喊沒錢聽團的朋友快衝 👥\n\n🔗 依展演空間看全台本週演出：見首頁連結",
     "images": [
       "https://akstatic.streetvoice.com/venue_activity_image/2026/10/27/1710cf86b94e4371a075d4ec4ac5b613.jpeg"
     ],
@@ -134,9 +199,9 @@
       "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/10/27/1710cf86b94e4371a075d4ec4ac5b613.jpeg",
       "source": "StreetVoice",
       "is_free": "unknown",
-      "card_url": "cards/spotlight_5.jpg"
+      "card_url": "cards/spotlight_7.jpg"
     },
-    "card_url": "cards/spotlight_5.jpg"
+    "card_url": "cards/spotlight_7.jpg"
   },
   {
     "type": "spotlight",
@@ -163,75 +228,6 @@
       "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/11/21/d2cd1fd553c04818ac4e28b00abe5cfa.jpeg",
       "source": "StreetVoice",
       "is_free": "unknown",
-      "card_url": "cards/spotlight_6.jpg"
-    },
-    "card_url": "cards/spotlight_6.jpg"
-  },
-  {
-    "type": "spotlight",
-    "title": "妖山祭・妖霧漫山 Mont. Monster Matsuri・Misty Mountain Mysteria - 12/4",
-    "text": "⚑ 2026/12/04㊄ 《妖山祭・妖霧漫山 Mont. Monster Matsuri・Misty Mountain Mysteria - 12/4》（免費）\n\n➤ 卡司陣容：\n♥︎NZ ♥︎Lyli ♥︎純平回家了 ♥︎邱舒 Chiu Shu ♥︎緋石 feishih ♥︎DJ ZK ♥︎Kichor.ms ♥︎DJ Sü\n\n❑ 地點：[臺北市] 荒山劇場 ❑\n\n💬 免費入場太佛了吧！標記那個每次都喊沒錢聽團的朋友快衝 👥\n\n🔗 依展演空間看全台本週演出：見首頁連結",
-    "images": [
-      "https://akstatic.streetvoice.com/venue_activity_image/2026/11/21/cc2e2091df7d419eaa11a933df3da362.jpeg"
-    ],
-    "event": {
-      "name": "2026 妖山祭・妖霧漫山 Mont. Monster Matsuri・Misty Mountain Mysteria - 12/4",
-      "date": "2026-12-04",
-      "time": "16:00",
-      "venue_name": "荒山劇場",
-      "city": "臺北市",
-      "performers": [
-        "NZ",
-        "Lyli",
-        "純平回家了",
-        "邱舒 Chiu Shu",
-        "緋石 feishih",
-        "DJ ZK",
-        "Kichor.ms",
-        "DJ Sü"
-      ],
-      "source_url": "https://streetvoice.com/gigs/10386/",
-      "ticket_url": "https://streetvoice.com/gigs/10386/",
-      "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/11/21/cc2e2091df7d419eaa11a933df3da362.jpeg",
-      "source": "StreetVoice",
-      "is_free": "unknown",
-      "is_discovery": false,
-      "performer_profiles": {},
-      "genre": "Other",
-      "card_url": "cards/spotlight_7.jpg"
-    },
-    "card_url": "cards/spotlight_7.jpg"
-  },
-  {
-    "type": "spotlight",
-    "title": "第二屆北流演唱會學院成果展演《那狠會》",
-    "text": "⚑ 2026/12/04㊄ 《第二屆北流演唱會學院成果展演《那狠會》》（免費）\n\n➤ 卡司陣容：\n♥︎ABAO 阿爆 ♥︎Nanguaq Music那屋瓦 ♥︎Kivi ♥︎Dremadreman 曾妮 ♥︎Makav 真愛 ♥︎Arase 阿拉斯 ♥︎R.fu\n\n❑ 地點：[臺北市] Legacy TERA ❑\n\n💬 這週末免費去處有了！轉發分享給想一起聽歌的人 🎶\n\n🔗 依展演空間看全台本週演出：見首頁連結",
-    "images": [
-      "https://akstatic.streetvoice.com/venue_activity_image/2026/11/14/b69690e83c22453085515678b45612e6.jpeg"
-    ],
-    "event": {
-      "name": "第二屆北流演唱會學院成果展演《那狠會》",
-      "date": "2026-12-04",
-      "time": "20:00",
-      "venue_name": "Legacy TERA",
-      "city": "臺北市",
-      "performers": [
-        "ABAO 阿爆",
-        "Nanguaq Music那屋瓦",
-        "Kivi",
-        "Dremadreman 曾妮",
-        "Makav 真愛",
-        "Arase 阿拉斯",
-        "R.fu"
-      ],
-      "source_url": "https://streetvoice.com/gigs/10346/",
-      "ticket_url": "https://streetvoice.com/gigs/10346/",
-      "image_url": "https://akstatic.streetvoice.com/venue_activity_image/2026/11/14/b69690e83c22453085515678b45612e6.jpeg",
-      "source": "StreetVoice",
-      "is_free": "unknown",
-      "is_discovery": false,
-      "performer_profiles": {},
-      "genre": "Other",
       "card_url": "cards/spotlight_8.jpg"
     },
     "card_url": "cards/spotlight_8.jpg"
